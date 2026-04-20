@@ -1,75 +1,86 @@
-# globalpatientsafety.com — Broader Safety Metrics Dashboard
+# globalpatientsafety.com — Clearing house / portal for the tool suite.
+#
+# Renders a landing page with cards linking to each tool. Extend by appending
+# a row to the TOOLS tibble in app/logic/tools.R — the portal module picks it
+# up automatically.
 
 box::use(
-  shiny[bootstrapPage, moduleServer, NS, tags, div, fluidPage, navbarPage,
-        tabPanel, fileInput, reactive, req, observeEvent, h4, p, hr,
-        fluidRow, column, selectInput],
+  shiny[
+    moduleServer, NS, tags, div, h1, h2, h3, p, a, hr
+  ],
+  bslib[bs_theme, page_fluid],
 )
 
 box::use(
-  app/view/signal_table,
+  app/view/portal,
 )
 
 #' @export
 ui <- function(id) {
   ns <- NS(id)
-  navbarPage(
-    title = "Global Patient Safety",
-    theme = bslib::bs_theme(bootswatch = "united"),
-    tabPanel("Signal Detection",
-      fluidPage(
-        div(class = "container-fluid", style = "padding-top: 20px;",
-          fluidRow(
-            column(12,
-              h4("Bayesian Safety Signal Detection"),
-              p("Upload adverse event reporting data from any source to detect ",
-                "disproportionate signals using Gamma-Poisson shrinkage."),
-              hr()
-            )
-          ),
-          fluidRow(
-            column(4,
-              fileInput(ns("data_file"), "Upload data (CSV):", accept = ".csv")
-            ),
-            column(4,
-              selectInput(ns("data_source"), "Data source:",
-                          choices = c("FAERS (Drugs)" = "faers",
-                                      "VAERS (Vaccines)" = "vaers",
-                                      "MAUDE (Devices)" = "maude",
-                                      "EudraVigilance" = "eudra",
-                                      "VigiBase (WHO)" = "vigibase",
-                                      "Custom" = "custom"))
-            ),
-            column(4,
-              p(tags$strong("Expected columns:"), " product, event"),
-              p("Each row = one adverse event report.")
-            )
-          ),
-          signal_table$ui(ns("signals"))
+  page_fluid(
+    theme = bs_theme(bootswatch = "flatly"),
+
+    # Hero
+    div(
+      class = "bg-primary text-white py-5 mb-4",
+      div(
+        class = "container text-center",
+        h1("Global Patient Safety", class = "display-4 fw-light mb-3"),
+        p(
+          "Open tools for pharmacovigilance signal detection and clinical research acceleration.",
+          class = "lead mb-0"
         )
       )
     ),
-    tabPanel("About",
-      fluidPage(
-        div(style = "max-width: 800px; margin: 40px auto;",
-          tags$h2("Global Patient Safety"),
-          tags$p("A platform for pharmacovigilance signal detection across ",
-                 "multiple international adverse event reporting systems."),
-          tags$h3("Supported Data Sources"),
-          tags$ul(
-            tags$li(tags$strong("FAERS"), " — FDA Adverse Event Reporting System (US drugs)"),
-            tags$li(tags$strong("VAERS"), " — Vaccine Adverse Event Reporting System (US vaccines)"),
-            tags$li(tags$strong("MAUDE"), " — FDA device reports"),
-            tags$li(tags$strong("EudraVigilance"), " — European Medicines Agency"),
-            tags$li(tags$strong("VigiBase"), " — WHO global ICSR database")
+
+    # Tool cards
+    div(
+      class = "container",
+      h2("Tools", class = "mb-4"),
+      portal$ui(ns("tools")),
+
+      hr(class = "my-5"),
+
+      div(
+        class = "row",
+        div(
+          class = "col-md-8",
+          h2("About"),
+          p(
+            "Global Patient Safety is a growing suite of open-source tools ",
+            "for pharmacovigilance and clinical research. The tools share a ",
+            "common philosophy: signal detection produces hypotheses, not ",
+            "conclusions; cohort construction should be transparent and ",
+            "auditable; and clinical data work should be reproducible on a ",
+            "researcher's laptop."
           ),
-          tags$h3("Statistical Method"),
-          tags$ul(
-            tags$li("Prior: 2-component Gamma mixture fitted via EM algorithm"),
-            tags$li("Posterior: full Gamma mixture with percentile-based signal detection"),
-            tags$li("Reference: DuMouchel (1999), American Statistician 53(3)")
+          p(
+            "Built by ",
+            a("Harlan A. Nelson", href = "https://harlananelson.com", target = "_blank"),
+            ". Source code on ",
+            a("GitHub", href = "https://github.com/harlananelson", target = "_blank"),
+            "."
+          )
+        ),
+        div(
+          class = "col-md-4",
+          h3("Disclaimer"),
+          p(
+            tags$small(
+              "Signals detected by these tools are statistical patterns in ",
+              "spontaneous reporting data, not evidence of causation. ",
+              "Outputs are hypotheses requiring further investigation."
+            )
           )
         )
+      )
+    ),
+
+    div(
+      class = "bg-light py-4 mt-5 text-center text-muted",
+      tags$small(
+        "globalpatientsafety.com — clearing house for open clinical-data tools."
       )
     )
   )
@@ -78,11 +89,6 @@ ui <- function(id) {
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
-    uploaded_data <- reactive({
-      req(input$data_file)
-      utils::read.csv(input$data_file$datapath, stringsAsFactors = FALSE)
-    })
-
-    signal_table$server("signals", data = uploaded_data)
+    portal$server("tools")
   })
 }
