@@ -81,6 +81,78 @@ Two implementation paths:
 Decision needed with user. Adaptive prior is the right answer but
 belongs in signal-compute.
 
+---
+
+## Top-20 Novel Signal Audit (2026-04-21)
+
+Manually verified the top-20 novel pairs sorted by most-recent latest
+quarter (all 2024Q4). **0 / 20 were truly novel.** Full audit at
+`/home/harlan/projects/AI/reviews/top20-novel-verification.md`.
+
+False-positive breakdown:
+
+| Category | # of 20 | Driver |
+|---|---|---|
+| Product quality / medication error | 7 | Blacklist misses |
+| Known / labeled | 5 | Label cache stale OR MedDRA-synonym walk misses |
+| Confounding by indication | 4 | `indications_and_usage` exists but fuzzy matcher misses synonyms |
+| Expected mechanism / formulation | 3 | No filter for on-label titration endpoints |
+| Published case reports only | 1 | Dabigatran + cardiac tamponade (closest to "novel") |
+| Duplicate PT at same HLT | 1 | `Product contamination` vs `Product contamination physical` |
+
+### Filter improvements — ranked by fixability × impact
+
+**Step 1. Expand product-quality / med-error PT blacklist** (removes 7/20).
+Add to `EVENT_BLACKLIST_EXACT` and expand `EVENT_BLACKLIST_PATTERNS` to
+cover the full MedDRA SOC **Product issues** and the **Medication
+errors** SMQ. Specific PTs: `Product contamination*`, `Product cleaning
+inadequate`, `Product residue present`, `Product deposit`, `Labelled
+drug-disease interaction medication error`, `Injection site
+extravasation`. Regex patterns: `^product `, `medication error$`,
+`drug-disease interaction`.
+**STATUS: shipped 2026-04-21**, aers@<pending>, faers@<pending>.
+
+**Step 2. Make indication confounder matching work on synonyms**
+(removes 4/20). The `indications_and_usage` text is already being
+folded into the label match, but the fuzzy matcher misses PT↔label
+synonyms like "Nephrogenic anaemia" ↔ "anemia of chronic kidney
+disease" or "Acute lymphocytic leukaemia recurrent" ↔ "relapsed or
+refractory B-ALL". Extend the `.event_in_label_expanded` synonym walk
+so it applies to the indications section, not just the warnings/AE
+sections. ~30 min.
+
+**Step 3. MedDRA HLT-level deduplication** (removes 1+/20).
+When the DT has two rows that share the same `(drug, HLT)` — e.g.
+`chloraprep + Product contamination` and `chloraprep + Product
+contamination physical` — collapse to one row with the best stats
+across both. Needs the HLT column from UMLS (we already cache the
+CUI; HLT lookup requires a separate UMLS call per PT). Or: simple
+heuristic that collapses PTs sharing >=80% of tokens. Medium effort.
+
+**Step 4. Mechanism / formulation ignore-list** (removes 3/20).
+Per-drug "expected on-label effects" allowlist-to-ignore, e.g.
+flecainide → QRS prolongation (titration endpoint), Urocit-K → ghost
+tablet, Depo-T → crystalline deposit. Hard to automate cleanly;
+probably manual curation per drug or SMQ-based. Lower priority.
+
+**Step 5. Refresh label cache with MedDRA synonyms baked in**
+(further reduces 5/20 known-but-mismatched). Re-fetch openFDA labels
+and preprocess each section so that "keratopathy" + "keratitis" +
+"corneal injury" all register as the same concept via CUI. The MedDRA
+hierarchy cache we already have is the right basis for this. ~hours.
+
+**Step 6. FDA recall feed integration** (removes recent spurious
+signals like levothyroxine `Product substitution issue`). Subscribe to
+the FDA Enforcement Report CDER feed and auto-suppress PTs in active
+recall windows for affected NDC. Feature work.
+
+### Recommended execution order
+
+After #1 ships and we rebuild the top-20 list, expect the new top to
+still contain indication confounders (#2) and some labeled-but-missed
+(#5) pairs — #2 is next most valuable. #3 is a nice-to-have. #4 and
+#6 are longer-term.
+
 ### 3. MedDRA hierarchy match
 
 **Goal:** a PT is "known" if the drug's label mentions any term in the PT's
