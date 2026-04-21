@@ -11,6 +11,18 @@ well-known pairs "novel." This document tracks the plan to fix it.
 
 Commits: `aers-mobi@e5b241c`, `faers-mobi@6422f7b`. Live on Hetzner.
 
+**Round 2 #5 — shipped (in progress) 2026-04-21:**
+- App code: `aers-mobi@1b2f1e6`, `faers-mobi@5a8478a`. Live. Reads
+  `indications_and_usage` column from `fda_labels.parquet` when
+  present; otherwise behaves identically to round 1.
+- Augmenter: `faers-pipeline@1a87c52` adds
+  `scripts/augment_fda_labels_indications.R`. Running locally to
+  fetch indication text for all 2000 cached drugs; ETA ~30-40 min.
+  A background waiter (not yet committed) will scp the augmented
+  parquet to `/srv/shiny-server/{aers,faers}-mobi/data/fda_labels.parquet`
+  on Hetzner and touch `restart.txt` when the fetch completes, so
+  #5 activates without further human action.
+
 1. **Medication-error / admin PT blacklist.** Hardcoded list of exact PT
    names plus regex patterns (`dispensing error`, `product.*error`, etc.).
 2. **Fuzzy label match.** `.event_in_label()` helper: exact substring OR
