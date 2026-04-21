@@ -47,6 +47,40 @@ governance model (app makes outbound API calls) or be too slow (~15k drug
 lookups). The right home is `signal-compute` (the offline pipeline that
 builds `signals.parquet`), which bundles extra parquets alongside.
 
+**Also pending (from AI/plans/drug-name-matching.md, new-drug-bias thread):**
+
+### New-drug / Weber-effect correction
+
+Observation: faers.mobi shows inflated EB05 on drugs less than ~2 years
+on market. Small background (E) + modest N blows up the raw N/E ratio,
+and the current fixed gamma prior isn't tight enough to shrink it.
+
+Two implementation paths:
+
+1. **Adaptive gamma prior** (proper). Drug-age-dependent (α, β):
+   ```
+   years  | alpha | beta | effect
+    <= 1  |  0.10 | 0.10 | strongly shrinks EB05
+    <= 2  |  0.20 | 0.50 | moderately shrinks
+    <= 3  |  0.50 | 1.00 | mild shrinkage
+     > 3  |  1.00 | 2.00 | baseline (current)
+   ```
+   Where applied: **signal-compute**. Per-quarter EB05 is recomputed
+   with the drug-age-specific prior, then EWMA-smoothed as today.
+   `years_on_market` = (quarter_end_date - first_approval_date) / 365.25.
+   first_approval_date already available via data/first_approval.parquet.
+
+2. **Multiplicative post-hoc shrinkage** (quick approximation). Applied
+   in the app's pair_stats reactive or in a lightweight post-process of
+   signals.parquet:
+   ```
+   adjusted_eb05 <- eb05 * (1 - 0.6 * exp(-years_on_market))
+   ```
+   Less principled but a few minutes of work. Useful as a stopgap.
+
+Decision needed with user. Adaptive prior is the right answer but
+belongs in signal-compute.
+
 ### 3. MedDRA hierarchy match
 
 **Goal:** a PT is "known" if the drug's label mentions any term in the PT's
