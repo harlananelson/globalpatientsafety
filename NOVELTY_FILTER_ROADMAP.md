@@ -81,6 +81,46 @@ Two implementation paths:
 Decision needed with user. Adaptive prior is the right answer but
 belongs in signal-compute.
 
+### Canonical signal math (per user specification, 2026-04-22)
+
+Replace the current safetysignal MGPS (2-component Gamma mixture) with
+the operational FDA approach:
+
+- **Likelihood:** N | E, λ ~ Poisson(λE) per (drug, event, stratum)
+- **Prior:** λ ~ Gamma(a, b) with BOTH hyperparameters learned from data
+  — not fixed, not simple, not single. Empirical Bayes.
+- **Fit:** marginal likelihood of N given E integrates out λ to a
+  Negative Binomial; MLE of (a, b) per stratum via numerical
+  optimization (BFGS / Newton-Raphson). No EM, no mixture.
+- **Per-pair posterior:** Gamma(â + N, b̂ + E)
+- **Point estimate:** posterior mean (â + N) / (b̂ + E), on the raw
+  rate-ratio scale — no log transform, no EBGM.
+- **CI:** percentiles of the posterior Gamma directly (e.g. `qgamma(0.05, ...)`
+  for 5th percentile), also raw-scale.
+
+**Stratification candidates:**
+- Drug age tier (years on market bucket) — bakes Weber correction
+  into the EB prior instead of applying a post-hoc multiplier.
+- ATC class — allows class-level shrinkage (every statin sees a
+  similar prior).
+- Time window (quarter / year) — prior changes as reporting volume
+  shifts.
+- MedDRA SOC for the event — anchors the expected-rate scale to
+  event-type background.
+- Combinations of the above.
+
+**Compute:** EB fit per stratum is embarrassingly parallel across
+strata; at FAERS scale (millions of pairs × several strata) a GPU
+implementation is appropriate. User has GPU hardware available.
+
+Source of truth: user's 2006 simulation work at Lilly compared this
+approach to the MGPS mixture and showed it performed better. The
+literature papers I (Claude) initially referenced describe academic
+MGPS, not the operational FDA method.
+
+This replaces the current Weber-effect post-hoc shrinkage once built
+(the adj_eb05 column becomes redundant).
+
 ---
 
 ## Top-20 Novel Signal Audit (2026-04-21)
