@@ -6,3 +6,7 @@ dutasteride,Genital hypoaesthesia,"Post-5-alpha-reductase-inhibitor sexual AEs a
 oxybutynin chloride,Anorectal malformation,"Congenital malformation in pregnancy exposure — highly atypical signal for anticholinergic. Watch for clustering or additional birth-defect reports.",claude-audit,2026-04-22
 oxybutynin chloride,Congenital musculoskeletal disorder of spine,"Companion to the anorectal malformation signal — same pregnancy-exposure question.",claude-audit,2026-04-22
 bedaquiline,Optic nerve disorder,"Bedaquiline labeled for QT but optic nerve is less-emphasized; newer TB drug with limited post-market experience.",claude-audit,2026-04-22
+zolmitriptan,Renal infarct,"Triptan class vasoconstriction — renal infarct is rare but mechanistically plausible. Needs case-series review.",grok-batch,2026-04-22
+zolmitriptan,Tricuspid valve disease,"Triptan class vasoconstriction; rare valvular reports mechanistically plausible. Companion to renal infarct signal.",grok-batch,2026-04-22
+piasky,Type III immune complex mediated reaction,"Very new complement inhibitor (approved 2024). Immune-complex reaction could be genuine novel signal. Needs case review.",grok-batch,2026-04-22
+ropinirole,Limbic encephalitis,"No clear literature tie for this dopamine agonist + limbic encephalitis pair; worth deeper review.",grok-batch,2026-04-22

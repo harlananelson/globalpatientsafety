@@ -35,3 +35,120 @@ ribavirin,Monoparesis,pending,"Unusual neurologic finding for ribavirin; needs P
 dutasteride,Genital hypoaesthesia,pending,"Possible urogenital neurological effect; 5-alpha-reductase inhibitor post-marketing reports of sexual AEs are known but anesthesia of the genitals specifically needs label check.",claude-audit,2026-04-22
 oxybutynin chloride,Anorectal malformation,pending,"Congenital malformation reports — could indicate pregnancy exposure concern or reporting artifact. Needs review.",claude-audit,2026-04-22
 oxybutynin chloride,Congenital musculoskeletal disorder of spine,pending,"Another congenital PT — same pregnancy-exposure question as above.",claude-audit,2026-04-22
+sestamibi,Scan myocardial perfusion abnormal,med_error,Diagnostic artifact: sestamibi *is* the radiotracer injected to perform the scan,grok-batch,2026-04-22
+statrol,False negative investigation result,med_error,"Test-result reporting, not a clinical AE",grok-batch,2026-04-22
+ultra-technekow,Scan myocardial perfusion abnormal,med_error,Same radiotracer artifact as #1,grok-batch,2026-04-22
+bimatoprost,Corneal endothelial cell loss,known_labeled,Known risk with bimatoprost (Durysta implant & eye drops); multiple studies + label warnings,grok-batch,2026-04-22
+radicut bag for i v infusion,Amyotrophic lateral sclerosis,indication,Edaravone (Radicut) is *indicated* for ALS; reports reflect the treated disease,grok-batch,2026-04-22
+fedratinib,Vitamin B1 decreased,known_labeled,Boxed warning for thiamine deficiency / Wernicke's encephalopathy; label requires monitoring,grok-batch,2026-04-22
+narcan,Unintentional use for unapproved indication,med_error,Medication-error / off-label-use reporting (naloxone is rescue medication),grok-batch,2026-04-22
+pitocin,Postpartum haemorrhage,known_labeled,Oxytocin is indicated to *prevent* PPH; this is expected indication-related reporting,grok-batch,2026-04-22
+lopinavir ritonavir,Dyslipidaemia,known_class,Classic protease-inhibitor class effect; labeled for decades,grok-batch,2026-04-22
+bupivacaine hydrochloride anhydrous,Anaesthetic complication,known_labeled,Local-anesthetic systemic toxicity (LAST) is explicitly warned in every bupivacaine label,grok-batch,2026-04-22
+"antihemophilic factor, porcine",Factor VIII inhibition,known_labeled,Porcine FVIII products have known immunogenicity/inhibitor risk in hemophilia,grok-batch,2026-04-22
+dapsone,Methaemoglobinaemia,known_labeled,"Well-known, labeled adverse reaction (even in topical use)",grok-batch,2026-04-22
+fedratinib,Vitamin B1 deficiency,known_labeled,Same as #6 (duplicate thiamine-deficiency signal),grok-batch,2026-04-22
+voraxaze,Laboratory test interference,known_labeled,Glucarpidase is indicated to *interfere* with methotrexate levels; this is the intended pharmacologic effect,grok-batch,2026-04-22
+cloruro de sodio usp,Pantoea agglomerans infection,med_error,Product contamination / manufacturing signal (saline),grok-batch,2026-04-22
+sinuva,Nasal crusting,known_labeled,Expected local reaction with mometasone sinus implant; labeled,grok-batch,2026-04-22
+diluent glycerin,False positive investigation result,med_error,Test-result artifact,grok-batch,2026-04-22
+technescan hdp,Bone scan abnormal,med_error,Radiotracer used *to perform* bone scans,grok-batch,2026-04-22
+meningococcal group b vaccine,Meningococcal infection,indication,Vaccine-failure / breakthrough-infection reports (expected in vaccinated population),grok-batch,2026-04-22
+curosurf,Endotracheal intubation complication,procedural,Surfactant is given *during* intubation in neonates; procedural artifact,grok-batch,2026-04-22
+sifrol (pramipexole),Impulse-control disorder,known_labeled,"Classic dopamine-agonist effect (gambling, hypersexuality, etc.). Explicit Warnings & Precautions in Mirapex/Sifrol label for >15 years.",grok-batch,2026-04-22
+tae bulk 402 (alternaria spp),Injection site dryness,procedural,Allergen extract used in allergy immunotherapy shots. Local skin reactions are expected.,grok-batch,2026-04-22
+meningococcal b recom vaccine,Vaccination failure,indication,Vaccine-failure / breakthrough-infection reports (expected in any vaccinated population).,grok-batch,2026-04-22
+meningococcal b recom vaccine,Meningococcal infection,indication,Same as above — disease reports in vaccinated people.,grok-batch,2026-04-22
+oxytocin sodium chloride (compounded),Postpartum haemorrhage,indication,Oxytocin is *indicated* to prevent/treat PPH. Reports reflect the treated condition.,grok-batch,2026-04-22
+sb497115 (eltrombopag),Clonal evolution,known_class,Thrombopoietin-receptor agonists carry known risk of clonal evolution / MDS / AML progression in aplastic anemia patients.,grok-batch,2026-04-22
+tenofovir disoproxil,Acute HIV infection,indication,Tenofovir is used for HIV treatment/prevention. Breakthrough or acute infection reports are expected.,grok-batch,2026-04-22
+ropivacaine pharmedium,Delayed recovery from anaesthesia,known_labeled,Local-anesthetic class effect (prolonged block). Labeled in ropivacaine PI.,grok-batch,2026-04-22
+prasugrel hydrochloride,Thrombotic cerebral infarction,indication,Antiplatelet drug *indicated to prevent* thrombotic events. Breakthrough events = treatment-failure reports.,grok-batch,2026-04-22
+givlaari (givosiran),Porphyria acute,indication,Givosiran is indicated *for* acute hepatic porphyria. Reports reflect the treated disease.,grok-batch,2026-04-22
+blinded cariprazine hcl cap,Cataract nuclear,med_error,Likely trial blinding / placebo arm or unrelated comorbidity in psychiatric trial population.,grok-batch,2026-04-22
+anti-inhibitor coagulant complex,Anti factor VIII antibody positive,known_labeled,Porcine/bypassing products have known immunogenicity risk in hemophilia.,grok-batch,2026-04-22
+klacid (clarithromycin),Injection site phlebitis,known_labeled,Common with IV macrolides; labeled local reaction.,grok-batch,2026-04-22
+blinded no treatment received (placebo),Infective exacerbation of bronchiectasis,indication,Placebo arm in respiratory trial — reflects underlying disease.,grok-batch,2026-04-22
+viagra (sildenafil),Erection increased,known_labeled,Intended pharmacologic effect of PDE5 inhibitor.,grok-batch,2026-04-22
+gold bond original strength powder (menthol),Mesothelioma,med_error,Unrelated environmental/occupational signal; talc/menthol powder not causal.,grok-batch,2026-04-22
+donepezil hydrochloride,Cholinergic syndrome,known_labeled,Explicitly described in Aricept label (overdose/cholinergic crisis). Class effect.,grok-batch,2026-04-22
+talc,Exposure to chemical pollution,med_error,Occupational/environmental reporting artifact (talc is the exposure).,grok-batch,2026-04-22
+sb497115 (eltrombopag),Cytogenetic abnormality,known_class,Same TPO-RA clonal-evolution risk as rank 26.,grok-batch,2026-04-22
+propess (dinoprostone),Foetal heart rate deceleration abnormality,indication,Dinoprostone is used to induce labor — fetal HR changes are monitored/expected.,grok-batch,2026-04-22
+cardiogen-82 (rubidium 82 rb chloride),Radiation overdose,procedural,"Diagnostic radiopharmaceutical used in PET scans; “radiation overdose” reports reflect dosing or scan protocol, not drug toxicity.",grok-batch,2026-04-22
+photrexa viscous (dextran + vitamin b2),Corneal epithelium defect,known_labeled,Corneal cross-linking procedure for keratoconus; epithelial defects are expected procedural side effect. Labeled in PI.,grok-batch,2026-04-22
+"multitrace-4 (chromium, copper, manganese, zinc)",Incorrect product formulation administered,med_error,"Medication-error / compounding report, not a pharmacologic AE.",grok-batch,2026-04-22
+sevoflurane baxter,Nephrogenic diabetes insipidus,pending,Documented in anesthesia literature with prolonged ICU sedation (AnaConDa device). Not in standard anesthesia labels.,grok-batch,2026-04-22
+kinevac (sincalide),Hepatobiliary scan abnormal,med_error,Sincalide is injected *to perform* hepatobiliary scans. Test-result artifact.,grok-batch,2026-04-22
+yosprala (aspirin + omeprazole),Aspirin-exacerbated respiratory disease,known_class,Aspirin component triggers AERD in sensitive patients. Well-known and labeled for aspirin.,grok-batch,2026-04-22
+kaletra (lopinavir;ritonavir),Dyslipidaemia,known_class,Duplicate of earlier protease-inhibitor class effect (already tagged).,grok-batch,2026-04-22
+tylenol regular strength (paracetamol),Autism spectrum disorder,med_error,Long-debunked association from observational data; no causal link in controlled studies.,grok-batch,2026-04-22
+allergenic extract-peanut,False negative investigation result,med_error,Allergy testing artifact (false-negative skin/prick test).,grok-batch,2026-04-22
+belatacept,Graft loss,indication,Belatacept is used in kidney transplant patients; graft loss reports reflect transplant complications.,grok-batch,2026-04-22
+fenfluramine hydrochloride,Echocardiogram abnormal,known_labeled,Fenfluramine (Fintepla) carries explicit cardiac valvulopathy warning; echocardiogram monitoring required.,grok-batch,2026-04-22
+blinded bimatoprost,Corneal endothelial cell loss,known_labeled,Duplicate of earlier bimatoprost signal (already tagged).,grok-batch,2026-04-22
+curosurf (poractant alfa),Neonatal pneumothorax,indication,Surfactant given to preterm infants with RDS; pneumothorax is a known complication of the underlying lung disease.,grok-batch,2026-04-22
+tenecteplase,Neurological decompensation,indication,Thrombolytic used in acute stroke; neurological worsening can reflect stroke progression or reperfusion injury.,grok-batch,2026-04-22
+voretigene neparvovec (Luxturna),Injection site atrophy,procedural,Gene therapy delivered by subretinal injection; local atrophy is a procedural complication.,grok-batch,2026-04-22
+luxturna (voretigene neparvovec),Retinal depigmentation,known_labeled,Expected retinal change after subretinal gene therapy injection; described in Luxturna label.,grok-batch,2026-04-22
+enasidenib,Differentiation syndrome,known_labeled,IDH inhibitor; differentiation syndrome is a boxed warning / well-characterized risk.,grok-batch,2026-04-22
+voretigene neparvovec,Retinal degeneration,known_labeled,Expected retinal remodeling after gene therapy; labeled.,grok-batch,2026-04-22
+intralipid (unsaturated fatty acids),Neonatal infection,indication,Lipid emulsion used in neonatal parenteral nutrition; infection reports reflect central-line complications.,grok-batch,2026-04-22
+alprolix (factor ix),Factor IX inhibition,known_labeled,Known immunogenicity / inhibitor development risk with recombinant factor IX products in hemophilia. Explicitly labeled and monitored.,grok-batch,2026-04-22
+bacteriostatic sodium chloride,Suspected product contamination,med_error,Product-quality / manufacturing contamination report (saline diluent). Not a pharmacologic patient AE.,grok-batch,2026-04-22
+aplisol (tuberculin),False positive tuberculosis test,med_error,Diagnostic test artifact (tuberculin skin test false-positive).,grok-batch,2026-04-22
+brineura (cerliponase alfa),CSF culture positive,procedural,Enzyme replacement delivered directly into CSF via implanted reservoir; positive culture reflects device/procedure complication.,grok-batch,2026-04-22
+aducanumab (Aduhelm),Amyloid related imaging abnormality-oedema/effusion (ARIA-E),known_labeled,Boxed Warning for ARIA-E/O in all anti-amyloid monoclonal antibodies. Well-characterized and labeled.,grok-batch,2026-04-22
+zolmitriptan,Renal infarct,pending,Triptan class has vasoconstrictive effects; renal infarct is rare but mechanistically plausible. Needs PubMed/case-series review.,grok-batch,2026-04-22
+esperoct (factor viii),Coagulation factor VIII level decreased,indication,Factor VIII replacement therapy — low levels reflect breakthrough bleeding or inadequate dosing in hemophilia patients.,grok-batch,2026-04-22
+prostin e2 (dinoprostone),Bradycardia foetal,indication,"Dinoprostone used for labor induction; fetal bradycardia is a known, monitored effect during induction.",grok-batch,2026-04-22
+maci (chondrocytes;collagen),Graft delamination,procedural,Autologous chondrocyte implantation (cartilage repair surgery) — graft delamination is a recognized surgical complication.,grok-batch,2026-04-22
+simulect (basiliximab),Kidney transplant rejection,indication,Basiliximab is induction immunosuppression in kidney transplant; rejection reports reflect the treated population/disease.,grok-batch,2026-04-22
+istodax (romidepsin),Peripheral T-cell lymphoma unspecified,indication,HDAC inhibitor indicated for relapsed/refractory PTCL — reports reflect disease progression in the exact indicated population.,grok-batch,2026-04-22
+myxredlin (insulin),Increased insulin requirement,indication,Insulin product — “increased requirement” reflects disease progression or insulin resistance in diabetics.,grok-batch,2026-04-22
+dilantin (phenytoin),Cerebellar atrophy,known_published,Long-term phenytoin use classically associated with cerebellar atrophy (well-documented in literature and labels).,grok-batch,2026-04-22
+elmiron (pentosan polysulfate),Maculopathy,known_labeled,"Pigmentary maculopathy is a recognized, labeled risk with long-term Elmiron (FDA safety communication + label update).",grok-batch,2026-04-22
+vancomicina hikma (vancomycin),Peritoneal effluent leukocyte count increased,procedural,Vancomycin used in peritoneal dialysis; elevated WBC in effluent is a monitoring marker for peritonitis.,grok-batch,2026-04-22
+dolutegravir lamivudine tenofovir disoproxil fumarate,Nephropathy toxic,known_class,"Tenofovir component known for renal toxicity (Fanconi syndrome, etc.); explicitly labeled.",grok-batch,2026-04-22
+abrocitinib,Eczema herpeticum,known_class,JAK-inhibitor class effect — increased risk of herpes infections including eczema herpeticum; labeled.,grok-batch,2026-04-22
+orfadin (nitisinone),Amino acid level increased,known_labeled,Expected pharmacologic effect (inhibits tyrosine metabolism); tyrosine/amino-acid levels are deliberately monitored.,grok-batch,2026-04-22
+myoview (technetium tc 99m tetrofosmin),Radioisotope scan abnormal,med_error,Radiotracer injected specifically to perform myocardial perfusion scans — test-result artifact.,grok-batch,2026-04-22
+brevital sodium (methohexital),Unwanted awareness during anaesthesia,known_labeled,General anesthesia awareness is a well-known risk for all IV anesthetics including barbiturates; discussed in anesthesia guidelines and labels.,grok-batch,2026-04-22
+piasky (crovalimab),Type III immune complex mediated reaction,pending,Very new complement inhibitor (approved 2024). This immune-complex reaction could be a genuine novel signal. Needs literature/case review.,grok-batch,2026-04-22
+neoprofen (ibuprofen),Posthaemorrhagic hydrocephalus,indication,Ibuprofen used in preterm infants for PDA closure; IVH and post-hemorrhagic hydrocephalus are extremely common in this population.,grok-batch,2026-04-22
+aduhelm (aducanumab),Amyloid related imaging abnormality-oedema/effusion,known_labeled,Duplicate of earlier ARIA-E signal; boxed warning for all anti-amyloid mAbs.,grok-batch,2026-04-22
+epinephrine lidocaine hydrochloride,Vasoconstriction,known_labeled,"Intended pharmacologic effect of epinephrine added to local anesthetics (prolongs duration, reduces systemic absorption).",grok-batch,2026-04-22
+col optic white prof kit in-office,Gingival discomfort,procedural,In-office dental whitening/bleaching kit; local mucosal irritation is an expected procedural side effect.,grok-batch,2026-04-22
+triferic (iron),Thrombosis in device,procedural,IV iron given during hemodialysis; device/thrombosis reports reflect dialysis circuit complications.,grok-batch,2026-04-22
+nitrous oxide,PCO2 increased,known_class,Anesthetic effect — nitrous oxide can cause respiratory depression and CO₂ retention.,grok-batch,2026-04-22
+tice bcg (bcg vaccine),Bladder cancer recurrent,indication,BCG is *indicated* for non-muscle-invasive bladder cancer treatment; recurrence reports reflect the treated disease.,grok-batch,2026-04-22
+zolmitriptan,Tricuspid valve disease,pending,Triptan class vasoconstriction; rare valvular reports are mechanistically plausible (similar to renal infarct signal). Needs review.,grok-batch,2026-04-22
+gonal f (follitropin),Abortion missed,indication,Fertility drug used in assisted reproduction; pregnancy loss reports are common in this population.,grok-batch,2026-04-22
+g-lasta (pegfilgrastim),Colony stimulating factor therapy,med_error,"The drug *is* a colony stimulating factor; this is the indication itself, not an adverse event.",grok-batch,2026-04-22
+cervidil (dinoprostone),Uterine hyperstimulation,known_labeled,Explicitly warned in labor-induction labeling for dinoprostone products.,grok-batch,2026-04-22
+heparin,Heparin-induced thrombocytopenia,known_labeled,"Classic, extensively labeled risk of heparin (already tagged multiple times).",grok-batch,2026-04-22
+afstyla (antihemophilic factor single chain),Inhibiting antibodies positive,known_labeled,Factor VIII replacement products carry known inhibitor-development risk.,grok-batch,2026-04-22
+luxturna (voretigene neparvovec),Chorioretinal atrophy,known_labeled,Expected retinal remodeling after subretinal gene therapy injection; described in Luxturna label.,grok-batch,2026-04-22
+dianeal (peritoneal dialysis solution),Abdominal infection,procedural,Peritoneal dialysis fluid; peritonitis/infection is a common device-related complication.,grok-batch,2026-04-22
+cetrotide (cetrorelix),Premature ovulation,indication,GnRH antagonist used in IVF to *prevent* premature ovulation; breakthrough reports reflect the treated population.,grok-batch,2026-04-22
+androgel (testosterone),Blood testosterone decreased,indication,Testosterone replacement therapy — low levels reflect inadequate dosing or absorption.,grok-batch,2026-04-22
+sensipar (cinacalcet),Renal transplant,indication,Cinacalcet used for secondary hyperparathyroidism in dialysis/transplant patients.,grok-batch,2026-04-22
+elmiron (pentosan polysulfate),Retinal pigmentation,known_labeled,"Pigmentary maculopathy / retinal pigmentation is a well-documented, labeled risk with long-term Elmiron use (FDA safety communication + label update). Duplicate of earlier maculopathy signals.",grok-batch,2026-04-22
+eslax (rocuronium),Recurrence of neuromuscular blockade,known_labeled,Known risk with neuromuscular blocking agents; explicitly warned in rocuronium labeling (residual block / recurarization).,grok-batch,2026-04-22
+liquid oxygen,Respiratory fume inhalation disorder,med_error,Occupational / environmental exposure report (oxygen is the “exposure”). Not a pharmacologic AE.,grok-batch,2026-04-22
+clavamox (amoxicillin;clavulanic acid),Type IV hypersensitivity reaction,known_class,Beta-lactam class effect; delayed hypersensitivity is common and labeled for amoxicillin/clavulanate.,grok-batch,2026-04-22
+orbactiv (oritavancin),Vancomycin infusion reaction,known_class,Glycopeptide class effect (red-man syndrome); oritavancin has similar infusion-related warnings.,grok-batch,2026-04-22
+patanol (olopatadine),Alopecia areata,med_error,Rare/unrelated report; no established causal link in literature or labeling.,grok-batch,2026-04-22
+prasugrel hydrochloride,Vascular stent thrombosis,indication,Antiplatelet indicated to *prevent* stent thrombosis; breakthrough events = treatment failure reports.,grok-batch,2026-04-22
+photrexa viscous (dextran + vitamin b2),Corneal infiltrates,procedural,Corneal cross-linking procedure; infiltrates are expected local/procedural effect.,grok-batch,2026-04-22
+ropinirole,Limbic encephalitis,pending,"Dopamine agonist with neuropsychiatric warnings, but limbic encephalitis is unusually specific and not labeled. Mechanistically unusual.",grok-batch,2026-04-22
+edaravone (radicut),Amyotrophic lateral sclerosis,indication,Edaravone is indicated *for* ALS; reports reflect the treated disease. Duplicate of earlier signal.,grok-batch,2026-04-22
+abacavir sulfate dolutegravir sodium lamivudine,Syphilis,indication,"HIV regimen; syphilis reports reflect high-risk population / screening, not drug causation.",grok-batch,2026-04-22
+orgaran (danaparoid),Ovarian hyperstimulation syndrome,indication,Danaparoid used in fertility / IVF contexts; OHSS is a known fertility-treatment complication.,grok-batch,2026-04-22
+ipi-145 (duvelisib),Enteritis infectious,known_class,PI3K inhibitor class effect — increased infection risk (including GI). Labeled.,grok-batch,2026-04-22
+leuplin (leuprorelin),Marasmus,indication,GnRH agonist used in prostate cancer / endometriosis; cachexia/malnutrition reports reflect advanced disease.,grok-batch,2026-04-22
+atropine,Anticholinergic syndrome,known_labeled,Classic anticholinergic toxicity; explicitly warned in atropine labeling.,grok-batch,2026-04-22
+mogamulizumab,Adult T-cell lymphoma/leukaemia recurrent,indication,Approved specifically for relapsed/refractory ATLL; recurrence = expected disease behavior.,grok-batch,2026-04-22
+valacyclovir hydrochloride,Intraductal papillary mucinous neoplasm,indication,Antiviral used in patients with pancreatic/hepatic issues; neoplasm reports reflect underlying condition.,grok-batch,2026-04-22
+sayana press (medroxyprogesterone),Injection site indentation,known_labeled,Expected local reaction with depot injectable contraceptive.,grok-batch,2026-04-22
+iluvien (fluocinolone),Glaucoma drainage device placement,procedural,Intravitreal implant for diabetic macular edema; glaucoma surgery is a downstream complication of the treated condition.,grok-batch,2026-04-22
