@@ -98,16 +98,25 @@ the operational FDA approach:
 - **CI:** percentiles of the posterior Gamma directly (e.g. `qgamma(0.05, ...)`
   for 5th percentile), also raw-scale.
 
-**Stratification candidates:**
-- Drug age tier (years on market bucket) — bakes Weber correction
-  into the EB prior instead of applying a post-hoc multiplier.
-- ATC class — allows class-level shrinkage (every statin sees a
-  similar prior).
-- Time window (quarter / year) — prior changes as reporting volume
-  shifts.
-- MedDRA SOC for the event — anchors the expected-rate scale to
-  event-type background.
-- Combinations of the above.
+**Stratification** (per user clarification 2026-04-22):
+
+Two natural stratum dimensions:
+
+1. **Drug age — new vs established.** Fit separate (â, b̂) per tier.
+   The EB prior learned on new drugs is naturally wider (reflecting
+   sparse-background reality) without any post-hoc multiplier: the
+   Weber correction falls out of the data. Starting tiers: 0–2 years,
+   2–5 years, >5 years (subject to refinement).
+2. **Drug category — e.g. oncology / antibiotics / small molecules
+   vs biologics.** The expected-AE distribution is categorically
+   different across therapeutic areas (oncology drugs expect severe
+   AEs; chronic-care drugs less so). Fitting a single prior across
+   all categories over-shrinks the signal-rich categories and
+   under-shrinks the benign ones.
+
+Both dimensions are valid. User-directed choice which to implement
+first, or whether to combine. Not every split is a stratum — SOC,
+time window, indication, etc. are NOT currently part of the design.
 
 **Compute:** EB fit per stratum is embarrassingly parallel across
 strata; at FAERS scale (millions of pairs × several strata) a GPU
