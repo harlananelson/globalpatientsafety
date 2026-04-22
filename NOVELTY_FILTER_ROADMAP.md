@@ -153,6 +153,72 @@ still contain indication confounders (#2) and some labeled-but-missed
 (#5) pairs — #2 is next most valuable. #3 is a nice-to-have. #4 and
 #6 are longer-term.
 
+---
+
+## 2026-04-21 progress snapshot
+
+**Shipped tonight:**
+- Step 1: blacklist expansion — commits `aers-mobi@87592cb`,
+  `faers-mobi@2f7c0ca`. 7 of the original top-20 false positives
+  dropped (all `Product *` and `Medication error` PTs).
+- Step 2: spelling normalization + looser synonym threshold —
+  `aers-mobi@00aa141`, `faers-mobi@be46156`. British↔American
+  medical spellings (anaemia, leukaemia, oedema, etc.) plus
+  curated clinical synonyms (adrenocortical↔adrenal,
+  lymphoblastic↔lymphocytic, relapsed/refractory↔recurrent,
+  staining↔discoloration, colour↔color). Synonym match threshold
+  dropped from 0.7 to 0.6 (direct-event match stays at 0.7).
+- Step 5 ROOT CAUSE: the `indications_and_usage` column was NEVER
+  deployed to Hetzner — an earlier background waiter had a
+  self-matching pgrep bug and never fired. Manually scp'd the
+  augmented parquet tonight. Label cache now has indication text
+  for 658 of 2000 drugs (remaining 1342 have no retrievable
+  openFDA label record — all that would return the same result).
+- Step 2's clinical-synonym path caught blinatumomab (ALL recurrent
+  now matches indication "relapsed/refractory b-cell precursor ALL")
+  and daprodustat (nephrogenic anaemia → anemia of renal disease
+  via UMLS synonym, matching "anemia of chronic kidney disease").
+  Neither appears in top 20 after deploy.
+
+**Still false positive in top 20:**
+- `alkindi sprinkle` + adrenocortical insufficiency — LABEL CACHE
+  MISS: cache has topical anti-itch hydrocortisone, not oral Alkindi.
+- `chlorhexidine gluconate` + tooth discolouration — same: cache has
+  antiseptic skin solution, not Peridex dental rinse.
+- `tioconazole`, `miconazole` + vulvovaginal — UMLS synonyms are
+  narrow; label wording doesn't match.
+- Procedural pairs (bss plus + endophthalmitis, ranibizumab +
+  conjunctival, lidocaine + foreign body, etelcalcetide + shunt) —
+  need step 4.
+- `flecainide` + QRS prolongation — mechanism/titration endpoint;
+  needs step 4.
+
+### New bottleneck: label cache product-variant selection
+
+The label fetch (`scripts/fetch_fda_labels.R`) queries openFDA by
+`openfda.generic_name` with `limit=1`. For a generic ingredient with
+multiple marketed products, the API returns the first hit — often the
+wrong formulation for the signal we're checking. Examples:
+- hydrocortisone → anti-itch topical (not Alkindi oral tabs)
+- chlorhexidine gluconate → antiseptic skin solution (not Peridex rinse)
+
+**Fix direction (signal-compute side, not app):** fetch multiple
+labels per ingredient and concatenate the warning/AE/indication
+sections across all marketed products. That way any labeled effect
+across any formulation will be matched. Doubles label fetch cost
+(~2000 → ~6000 calls) but makes the novel flag correct.
+
+### When the full roadmap is done (post step 1-6 + label fetch fix)
+
+Expected effective novel rate on top-N: should approach what a
+pharmacovigilance reviewer would flag for deeper investigation.
+Sevoflurane + nephrogenic DI (subtle but documented), glimepiride
++ cholangiocarcinoma (potentially novel), ondansetron + G6PD
+(interaction not causation), and dabigatran + cardiac tamponade
+(case reports exist) are the kinds of pairs that would survive
+even a rigorous filter pass — and those are what's surfacing
+tonight, albeit mixed with the product-variant-label-cache noise.
+
 ### 3. MedDRA hierarchy match
 
 **Goal:** a PT is "known" if the drug's label mentions any term in the PT's
