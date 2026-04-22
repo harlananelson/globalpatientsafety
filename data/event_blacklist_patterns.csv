@@ -1,0 +1,16 @@
+pattern
+dispensing error
+administration error
+product.*error
+product use issue
+drug use error
+medication interaction
+^product
+medication error$
+drug-disease interaction
+drug preparation error
+product storage error
+test positive$
+antigen increased$
+^foreign body
+^contrast media
