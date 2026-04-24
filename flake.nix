@@ -42,8 +42,10 @@
 
           packages = [
             rWithPkgs
-            pkgs.nodejs  # sass: node (rhino.yml)
+            pkgs.nodejs       # sass: node (rhino.yml) + claude-code install
             pkgs.git
+            pkgs.tmux
+            pkgs.mistral-vibe # Mistral CLI coding agent
           ];
 
           env = {
@@ -57,10 +59,17 @@
             export LANG=C.UTF-8
             export LC_ALL=C.UTF-8
 
+            # Install Claude Code if not already available
+            if ! command -v claude &>/dev/null; then
+              echo "Installing Claude Code..."
+              npm install -g @anthropic-ai/claude-code 2>/dev/null || true
+            fi
+
             echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "  globalpatientsafety.com dev environment"
             echo "  R: $(R --version | head -1)"
+            echo "  Tools: claude, mistral, tmux"
             echo "  Run: Rscript -e 'shiny::runApp()'"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           '';
