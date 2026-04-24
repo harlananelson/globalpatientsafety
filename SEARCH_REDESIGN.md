@@ -293,6 +293,76 @@ Conversely, stratification with small cell sizes inflates false positives.
 The temporal dimension mitigates this: a stratified signal that persists
 across quarters is more credible than one that appears once.
 
+#### The Class-Wide Masking Problem (Critical)
+
+There is a deeper failure mode that within-class disproportionality **cannot
+detect at all**: when every drug in a class develops the same adverse event.
+
+**Example:** Suppose a class of vaccines all cause myocarditis starting in
+2021Q3. Within-class disproportionality compares each vaccine against the
+class background rate. But the background rate IS the problem — every vaccine
+has the elevated myocarditis rate, so none is disproportionate relative to
+the others. The signal is perfectly masked. No amount of cross-sectional
+stratification will find it.
+
+**The temporal comparison breaks the mask.** Comparing the class's current
+rate to its own historical baseline reveals the change:
+
+```
+Within-class cross-sectional (2022Q1):
+  Vaccine A → myocarditis: EB05 = 0.9  (not flagged — class rate is high)
+  Vaccine B → myocarditis: EB05 = 1.1  (not flagged)
+  Vaccine C → myocarditis: EB05 = 0.8  (not flagged)
+  → No signal detected. Every vaccine looks "normal" for the class.
+
+Temporal comparison (2022Q1 vs 2020Q4, same class):
+  Class "vaccines" → myocarditis: rate ratio = 8.3x  (SIGNAL)
+  → The entire class shifted. Something changed.
+```
+
+This means the temporal analysis is not just a refinement of stratification —
+it is the **only way** to detect class-wide effects. The architecture must
+support comparing a stratum against its own past, not just against other
+drugs in the same period.
+
+**Implementation: class-level temporal signals**
+
+```r
+# For each (ATC class, event, quarter), compute the class-aggregate rate
+# and compare to the class's historical baseline
+class_temporal <- contingency %>%
+  # Tag each drug with its ATC class
+  left_join(atc, by = "rxnorm_name") %>%
+  # Aggregate within class: total reports of this event across all drugs in class
+  group_by(atc_class4, outcome_name, quarter) %>%
+  summarise(
+    class_observed = sum(observed),
+    class_total = sum(total_reports),
+    .groups = "drop"
+  ) %>%
+  # Compute rate per quarter
+  mutate(class_rate = class_observed / class_total) %>%
+  # Compare to historical median rate for this (class, event)
+  group_by(atc_class4, outcome_name) %>%
+  mutate(
+    historical_median_rate = median(class_rate[quarter < cutoff_quarter]),
+    rate_ratio = class_rate / historical_median_rate,
+    is_class_signal = rate_ratio > 2.0 & class_observed >= 5
+  ) %>%
+  ungroup()
+```
+
+**This analysis answers three distinct questions:**
+
+| Question | Method | What it detects |
+|----------|--------|----------------|
+| Is this drug worse than others? | Cross-sectional disproportionality (current GPS) | Drug-specific effects |
+| Is this drug worse than others in its class? | Within-class disproportionality (Phase 5 Approach B) | Drug-specific effects masked by inter-class variation |
+| Did something change for this entire class? | Temporal class-rate comparison | **Class-wide effects invisible to any cross-sectional method** |
+
+All three are needed. The third is the one that current pharmacovigilance
+tools typically miss.
+
 #### Segmentation Dimensions
 
 **By MedDRA body system (SOC/HLGT/HLT):**
@@ -450,6 +520,12 @@ fluidRow(
    strata (SOC or ATC class) to unmask Simpson's paradox signals. Either
    precompute in signal-compute (larger parquet) or compute on-the-fly in the
    app (requires shipping contingency data to VPS).
+6. **Phase 6:** Class-level temporal signals. Aggregate reporting rates at the
+   ATC class level per quarter, compare to historical baseline. Detects class-wide
+   effects that are invisible to any cross-sectional disproportionality method
+   (every drug in the class has the same problem, so none is disproportionate
+   relative to the others). This is the "did something change for this entire
+   class?" question — requires contingency data with total report counts.
 
 ### 10. Validation
 
@@ -477,3 +553,10 @@ After implementation, verify:
 - Temporal persistence filter removes single-quarter stratified artifacts
 - Cross-stratum comparison: same (drug, event) pair shows different EB05 within-SOC
   vs pooled, confirming masking was present
+
+**Class-wide temporal signals (Phase 6):**
+- Known class-wide effect (e.g., fluoroquinolones + tendon rupture) detected by
+  class-level temporal comparison even when no single drug is disproportionate within-class
+- Class rate ratio flags quarters where the entire class shifted
+- False positive rate: class signals that appear in one quarter but not adjacent quarters
+  should be flagged as unstable
