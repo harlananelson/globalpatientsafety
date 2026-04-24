@@ -198,30 +198,282 @@ all_drugs <- reactive({
 })
 ```
 
-### 6. Files to Modify
+### 6. Temporal Trend Analysis
 
-| File | Change |
-|------|--------|
-| `app/view/signal_timeline.R` | Main changes: search UI, `pair_stats()` refactor, priority tiers |
-| `app/view/signal_timeline.R` | Remove `head(2000)`, add `fuzzy_match_events()` |
-| `app/view/signal_timeline.R` | Add priority tier column to DT display |
+#### The Question: Is This Signal Getting Stronger?
 
-No new files needed. This is a refactor of the existing module.
+Current signals are computed over all time (4-quarter rolling window pooled).
+This answers "is there a signal?" but not "is it increasing?" A signal that
+was flat for 10 years is very different from one that doubled last quarter.
 
-### 7. Migration Path
+#### Period-over-Period Comparison
+
+Compare the most recent window against prior windows to detect acceleration:
+
+```r
+# For a given (drug, event) pair, compute trend metrics across quarters
+trend <- ds %>%
+  filter(rxnorm_name == drug, outcome_name == event) %>%
+  arrange(quarter) %>%
+  collect() %>%
+  mutate(
+    # Quarter-over-quarter change in EWMA-smoothed EB05
+    eb05_delta = ewma_eb05 - lag(ewma_eb05),
+    # Percentage change
+    eb05_pct_change = eb05_delta / lag(ewma_eb05) * 100,
+    # Rolling 4-quarter slope (linear trend)
+    eb05_slope = slider::slide_dbl(ewma_eb05, ~ coef(lm(.x ~ seq_along(.x)))[2], .before = 3)
+  )
+```
+
+**Trend classification:**
+
+| Category | Definition | Display |
+|----------|-----------|---------|
+| **Accelerating** | EB05 slope > 0 over last 4 quarters AND latest > prior peak | Red arrow up |
+| **Rising** | EB05 slope > 0 over last 4 quarters | Orange arrow up |
+| **Stable** | Slope ≈ 0 (within ±10% of mean) | Grey dash |
+| **Declining** | EB05 slope < 0 over last 4 quarters | Green arrow down |
+| **New** | Fewer than 4 quarters of data | Blue "NEW" badge |
+
+**Add to the datatable:**
+- `Trend` column with arrow icons
+- `Recent EB05` (latest quarter) vs `Prior EB05` (4 quarters ago) for quick comparison
+- Sortable — users can find the fastest-growing signals
+
+**Add to the splash page priority ranking:**
+Accelerating novel signals should rank above stable novel signals. Modify the
+priority tier:
+
+```r
+priority = case_when(
+  novel & trend == "Accelerating" ~ "Emerging + Accelerating",  # top priority
+  novel & first_signal >= two_quarters_ago ~ "Emerging",
+  novel & trend %in% c("Accelerating", "Rising") ~ "Novel + Rising",
+  novel & quarters_flagged >= 3 ~ "Novel",
+  ...
+)
+```
+
+#### User-Selectable Time Windows
+
+Allow the user to compare two periods directly:
+
+```r
+# UI: two date-range pickers or quarter selectors
+# "Compare: [2024Q1-2024Q4] vs [2023Q1-2023Q4]"
+#
+# Server: compute signal stats for each window independently,
+# then join and show delta columns
+period_a <- ds %>% filter(quarter %in% quarters_a) %>% ...
+period_b <- ds %>% filter(quarter %in% quarters_b) %>% ...
+comparison <- inner_join(period_a, period_b, by = c("rxnorm_name", "outcome_name"),
+                         suffix = c("_recent", "_prior")) %>%
+  mutate(
+    eb05_change = peak_eb05_recent - peak_eb05_prior,
+    eb05_ratio = peak_eb05_recent / peak_eb05_prior,
+    new_in_recent = is.na(peak_eb05_prior) & !is.na(peak_eb05_recent)
+  )
+```
+
+This answers: "What signals appeared or strengthened in the last year that
+weren't there before?" — exactly the question for finding signals before
+the FDA acts.
+
+### 7. Stratified Analysis (Segmentation)
+
+#### Why Segmentation Matters
+
+Pooling all drugs and events together can **mask** real signals through
+Simpson's paradox. A drug-event pair might show no disproportionality overall
+because one large, safe drug class dilutes the background rate. Stratifying
+by body system or drug class reveals signals hidden in the aggregate.
+
+Conversely, stratification with small cell sizes inflates false positives.
+The temporal dimension mitigates this: a stratified signal that persists
+across quarters is more credible than one that appears once.
+
+#### Segmentation Dimensions
+
+**By MedDRA body system (SOC/HLGT/HLT):**
+
+The app already loads `meddra_hierarchy.parquet` which maps PT → HLT → HLGT → SOC.
+Use this to let users focus on a body system:
+
+```r
+# User selects SOC = "Nervous system disorders"
+# Filter events to PTs under that SOC
+nervous_pts <- meddra %>%
+  filter(soc == "Nervous system disorders") %>%
+  pull(pt)
+
+# Recompute disproportionality within this stratum:
+# - Numerator: reports of (drug, PT in nervous system)
+# - Denominator: all reports of (drug, any PT in nervous system)
+# This changes the expected count and can reveal masked signals
+```
+
+**By ATC drug class:**
+
+The app already has `atc_classes.parquet` and computes `class_co_flags`.
+Extend to allow users to restrict analysis to a drug class:
+
+```r
+# User selects ATC class = "Antithrombotic agents"
+# Show only drugs in that class
+# Background rate is computed within-class, not across all drugs
+# This reveals signals specific to one drug vs its class
+```
+
+**By time period (critical for masking mitigation):**
+
+When you stratify by body system AND look at trends over time, you can
+distinguish:
+- A signal that's real but masked in the aggregate (appears when stratified)
+- A signal that's artifactual from small numbers (appears once, doesn't persist)
+- A class effect vs a drug-specific effect (compare within-class trend to
+  across-class trend)
+
+#### Stratified Signal Computation
+
+Two approaches, in order of complexity:
+
+**Approach A: Post-hoc filtering (Phase 4)**
+
+Filter the existing `signals.parquet` by MedDRA SOC or ATC class. This
+doesn't recompute disproportionality — it just narrows the view. Fast,
+no pipeline changes needed. Useful for exploration but doesn't address
+the masking problem directly.
+
+```r
+# Filter pair_stats to a SOC
+pair_stats_filtered <- pair_stats() %>%
+  filter(outcome_name %in% pts_in_selected_soc)
+```
+
+**Approach B: Stratified disproportionality (Phase 5)**
+
+Recompute expected counts within strata. This is the proper solution to
+masking: the "expected" count in the GPS model is based on the marginal
+rates within the stratum, not across all drugs/events.
+
+This requires changes to `signal-compute`, not just the app:
+
+```r
+# In compute_quarterly.R, add stratification:
+# For each (SOC, quarter):
+#   subset contingency to PTs in that SOC
+#   recompute observed/expected within-SOC
+#   run detect_all_methods on the within-SOC table
+#
+# Output: signals_faers_stratified_v<date>.parquet
+# Additional columns: stratum_type, stratum_value
+```
+
+The stratified parquet would be larger (~5-10x) but Arrow handles this
+efficiently with row-group filtering.
+
+**Approach C: On-the-fly stratified computation (Phase 5 alternative)**
+
+Instead of precomputing all strata, compute disproportionality on the fly
+for the user's selected stratum. This uses `safetysignal` directly in the
+app — slower (seconds per query) but no pipeline changes and no storage
+multiplication.
+
+```r
+# In faers-mobi, load the raw contingency (not just signals)
+contingency <- open_dataset("data/contingency/")
+
+# When user selects a stratum:
+stratum_data <- contingency %>%
+  filter(outcome_name %in% pts_in_soc, quarter %in% selected_quarters) %>%
+  collect()
+
+# Run safetysignal on the stratum
+result <- safetysignal::detect_all_methods(
+  stratum_data,
+  methods = c("gps", "prr", "ror", "ic"),
+  min_count = 3
+)
+```
+
+This requires shipping the contingency parquet to the VPS alongside
+signals.parquet (~2-3 GB for all quarters).
+
+#### UI for Segmentation
+
+```r
+fluidRow(
+  column(4,
+    selectInput(ns("soc_filter"), "Body System (MedDRA SOC)",
+                choices = c("All" = "", sort(unique(meddra$soc))),
+                selected = "")
+  ),
+  column(4,
+    selectInput(ns("atc_filter"), "Drug Class (ATC Level 4)",
+                choices = c("All" = "", sort(unique(atc$atc_class4))),
+                selected = "")
+  ),
+  column(4,
+    selectInput(ns("time_compare"), "Time Comparison",
+                choices = c("All time", "Last 4 quarters vs prior 4",
+                            "Last 2 quarters vs prior 2", "Custom..."),
+                selected = "All time")
+  )
+)
+```
+
+### 8. Files to Modify
+
+| File | Change | Phase |
+|------|--------|-------|
+| `app/view/signal_timeline.R` | Search UI, `pair_stats()` refactor, priority tiers | 1-2 |
+| `app/view/signal_timeline.R` | Remove `head(2000)`, add `fuzzy_match_events()` | 1 |
+| `app/view/signal_timeline.R` | Trend column (slope, arrows), period comparison UI | 3 |
+| `app/view/signal_timeline.R` | SOC/ATC filter dropdowns, post-hoc stratification | 4 |
+| `signal-compute/R/compute_quarterly.R` | Stratified disproportionality output | 5 |
+| `signal-compute/scripts/deploy_to_vps.sh` | Ship contingency parquet if using on-the-fly approach | 5 |
+
+### 9. Migration Path
 
 1. **Phase 1:** Add search box + server-side fuzzy search. Keep `head(2000)` as
    the splash default. This is additive — doesn't break existing behavior.
 2. **Phase 2:** Replace `head(2000)` splash with priority-ranked default view.
    Requires the priority tier logic and a smaller default set (~200).
-3. **Phase 3:** Add MedDRA hierarchy expansion — searching "stroke" also matches
-   HLT/HLGT parent terms using `meddra_hierarchy.parquet`.
+3. **Phase 3:** Temporal trend analysis. Add trend classification (Accelerating /
+   Rising / Stable / Declining / New) per pair. Trend column in DT. Period-over-period
+   comparison UI. Integrate trend into splash priority ranking.
+4. **Phase 4:** Post-hoc segmentation. MedDRA SOC and ATC class filter dropdowns.
+   Filters the existing signal results — doesn't recompute disproportionality.
+   Also: MedDRA hierarchy expansion for search ("stroke" matches all stroke PTs).
+5. **Phase 5:** Stratified disproportionality. Recompute expected counts within
+   strata (SOC or ATC class) to unmask Simpson's paradox signals. Either
+   precompute in signal-compute (larger parquet) or compute on-the-fly in the
+   app (requires shipping contingency data to VPS).
 
-### 8. Validation
+### 10. Validation
 
 After implementation, verify:
+
+**Search (Phase 1):**
 - "ischemic stroke" returns results (fuzzy → "Ischaemic stroke")
 - "semaglutide" returns all semaglutide pairs
-- Default splash shows emerging/novel signals first
 - Caterpillar plot still works when clicking a search result
-- Page load time < 5 seconds (was instant with top-2000 DT)
+- Page load time < 5 seconds
+
+**Splash (Phase 2):**
+- Default view shows emerging/novel signals first
+- Accelerating novel signals rank above stable novel signals
+
+**Trends (Phase 3):**
+- Trend arrows are directionally correct against visual caterpillar plots
+- Period comparison shows signals that appeared in recent window but not prior
+- "New in recent" flag correctly identifies first-time signals
+
+**Segmentation (Phase 4-5):**
+- Filtering by SOC = "Nervous system disorders" shows only neuro PTs
+- Filtering by ATC = "Antithrombotic agents" shows only anticoagulant/antiplatelet drugs
+- Stratified analysis reveals signals hidden in aggregate (test with known masked cases)
+- Temporal persistence filter removes single-quarter stratified artifacts
+- Cross-stratum comparison: same (drug, event) pair shows different EB05 within-SOC
+  vs pooled, confirming masking was present
