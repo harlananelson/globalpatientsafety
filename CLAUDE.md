@@ -1,20 +1,151 @@
 # globalpatientsafety.com — Global Safety Metrics Dashboard
 
 ## Overview
-Rhino/Shiny app for Bayesian pharmacovigilance signal detection across multiple international adverse event reporting systems. Uses the `safetysignal` R package as its statistical engine.
+
+Rhino/Shiny portal app at globalpatientsafety.com. Renders a landing page with cards linking
+to each tool in the pharmacovigilance suite. This project is the **clearing house only** — it
+does not run signal detection itself.
 
 ## Architecture
-- **Framework:** Rhino (production Shiny)
-- **Engine:** `safetysignal` package (2-component Gamma-Poisson)
-- **Data sources:** FAERS, VAERS, MAUDE, EudraVigilance, VigiBase (WHO)
-- **Domain:** globalpatientsafety.com
 
-## Key Files
-- `app/main.R` — App entry point
-- `app/logic/signal_engine.R` — Wraps safetysignal for this app
-- `app/view/signal_table.R` — Signal results table module
+- **Framework:** Rhino (production Shiny with `box` modules)
+- **Sass:** Compiled via Node (`rhino.yml: sass: node`)
+- **Deployment:** rsconnect (see `dependencies.R` for packrat discovery)
+
+### Key Files
+
+| File | Role |
+|------|------|
+| `app/main.R` | App entry point — hero banner + portal cards + about section |
+| `app/logic/tools.R` | `TOOLS` tribble — one row per tool card. Add tools here. |
+| `app/view/portal.R` | Renders tool cards from `TOOLS` tribble |
+| `app/logic/signal_engine.R` | Wraps `safetysignal` package (not used by portal itself) |
+| `app/view/signal_table.R` | Signal results table module (not used by portal itself) |
+| `rhino.yml` | Rhino config (`sass: node`) |
+| `dependencies.R` | Packrat/rsconnect dependency discovery |
+
+## Tool Suite
+
+The portal links to these apps:
+
+| Tool | URL | Project | Status |
+|------|-----|---------|--------|
+| **faers.mobi** | https://faers.mobi | `/projects/faers-mobi/` | Live |
+| **aers.mobi** | https://aers.mobi | `/projects/aers-mobi/` | Beta |
+| **pico-dag** | https://picodag.globalpatientsafety.com | `/projects/pico-dag/` | Live |
+| Signal methods | — | — | Coming soon |
+| MAUDE device safety | — | — | Coming soon |
+
+## Signal Detection Data Flow
+
+Understanding how data reaches the apps:
+
+```
+faers-pipeline (Python)          signal-compute (R)           faers-mobi (R/Shiny)
+─────────────────────            ──────────────────           ────────────────────
+FDA FAERS XML                    Reads contingency parquet    Reads signals.parquet
+  → parse + clean                Runs safetysignal per qtr     → DT datatable search
+  → contingency parquet          Outputs:                      → caterpillar plots
+    at ~/data/faers-pipeline/      signals_faers_v<date>.parquet   → novelty filter
+                                   at ~/data/signal-compute/
+                                                              scp to VPS → data/signals.parquet
+```
+
+### Data Locations
+
+| Data | Path | Producer |
+|------|------|----------|
+| Raw FAERS contingency | `~/data/faers-pipeline/contingency/` | `faers-pipeline` |
+| Drug/event dictionaries | `~/data/faers-pipeline/{drug,event}_dictionary.parquet` | `faers-pipeline` |
+| Computed signals | `~/data/signal-compute/signals_faers_v<date>.parquet` | `signal-compute` |
+| App-ready signals | `faers-mobi/data/signals.parquet` | Copied from signal-compute output |
+| FDA labels | `faers-mobi/data/fda_labels.parquet` | Manual / script |
+| MedDRA hierarchy | `faers-mobi/data/meddra_hierarchy.parquet` | Manual / script |
+
+### signals.parquet Schema
+
+Each row is a (drug, event, quarter) tuple:
+
+| Column | Description |
+|--------|-------------|
+| `drug_concept_id`, `drug_name` | Drug identifier and name |
+| `outcome_concept_id`, `outcome_name` | MedDRA PT event identifier and name |
+| `quarter` | Time period (YYYY-QN) |
+| `observed` | Count in 4-quarter rolling window |
+| `eb05`, `eb50`, `eb95` | GPS/EBGM credible interval |
+| `prr`, `prr_lci`, `prr_uci`, `prr_chisq` | PRR with CI |
+| `ror`, `ror_lci`, `ror_uci` | ROR with CI |
+| `ic`, `ic025`, `ic975` | Information Component (BCPNN) |
+| `n_methods_flagged` | How many of 4 methods flagged this pair |
+| `is_signal_any` | TRUE if ≥1 method flagged |
+
+### The "Top 2000" Limitation
+
+`signals.parquet` shipped to the VPS contains only the **top 2000 (drug, event) pairs**
+ranked by highest peak EB05, filtered to pairs flagged by ≥2 of 4 methods. This is a
+deliberate size constraint for the web app.
+
+**Implication:** If a user searches for an event like "ischemic stroke" and gets no results,
+it may be because no (drug, ischemic stroke) pair ranks in the top 2000. This does NOT mean
+no signal exists — it means the signal wasn't strong enough to make the cut.
+
+### Debugging "No Results" for an Event Search
+
+When a user reports that searching for an event returns nothing:
+
+1. **Check if `data/signals.parquet` exists** in the faers-mobi project:
+   ```bash
+   ls -la /home/harlan/projects/faers-mobi/data/signals.parquet
+   ```
+   If missing, the data hasn't been deployed locally. Copy from signal-compute output.
+
+2. **Check if the event is in the parquet** (R):
+   ```r
+   library(arrow)
+   library(dplyr)
+   ds <- open_dataset("data/signals.parquet")
+   ds |> filter(grepl("ischemic stroke", outcome_name, ignore.case = TRUE)) |> collect()
+   ```
+
+3. **Check the full signal-compute output** (before top-2000 filtering):
+   ```r
+   ds <- open_dataset("~/data/signal-compute/signals_faers_v2024-12-31.parquet")
+   ds |> filter(grepl("ischemic stroke", outcome_name, ignore.case = TRUE)) |>
+     arrange(desc(eb05)) |> head(20) |> collect()
+   ```
+
+4. **If the event exists in full output but not in app data:** The top-2000 filter excluded it.
+   Options: increase the cutoff in signal-compute, or add a manual inclusion list.
+
+5. **If the event doesn't exist anywhere:** Check MedDRA PT spelling. FAERS uses MedDRA
+   Preferred Terms. "Ischemic stroke" might be listed as "Ischaemic stroke" (British spelling)
+   or under a different PT like "Cerebrovascular accident".
 
 ## Related Projects
-- `safetysignal` — Shared Bayesian engine package
-- `faers-mobi` — Vaccine-focused app
-- `aers-mobi` — Drug/device-focused app
+
+| Project | Path | What It Does |
+|---------|------|-------------|
+| `safetysignal` | `/projects/safetysignal/` | R package: 2-component Gamma-Poisson Shrinker (GPS/EBGM) |
+| `signal-compute` | `/projects/signal-compute/` | Runs safetysignal across quarterly contingency → signals.parquet |
+| `faers-pipeline` | `/projects/faers-pipeline/` | Python: downloads + parses FDA FAERS XML → contingency parquet |
+| `faers-mobi` | `/projects/faers-mobi/` | Shiny app: signal timeline, caterpillar plots, novelty filter |
+| `aers-mobi` | `/projects/aers-mobi/` | Shiny app: historical AERS (2004-2012) |
+| `pico-dag` | `/projects/pico-dag/` | Shiny app: PICO → UMLS DAG → code lists |
+
+## Development
+
+```bash
+# Enter dev shell
+nix develop
+
+# Run the portal app
+Rscript -e 'shiny::runApp()'
+
+# Or with rhino
+Rscript -e 'rhino::app()'
+```
+
+## Deployment
+
+The portal is deployed to a Hetzner VPS at globalpatientsafety.com.
+faers.mobi and aers.mobi are separate deployments on the same VPS.
