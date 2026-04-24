@@ -493,16 +493,381 @@ fluidRow(
 )
 ```
 
-### 8. Files to Modify
+### 8. Downloadable Reports (Monetization — Phase 7)
+
+#### Concept
+
+Users can generate a professional PDF report from their current search/analysis
+session. The report is rendered server-side with Typst (bundled with Quarto) and
+returned as a downloadable file. Free users see the interactive app; reports
+cost a micropayment.
+
+#### Report Content
+
+A report captures the user's session state — their search, filters, selected
+pairs, and any temporal/stratified analysis — into a self-contained document:
+
+```
+┌──────────────────────────────────────────────────┐
+│  Global Patient Safety — Signal Report           │
+│  Generated: 2026-04-24                           │
+│                                                  │
+│  Search: "ischaemic stroke"                      │
+│  Filters: ATC = Antithrombotic agents            │
+│  Period: 2023Q1–2024Q4 vs 2021Q1–2022Q4          │
+│                                                  │
+│  1. Signal Summary Table                         │
+│     (drug, event, EB05, trend, novelty, class)   │
+│                                                  │
+│  2. Caterpillar Plots                            │
+│     Per selected (drug, event) pair              │
+│                                                  │
+│  3. Temporal Trend Analysis                      │
+│     Quarter-over-quarter EB05 with slope          │
+│     Period comparison (rate ratios)              │
+│                                                  │
+│  4. Class-Level Analysis (if stratified)         │
+│     Class rate vs historical baseline            │
+│     Within-class disproportionality              │
+│                                                  │
+│  5. FDA Label Cross-Reference                    │
+│     Novel vs known classification per pair       │
+│     Label sections matched                       │
+│                                                  │
+│  6. Methodology & Data Provenance                │
+│     Signal detection methods, data source,       │
+│     date range, filters applied, caveats         │
+│                                                  │
+│  Disclaimer: Statistical signals, not causation. │
+└──────────────────────────────────────────────────┘
+```
+
+#### Typst Rendering
+
+Quarto bundles Typst — no LaTeX installation needed on the VPS. The report
+template lives in the app:
+
+```
+faers-mobi/
+├── app/
+│   └── logic/
+│       └── report_generator.R     # Builds .qmd from session state
+├── templates/
+│   └── signal-report.qmd          # Typst template with parameterized content
+│   └── signal-report.typ          # Custom Typst template for branding
+```
+
+```r
+# report_generator.R
+generate_report <- function(search_state, output_path) {
+  # 1. Build a parameterized QMD from the session state
+  params <- list(
+    search_query = search_state$query,
+    filters = search_state$filters,
+    pairs = search_state$selected_pairs,   # tibble of (drug, event) rows
+    signals_data = search_state$pair_stats, # enriched signal data
+    trend_data = search_state$trends,
+    class_data = search_state$class_signals
+  )
+
+  # 2. Render with Quarto → Typst → PDF
+  quarto::quarto_render(
+    "templates/signal-report.qmd",
+    output_file = output_path,
+    execute_params = params
+  )
+}
+```
+
+```yaml
+# templates/signal-report.qmd front matter
+---
+title: "Signal Report"
+subtitle: "`r params$search_query`"
+author: "globalpatientsafety.com"
+date: today
+format:
+  typst:
+    papersize: us-letter
+    mainfont: "Linux Libertine"
+    template: signal-report.typ
+params:
+  search_query: ""
+  filters: !expr list()
+  pairs: !expr tibble::tibble()
+  signals_data: !expr tibble::tibble()
+  trend_data: !expr tibble::tibble()
+  class_data: !expr tibble::tibble()
+---
+```
+
+#### UI
+
+```r
+# In signal_timeline.R ui():
+downloadButton(ns("download_report"), "Generate Report (PDF)",
+               class = "btn-success mt-3",
+               icon = icon("file-pdf"))
+
+# In server():
+output$download_report <- downloadHandler(
+  filename = function() {
+    paste0("signal-report-", Sys.Date(), ".pdf")
+  },
+  content = function(file) {
+    # Check payment status before rendering
+    if (!user_has_credit(session)) {
+      showModal(modalDialog(
+        title = "Report Generation",
+        "PDF reports require a one-time micropayment of $X.XX.",
+        footer = tagList(
+          actionButton(ns("pay_report"), "Pay & Generate", class = "btn-primary"),
+          modalButton("Cancel")
+        )
+      ))
+      return()
+    }
+    generate_report(current_search_state(), file)
+  }
+)
+```
+
+### 9. API & Monetization (Phase 8)
+
+#### Revenue Model
+
+Three tiers:
+
+| Tier | Audience | Access | Price |
+|------|----------|--------|-------|
+| **Free** | Researchers, public | Interactive app, basic search, top signals | $0 |
+| **Pay-per-report** | Occasional users, consultants | PDF report generation | $2–5 per report |
+| **API access** | AI agents, programmatic users | REST API with rate limiting | $0.01–0.05 per query |
+| **Enterprise subscription** | Pharma companies | Unlimited API, bulk export, custom strata, SLA | $500–2000/month |
+
+#### REST API
+
+Plumber API alongside the Shiny app, or a separate service on the same VPS.
+The API exposes the same signal data the app uses, structured for programmatic
+consumption.
+
+**Endpoints:**
+
+```
+GET  /api/v1/signals/search?q=ischaemic+stroke&fuzzy=true
+     → Returns matching (drug, event) pairs with signal metrics
+
+GET  /api/v1/signals/drug/{drug_name}
+     → All signals for a specific drug
+
+GET  /api/v1/signals/event/{event_name}
+     → All drugs flagged for a specific event
+
+GET  /api/v1/signals/trend?drug=semaglutide&event=Pancreatitis&quarters=8
+     → Temporal trend data for a specific pair
+
+GET  /api/v1/signals/class/{atc_class}
+     → Class-level temporal analysis
+
+GET  /api/v1/signals/class/{atc_class}/temporal?baseline=2020Q1-2022Q4&current=2023Q1-2024Q4
+     → Class-wide temporal comparison (the masking-breaker)
+
+GET  /api/v1/signals/emerging?days=90
+     → New signals in the last N days (splash page data)
+
+POST /api/v1/reports/generate
+     → Generate and return a PDF report for a set of search parameters
+     Body: { "query": "...", "filters": {...}, "pairs": [...] }
+     Returns: PDF binary or a job ID for async generation
+
+GET  /api/v1/meta/events
+     → All available event names (for autocomplete / fuzzy matching)
+
+GET  /api/v1/meta/drugs
+     → All available drug names
+
+GET  /api/v1/meta/classes
+     → ATC classes and MedDRA SOCs available for stratification
+```
+
+**Response format:**
+
+```json
+{
+  "query": "ischaemic stroke",
+  "fuzzy_matched": true,
+  "matched_event": "Ischaemic stroke",
+  "results": [
+    {
+      "drug": "ozanimod",
+      "event": "Ischaemic stroke",
+      "peak_eb05": 992.3,
+      "adj_eb05": 891.1,
+      "n_methods_flagged": 4,
+      "quarters_flagged": 3,
+      "first_signal": "2019Q4",
+      "latest_signal": "2020Q2",
+      "trend": "Declining",
+      "novel": true,
+      "substance": "ozanimod",
+      "atc_class": "Immunosuppressants"
+    }
+  ],
+  "total_results": 153,
+  "api_credits_remaining": 487
+}
+```
+
+#### Implementation Options
+
+**Option A: Plumber API (R-native)**
+
+Runs alongside Shiny on the same VPS. Shares the same parquet data and R
+environment. Simplest to implement — same language, same data access code.
+
+```r
+# api/plumber.R
+library(plumber)
+library(arrow)
+library(dplyr)
+
+ds <- open_dataset("data/signals.parquet")
+
+#* Search signals by drug or event name
+#* @param q Search query
+#* @param fuzzy Enable fuzzy matching (default true)
+#* @get /api/v1/signals/search
+function(q, fuzzy = TRUE) {
+  # Reuse the same fuzzy_match_events() from signal_timeline.R
+  matches <- fuzzy_match_events(q, all_events, max_dist = 0.2)
+  ds %>%
+    filter(outcome_name %in% matches | rxnorm_name %in% drug_matches) %>%
+    filter(n_methods_flagged >= 2) %>%
+    group_by(rxnorm_name, outcome_name) %>%
+    summarise(...) %>%
+    collect()
+}
+```
+
+**Option B: FastAPI (Python) with Arrow**
+
+Separate service, reads the same parquet files. Better async performance
+and ecosystem for payment integration (Stripe SDK is Python-first).
+
+**Recommendation:** Start with Plumber (Option A) — the fuzzy search,
+signal computation, and novelty logic already exist in R. Add a thin
+Python proxy later only if performance requires it.
+
+#### AI Agent Integration
+
+The API is designed for AI consumption. An LLM with tool use can:
+
+1. Search for signals related to a drug or condition
+2. Pull temporal trends to assess whether a signal is growing
+3. Compare drug classes to identify class-wide effects
+4. Generate a report summarizing findings
+
+**MCP server potential:** The API endpoints map naturally to an MCP tool
+server. A future `mcp-globalpatientsafety` server would let Claude or other
+AI assistants query signal data directly during conversations.
+
+```json
+{
+  "tools": [
+    {
+      "name": "search_signals",
+      "description": "Search pharmacovigilance signals by drug or adverse event",
+      "parameters": {
+        "query": "string — drug name, event name, or general search term",
+        "fuzzy": "boolean — enable fuzzy matching for spelling variants"
+      }
+    },
+    {
+      "name": "get_signal_trend",
+      "description": "Get temporal trend for a specific drug-event pair",
+      "parameters": {
+        "drug": "string",
+        "event": "string",
+        "quarters": "integer — number of quarters to include"
+      }
+    },
+    {
+      "name": "compare_class_temporal",
+      "description": "Compare a drug class's current adverse event rate to historical baseline",
+      "parameters": {
+        "atc_class": "string",
+        "event": "string (optional)",
+        "baseline_period": "string — e.g. 2020Q1-2022Q4",
+        "current_period": "string — e.g. 2023Q1-2024Q4"
+      }
+    }
+  ]
+}
+```
+
+#### Payment Integration
+
+**Stripe** for all payment tiers:
+
+| Component | Stripe Product |
+|-----------|---------------|
+| Micropayment (reports) | Stripe Checkout one-time payment |
+| API credits | Stripe metered billing (usage-based) |
+| Enterprise subscription | Stripe recurring subscription |
+
+**Authentication flow:**
+
+```
+Free user → no auth required (rate-limited by IP)
+Report buyer → Stripe Checkout → one-time token → download
+API user → API key (issued after Stripe subscription)
+Enterprise → API key + higher rate limits + SLA dashboard
+```
+
+**Rate limiting:**
+
+| Tier | Rate Limit |
+|------|-----------|
+| Free (app) | No limit (interactive only) |
+| Free (API, if offered) | 10 queries/day |
+| API paid | 1000 queries/day per $10/month |
+| Enterprise | Unlimited (fair use) |
+
+#### Deployment Architecture (Phase 8)
+
+```
+VPS (Hetzner)
+├── nginx (reverse proxy, SSL)
+│   ├── faers.mobi → Shiny Server (port 3838)
+│   ├── api.globalpatientsafety.com → Plumber (port 8000)
+│   └── globalpatientsafety.com → Shiny Server (portal)
+├── Shiny Server
+│   ├── faers-mobi/
+│   └── globalpatientsafety/
+├── Plumber API
+│   └── api/ (reads same data/signals.parquet)
+└── data/
+    ├── signals.parquet
+    ├── contingency/ (for stratified analysis)
+    └── fda_labels.parquet
+```
+
+### 10. Files to Modify
 
 | File | Change | Phase |
 |------|--------|-------|
-| `app/view/signal_timeline.R` | Search UI, `pair_stats()` refactor, priority tiers | 1-2 |
-| `app/view/signal_timeline.R` | Remove `head(2000)`, add `fuzzy_match_events()` | 1 |
-| `app/view/signal_timeline.R` | Trend column (slope, arrows), period comparison UI | 3 |
-| `app/view/signal_timeline.R` | SOC/ATC filter dropdowns, post-hoc stratification | 4 |
+| `faers-mobi/app/view/signal_timeline.R` | Search UI, `pair_stats()` refactor, priority tiers | 1-2 |
+| `faers-mobi/app/view/signal_timeline.R` | Remove `head(2000)`, add `fuzzy_match_events()` | 1 |
+| `faers-mobi/app/view/signal_timeline.R` | Trend column (slope, arrows), period comparison UI | 3 |
+| `faers-mobi/app/view/signal_timeline.R` | SOC/ATC filter dropdowns, post-hoc stratification | 4 |
 | `signal-compute/R/compute_quarterly.R` | Stratified disproportionality output | 5 |
-| `signal-compute/scripts/deploy_to_vps.sh` | Ship contingency parquet if using on-the-fly approach | 5 |
+| `signal-compute/scripts/deploy_to_vps.sh` | Ship contingency parquet if using on-the-fly approach | 5-6 |
+| `faers-mobi/app/logic/report_generator.R` | **New** — builds parameterized QMD from session state | 7 |
+| `faers-mobi/templates/signal-report.qmd` | **New** — Typst report template | 7 |
+| `faers-mobi/templates/signal-report.typ` | **New** — Custom Typst branding template | 7 |
+| `faers-mobi/api/plumber.R` | **New** — REST API endpoints | 8 |
+| `faers-mobi/api/auth.R` | **New** — API key validation + Stripe integration | 8 |
+| VPS nginx config | Add `api.globalpatientsafety.com` proxy | 8 |
 
 ### 9. Migration Path
 
@@ -526,6 +891,11 @@ fluidRow(
    (every drug in the class has the same problem, so none is disproportionate
    relative to the others). This is the "did something change for this entire
    class?" question — requires contingency data with total report counts.
+7. **Phase 7:** Downloadable reports. Typst-rendered PDF from session state
+   (search, filters, selected pairs, trends, class analysis). Micropayment
+   via Stripe Checkout before download.
+8. **Phase 8:** REST API (Plumber) + monetization. API keys, metered billing,
+   enterprise subscriptions. MCP server wrapper for AI agent integration.
 
 ### 10. Validation
 
@@ -560,3 +930,18 @@ After implementation, verify:
 - Class rate ratio flags quarters where the entire class shifted
 - False positive rate: class signals that appear in one quarter but not adjacent quarters
   should be flagged as unstable
+
+**Reports (Phase 7):**
+- PDF renders successfully from a search session with filters and selected pairs
+- Report includes signal table, caterpillar plots, trend data, and methodology section
+- Typst rendering completes in < 30 seconds on the VPS
+- Stripe Checkout flow works end-to-end (test mode)
+- Download link expires after 24 hours
+
+**API & Monetization (Phase 8):**
+- `/api/v1/signals/search?q=ischaemic+stroke` returns correct JSON
+- Fuzzy matching works identically to the app
+- API key authentication rejects invalid keys
+- Rate limiting enforced per tier
+- Stripe metered billing records usage correctly
+- MCP tool server wrapping the API allows AI agents to search signals
