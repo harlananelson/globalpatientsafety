@@ -79,15 +79,22 @@ Each row is a (drug, event, quarter) tuple:
 | `n_methods_flagged` | How many of 4 methods flagged this pair |
 | `is_signal_any` | TRUE if ≥1 method flagged |
 
-### The "Top 2000" Limitation
+### Splash Cap (in-app), not a deploy filter
 
-`signals.parquet` shipped to the VPS contains only the **top 2000 (drug, event) pairs**
-ranked by highest peak EB05, filtered to pairs flagged by ≥2 of 4 methods. This is a
-deliberate size constraint for the web app.
+`signal-compute/scripts/deploy_to_vps.sh` `scp`s the **full** `signals_faers_v*.parquet`
+(~305 MB, 2.22M rows, ~265k unique pairs at `n_methods_flagged ≥ 2`) to the VPS at
+`/srv/shiny-server/faers-mobi/data/signals.parquet`. There is no top-2000 deploy-side filter.
 
-**Implication:** If a user searches for an event like "ischemic stroke" and gets no results,
-it may be because no (drug, ischemic stroke) pair ranks in the top 2000. This does NOT mean
-no signal exists — it means the signal wasn't strong enough to make the cut.
+The 2000-row cap is a **splash-display constraint inside the app** at
+`faers-mobi/app/view/signal_timeline.R` (`SPLASH_SIZE`). With Track A landed
+(2026-04-27, see `DECISION_LOG.md`), the splash shows the top 2000 by Adj EB05 by default,
+but server-side fuzzy search (`agrep` over the full set of distinct event/drug names) lets
+users reach any of the ~265k pairs by typing a query.
+
+**Implication for "no results" debugging:** if a user searches and gets nothing, the
+signal is genuinely absent from the parquet (or the term needs a spelling variant — try
+the British/American normalizer or `agrep`). It is NOT being filtered out by a
+deploy-time top-N cut.
 
 ### Debugging "No Results" for an Event Search
 

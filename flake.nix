@@ -31,6 +31,11 @@
             tibble
             dplyr
 
+            # faers-mobi / aers-mobi runtime deps
+            # (these apps live in sibling repos but are run from this dev shell)
+            arrow
+            DT
+
             # Dev
             languageserver
           ];
