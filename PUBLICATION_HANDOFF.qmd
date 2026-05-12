@@ -1,0 +1,308 @@
+---
+title: "Global Patient Safety — Publication Architecture Handoff"
+subtitle: "Plan for Claude Code: split publication from dashboard, build Quarto site"
+author: "Drafted with Claude (web), to be executed by Claude Code on home server"
+date: 2026-04-23
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+---
+
+# Purpose of this document
+
+This is a handoff from a planning conversation in Claude.ai (web) to Claude Code on the home server. It contains:
+
+1. The architectural decision and rationale
+2. The DESIGN.md spec to commit to the new publication repo
+3. The implementation plan in priority order
+4. Open questions Harlan still needs to answer before any code is written
+
+Claude Code should read this whole document before proposing or executing changes. Sections marked **OPEN QUESTION** must be resolved with Harlan before the relevant work begins.
+
+# Context
+
+## What exists today
+
+- `globalpatientsafety.com` — Rhino Shiny app. Cross-source pharmacovigilance signal detection (FAERS, VAERS, MAUDE, EudraVigilance, VigiBase) using the `safetysignal` R package. Repo: `harlananelson/globalpatientsafety`.
+- `faers.mobi` — Rhino Shiny app, single-source FAERS analysis. Repo: `harlananelson/faers-mobi`.
+- `aers.mobi` — Rhino Shiny app, single-source historical AERS. Repo: `harlananelson/aers-mobi`.
+- `pico-dag` — Tool, currently deployed at the same Hetzner box. Repo: presumably `harlananelson/pico-dag`.
+- All four apps deployed on Hetzner box `5.78.69.136`, Shiny Server + nginx, vhosts wired per domain.
+- Reload mechanism: `git pull` then `touch <app>/restart.txt`.
+
+## What Harlan wants to build
+
+A publication called Global Patient Safety. Open analytical work in pharmacovigilance, methodology-visible, monthly cadence growing to weekly. Bylines under the GPS masthead, with author credit per article. The publication is the umbrella; the dashboards are tools the publication offers.
+
+## Why the current architecture doesn't fit
+
+The Shiny app at `globalpatientsafety.com` currently serves as both the cross-source dashboard and the de facto landing page. A growing publication can't live inside a Shiny app — Shiny is an app framework, not a publication system. RSS, sitemaps, tag pages, archive views, fast static rendering, version control of content separate from app code: none of these are native to Shiny, and forcing them produces worse SEO and a heavier deployment than the work warrants.
+
+The fix is a clean split: publication on the apex domain, dashboard on a subdomain.
+
+# Architecture decision
+
+## Target topology
+
+```
+globalpatientsafety.com         → Quarto static publication (NEW)
+app.globalpatientsafety.com     → existing Shiny cross-source dashboard
+faers.mobi, aers.mobi           → unchanged
+pico-dag at current location    → unchanged
+```
+
+All four apps continue to share the Hetzner box. A new nginx vhost serves the static publication from the apex. The existing vhost for the Shiny dashboard moves to `app.globalpatientsafety.com`.
+
+## Why this shape
+
+- **Subdomain split, not path split.** Path-routing Shiny under nginx works but produces edge cases (websocket upgrades, asset URL rewrites). Subdomains are essentially free and produce clean per-app deployment, logging, and reload semantics.
+- **Quarto for the publication.** Already Harlan's authoring default. Built-in support for code blocks, executable R chunks, figure captions, footnotes, citations, math. Listings feature handles article indices, tag pages, RSS for free. SCSS theming consumes the DESIGN.md tokens directly. Static output is trivial to deploy.
+- **Dashboard stays exactly as it is.** Shiny app is doing real work. Don't rebuild it. Just move it to `app.` and let the publication take the apex.
+
+## What's NOT changing
+
+- The Shiny code itself — no edits to `app/`, `app.R`, `rhino.yml`, etc.
+- The deployment workflow for Shiny apps — still `git pull` + `touch restart.txt`.
+- The `safetysignal` R package — independent of this work.
+- The other domains (`faers.mobi`, `aers.mobi`) — no impact.
+
+# OPEN QUESTION 1: Are the apps integrated, or just colocated?
+
+This is the blocking question. Claude Code should not begin DNS or nginx work until this is resolved.
+
+The Hetzner deploy plan and the CLAUDE.md tell me the four apps share infrastructure (same box, same nginx, four vhosts). What they don't tell me is whether the apps are *functionally* integrated:
+
+- Does the GPS dashboard at `globalpatientsafety.com` link to, embed, or call into the faers.mobi / aers.mobi / pico-dag apps in ways that would break if the GPS dashboard moves to a subdomain?
+- Are there shared session cookies, shared auth, or cross-domain JS calls between the apps?
+- Does any app's nginx config rewrite URLs to point to another app's domain in a way that depends on the apex being the GPS dashboard?
+
+**Action for Claude Code:** before any DNS or nginx changes, audit the cross-app integration. Read each app's nginx vhost config on the Hetzner box, search the Shiny apps for hardcoded URLs pointing to sibling domains, and report what you find. If integrations exist, propose how to preserve them across the move. If not, the architecture above is safe.
+
+# Implementation plan
+
+## Phase 0 — Verify before changing anything
+
+1. Audit cross-app integration (see Open Question 1).
+2. Confirm with Harlan that the publication-on-apex / dashboard-on-subdomain split is still the right shape after that audit.
+
+## Phase 1 — New publication repo
+
+1. Create `harlananelson/globalpatientsafety-publication` (Quarto project).
+2. Commit `DESIGN.md` (full text in Section 5 below) to repo root.
+3. Commit a minimal Quarto skeleton:
+   - `_quarto.yml` with site metadata, navigation, listings config
+   - `theme.scss` translating DESIGN.md tokens to Bootstrap SCSS variables
+   - `index.qmd` — homepage (featured article + recent list + compressed tools section)
+   - `about.qmd` — masthead and editorial standards
+   - `tools.qmd` — directory of dashboards (cards link to `app.globalpatientsafety.com`, `faers.mobi`, etc.)
+   - `disclaimer.qmd` — moved from current Shiny landing
+   - `articles/` directory with one stub article using the methodology-callout pattern
+4. Local build: `quarto render`. Verify output at `_site/`.
+
+## Phase 2 — DNS and nginx
+
+Blocked on Phase 0.
+
+1. Add DNS A record: `app.globalpatientsafety.com` → `5.78.69.136`.
+2. On Hetzner box: copy current `globalpatientsafety` nginx vhost to `app.globalpatientsafety.com`. Change `server_name` line. Reload nginx.
+3. Verify `app.globalpatientsafety.com` serves the Shiny dashboard correctly.
+4. Create new nginx vhost for `globalpatientsafety.com` (apex) serving static files from `/srv/static/globalpatientsafety-publication/_site/`.
+5. **Do not yet point apex to the new static site** — first deploy the static site to the box (next step), then cut over.
+
+## Phase 3 — Static deploy pipeline
+
+1. Create `/srv/static/globalpatientsafety-publication/` on Hetzner box, owned by appropriate user.
+2. GitHub Action in publication repo: on push to `main`, run `quarto render`, rsync `_site/` to Hetzner over SSH.
+3. First deploy: confirm files appear correctly on the box.
+4. Cutover: enable the apex nginx vhost, disable the old apex-as-Shiny vhost. The Shiny dashboard remains accessible at `app.globalpatientsafety.com`.
+
+## Phase 4 — Verification
+
+1. `curl -sI https://globalpatientsafety.com/` returns 200 and serves static publication.
+2. `curl -sI https://app.globalpatientsafety.com/` returns 200 and serves Shiny dashboard.
+3. `curl -sI https://faers.mobi/` and `https://aers.mobi/` still return 200 (untouched).
+4. Publication's `/tools` page links resolve to all four dashboards.
+5. Article stub renders with correct DESIGN.md theme treatment.
+
+## Phase 5 — First real article
+
+Out of scope for the architecture work, but worth scheduling: one signal note on a real FAERS finding (semaglutide gallbladder, JAK inhibitor zoster cutaneous, dabigatran cardiac tamponade — any of the rows from the current dashboard view) rendered through the publication template. This is the calibration step that tells Harlan whether the DESIGN.md choices actually work against real content.
+
+# DESIGN.md spec (commit to publication repo root)
+
+The full DESIGN.md text follows. Commit verbatim as `DESIGN.md` at the root of the new publication repo. The `theme.scss` should derive from these tokens.
+
+## Brand position
+
+Independent analytical work in pharmacovigilance, presented as open analysis — methodology visible, data-journalism-adjacent, clinician-credible. The visual system deliberately borrows trust signals from three pretrained traditions:
+
+1. **Serious longform periodicals** (FT, The Atlantic, LRB) — serif body, generous margins, editorial hierarchy.
+2. **Open-source data tooling** (Observable, Quarto, Jupyter) — monospace as first-class, code and methodology as document elements not footnotes.
+3. **Academic/clinical publication** (NEJM, JAMA conventions) — old-style figures, small caps for acronyms, footnote discipline.
+
+The distinctive note is restraint plus an unusual accent. Oxblood — not ProPublica red, not FDA navy, not FT pink — paired with warm unbleached-paper ground rather than stark white. Zero border radius. Single-family typography.
+
+## Tokens
+
+### Surfaces
+
+- `surface-page` — `#F7F3EC` — unbleached paper. Warm, reads as document not app.
+- `surface-raised` — `#FDFBF6` — slightly lighter. Cards, asides, floating elements.
+- `surface-sunken` — `#EEE7DA` — slightly darker. Figure backgrounds, zebra striping.
+- `surface-code` — `#282420` — near-black warm. Monospace blocks.
+- `surface-callout` — `#F1E9D6` — warm sand. Methodology notes, caveats.
+
+### Ink
+
+- `ink-primary` — `#1C1A17` — warm graphite. Body text. Not pure black.
+- `ink-secondary` — `#4A4540` — muted warm grey. Captions, metadata.
+- `ink-muted` — `#8A827A` — low emphasis. Timestamps, source notes.
+- `ink-link` — `#6B1F28` — oxblood.
+- `ink-link-visited` — `#4A1A20` — darker oxblood.
+- `ink-code` — `#E8DCC4` — warm cream on dark code surface.
+
+### Accent
+
+- `accent-primary` — `#6B1F28` — oxblood. Signature color. Primary links, section rules, critical callouts only.
+- `accent-primary-muted` — `#A36168` — hover states, subtle backgrounds.
+
+### Domain (pharmacovigilance)
+
+Semantic severity tokens. Visual values colorblind-safe (Okabe-Ito-adjacent).
+
+- `signal-none` — `#8A827A` — muted. No disproportionality signal.
+- `signal-emerging` — `#D49A3E` — amber. Watch status.
+- `signal-established` — `#B8552A` — ochre-red. Established disproportionality.
+- `signal-withdrawn` — `#4A4540` — grey. Drug withdrawn / context changed.
+- `data-freshness-current` — default ink, no modifier.
+- `data-freshness-stale` — italic + `ink-muted`. Over 90 days from refresh.
+
+### Data visualization
+
+**Categorical — Okabe-Ito.** Pretrained-familiar among data-literate readers, colorblind-safe, print-legible.
+
+- `viz-cat-1` — `#E69F00`
+- `viz-cat-2` — `#56B4E9`
+- `viz-cat-3` — `#009E73`
+- `viz-cat-4` — `#F0E442`
+- `viz-cat-5` — `#0072B2`
+- `viz-cat-6` — `#D55E00`
+- `viz-cat-7` — `#CC79A7`
+- `viz-cat-8` — `#000000`
+
+**Sequential** (single-hue ramp for heatmaps): warm ochre, five steps from `#F5E8D0` to `#8B4513`.
+
+**Diverging** (for disproportionality around null): muted teal `#4A8B8B` → warm neutral `#EEE7DA` → oxblood `#6B1F28`. Matching the accent on the "of interest" end ties domain semantics to brand.
+
+### Typography
+
+- `font-body` — Source Serif 4 (fallback: Charter, Georgia, serif). Transitional serif, warm, readable at long lengths.
+- `font-display` — Source Serif 4 at heavier weights. No secondary display face. Deliberate.
+- `font-mono` — JetBrains Mono (fallback: ui-monospace, Menlo). Real monospace, not a system fallback.
+- `font-figure-label` — Source Serif 4 small caps. Chart labels, axis titles.
+
+Modular scale, base 18px, ratio 1.2:
+
+- `type-display` — 40px / 1.15 / semibold — article titles
+- `type-headline` — 28px / 1.2 / semibold
+- `type-subhead` — 22px / 1.3 / medium
+- `type-body` — 18px / 1.6 / regular — primary reading size
+- `type-small` — 15px / 1.5 — captions, metadata
+- `type-caption` — 13px / 1.4 small caps — figure captions, eyebrow labels
+- `type-mono` — 15px / 1.5 — code, inline data
+
+Numerals: old-style figures in prose, tabular figures in data tables. Non-negotiable.
+
+### Spacing
+
+8px base grid, generous by default:
+
+- `space-1` 4px · `space-2` 8px · `space-3` 16px · `space-4` 24px · `space-5` 40px · `space-6` 72px
+
+`measure-prose` — 68ch maximum for body text.
+
+### Rules and borders
+
+- `rule-section` — 1px solid `accent-primary`, 2/5 vertical split (FT convention) for pullquotes and section markers.
+- `rule-hairline` — 1px solid `ink-muted` at 30% opacity. Table borders, dividers.
+- `rule-emphasis` — 2px solid `ink-primary`. Sparingly.
+
+**Border radius: 0 everywhere.** Rectangles only.
+
+## Components
+
+- **Primary Button** — Rectangular, 0 radius. Fill `accent-primary`, text `surface-raised`, `type-small` semibold. Single highest-intent action per view.
+- **Secondary Button** — Rectangular, 0 radius. 1px outline `ink-primary`, no fill, text `ink-primary`.
+- **Pull Quote** — `type-subhead`, italic, `ink-primary`. 2px left vertical rule in `accent-primary`. 24px left padding.
+- **Data Table** — `font-body` (not mono). Tabular figures. `rule-hairline` between rows. Header row `type-caption` small caps. Zebra stripe `surface-sunken`. Numeric columns right-aligned.
+- **Code Block** — `surface-code` background, `ink-code` text, `font-mono`. 24px padding.
+- **Methodology Callout** — `surface-callout` background, `ink-primary` text. 2px left border `accent-primary`. "METHODOLOGY" eyebrow in `type-caption` small caps. Inline show-your-work component — a core open-analysis move.
+- **Footnote** — `type-small`, `ink-secondary`. Old-style figure numbering. Bidirectionally linked to call-site.
+- **Figure Caption** — `type-caption` small caps eyebrow ("FIGURE 3 —"), `font-body` italic for caption text. Source attribution required in `ink-muted`.
+
+## Do's
+
+- Use `accent-primary` sparingly. One per viewport.
+- Expose methodology. Every chart reaches a methodology callout. This is the brand.
+- Mark data freshness. Stale data automatically gets italic + muted ink.
+- Old-style figures in prose, tabular figures in tables.
+- Default charts to Okabe-Ito unless domain semantics override.
+- Generous whitespace. Density reads as dashboard; breathing room reads as publication.
+
+## Don'ts
+
+- Border radius. Anywhere.
+- Secondary typeface for display. Single-family is the commitment.
+- Pure black `#000` or pure white `#FFF`.
+- Accent for decoration. It's a semantic signal.
+- Institutional blue. That's FDA/regulatory territory — wrong position.
+- Emoji as UI. Breaks the editorial register.
+- Drop shadows, gradients, glassmorphism. All say "app" not "document."
+- Animation. The reader controls pacing.
+
+## Design rationale
+
+**Pretrained familiarity leveraged:** FT vertical-rule convention (section markers); Observable/Quarto code-first layout (methodology callouts); NEJM old-style + tabular figures (academic publication); Okabe-Ito palette (data literacy); longform serif body (reading not scanning).
+
+**Distinctive commitments:** oxblood accent (underused in analytical tooling); warm unbleached-paper ground (document register); zero border radius (print register); single-family typography (editorial restraint); methodology callout as core component (the brand is method visibility).
+
+**Explicit non-goals:** not a SaaS product design system; not a regulatory/institutional system; not a dashboard system.
+
+## Open calibration questions
+
+These tokens are untested against real content. The first real article will force revision. Specifically:
+
+- Dark mode: mirror the warm tones (not cold slate) or skip for v1?
+- Mobile register: do the dashboards inherit the publication tokens at all, or do they keep their current Shiny defaults?
+- Chart library binding: Observable Plot and Vega-Lite theme natively; ggplot2 (the likely default for Quarto-rendered R chunks) needs a theme function written against these tokens.
+
+# OPEN QUESTION 2: Article cadence commitment
+
+Harlan stated monthly growing to weekly. Before launch, write three signal notes. If three come hard, weekly is wrong and the cadence should be downgraded to bi-weekly or monthly. Publications that miss stated cadence lose credibility fast — better to commit to a slower cadence that gets hit.
+
+This isn't blocking the architecture work, but it should be answered before the first article publishes.
+
+# OPEN QUESTION 3: Author byline policy
+
+"Bylines under the GPS masthead, with author credit per article." Confirm: byline format is "Harlan Nelson" or "Harlan A. Nelson" or other? Affiliation listed on byline (e.g., "IU Health") or not? The independent-analysis position argues for keeping IU Health off the byline — the work is independent, not institutional — but this is Harlan's call.
+
+# OPEN QUESTION 4: Scope honesty in tagline
+
+The current tagline is "Open tools for pharmacovigilance signal detection and clinical research acceleration." For the publication, a tagline option:
+
+> Open analysis from international pharmacovigilance data — FAERS, VAERS, MAUDE, EudraVigilance, VigiBase.
+
+This is more specific and more honest than "Global Patient Safety" alone, which would otherwise overpromise. Harlan to confirm or revise.
+
+# Notes for Claude Code
+
+- This is a planning document, not yet a commit. Phase 0 (the integration audit) must complete and Open Question 1 must be answered before any DNS or nginx work begins.
+- The DESIGN.md section is ready to commit verbatim once the new publication repo exists.
+- All work in this plan is on the publication side. The existing Shiny dashboard repo (`harlananelson/globalpatientsafety`) gets two changes total: nothing in the code, just an eventual subdomain move at the nginx layer. The dashboard's CLAUDE.md should be updated after the move to note the new subdomain.
+- The dropdown-narrowing fix in `DEPLOY_PLAN.md` (currently drafted but not executed) should ship before this architecture work. It's contained, well-specified, and improves a working tool. The publication work is greenfield and bigger; do the small contained thing first.
+
+# Acknowledgments
+
+Drafted in conversation with Claude (web) on 2026-04-23. Architecture decisions and DESIGN.md choices made jointly with Harlan during that session. Implementation handed to Claude Code on the home server.

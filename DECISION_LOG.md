@@ -929,14 +929,151 @@ filters correctly. Verified empirically:
   Box has handled the single-job baseline (~6 GB) fine, parallel should fit.
 - Once finished: re-symlink, re-test, deploy.
 
+## 2026-04-29 — safetysignal int32 overflow fix + Opus→Sonnet handoff
+
+### safetysignal patch shipped
+
+Root-cause of the 13 still-missing quarters (2019, 2022Q4, 2023, 2024)
+was an int32 overflow at `safetysignal/R/detect-all.R:76` — the same
+class of bug already fixed at `observed-expected.R:54`. `n_drug *
+n_event` exceeds `.Machine$integer.max` (~2.1e9) on cumulative FAERS
+data once enough years have accumulated; `dplyr::mutate` then propagates
+NAs and the calling pipeline silently drops the affected quarter via
+its tryCatch.
+
+Patch: cast both sides + denominator to double:
+
+```diff
+-  expected = (.data$n_drug * .data$n_event) / n_total,
+-  rr = .data$observed / .data$expected
++  expected = (as.double(.data$n_drug) * as.double(.data$n_event)) / as.double(n_total),
++  rr = as.double(.data$observed) / .data$expected
+```
+
+Committed as `1f54d4e` on `safetysignal/main`, pushed. Reinstalled into
+`/home/harlan/R/x86_64-pc-linux-gnu-library/4.5/`. Verified on the
+2018Q2..2019Q1 window: 502,439 pairs, 349,313 flagged in 3.5s (was
+NULL pre-patch). The signal-compute nix dev shell loads safetysignal
+from this same user library, confirmed via `system.file()`.
+
+### VPS deploys (drug + substance + aers pre-patch)
+
+- `faers-mobi`: drug + substance parquets pushed via
+  `deploy_to_vps.sh faers-mobi`; new app code pulled via
+  `cd /srv/shiny-server/faers-mobi && git pull` + restart. setNames
+  unqualified-call hotfix shipped (`stats::setNames`).
+- `aers-mobi`: schema-renamed `signals_aers_v2026-04-20.parquet` (drug/
+  event), multiproduct labels, meddra_hierarchy, atc_classes,
+  diana_dictionary, first_approval all scp'd; new app code pulled;
+  restart. AERS data won't change again (closed dataset).
+
+Both sites verified live (200 + new HTML strings present, shiny logs
+clean post-restart).
+
+### Opus → Sonnet handoff
+
+User asked whether Sonnet 4.6 can finish the rest. Yes — the remaining
+work is execution + monitoring, not design. Sonnet should pick up here.
+
+**In-flight at handoff (started 2026-04-29 05:55):**
+
+- Drug rerun: PID 4145666, command
+  `Rscript R/compute_quarterly.R --source faers` from
+  `/projects/signal-compute/`.
+- Substance rerun: PID 4146181, same script with
+  `--contingency-root .../contingency-substance --output-root
+  .../signal-compute/substance`.
+- Both expected to finish ~10:55–11:55 local (5–6h). Watcher (background
+  task) fires when both exit. Output overwrites
+  `signals_faers_v2026-04-29.parquet` in their respective dirs.
+
+**Expected outcome (if patch works correctly):**
+
+- 130 → ~143 quarters covered (recovers all of 2019, 2022Q4, all of
+  2023, all of 2024). Some early sparse-contingency quarters may still
+  return NULL by design — verify via
+  `ds %>% distinct(quarter)` after both finish.
+- Total rows likely ~25M+ (was 18.5M with 130 quarters).
+- File size 3.0–3.5 GB (drug) and 2.5–2.8 GB (substance).
+
+**Sonnet to-do when reruns finish:**
+
+1. Verify quarter coverage with `distinct(quarter)` — should show no
+   gap between 1990Q1 and 2025Q4 except 2025Q2 (which lacks
+   contingency).
+2. Update local symlinks: `faers-mobi/data/signals.parquet` →
+   new drug parquet path; `signals_substance.parquet` → new substance.
+3. Boot-test faers-mobi locally if you want, but app code didn't
+   change so this is optional.
+4. `cd /projects/signal-compute && ./scripts/deploy_to_vps.sh
+   faers-mobi` to push fresh parquets to the VPS. The script already
+   handles both files.
+5. Verify VPS via `curl -s https://faers.mobi/` and check shiny logs
+   on VPS for any new errors.
+6. Append a "reruns landed" entry to DECISION_LOG.
+
+If anything looks off (NULL where data was expected, schema drift,
+deploy errors), surface to user before proceeding.
+
+---
+
+## 2026-04-29 — Reruns landed, full 143-quarter coverage deployed
+
+### Status: COMPLETE
+
+Both int32-fixed signal-compute reruns finished successfully:
+
+- **Drug signals:** `signals_faers_v2026-04-29.parquet` — 3.2G, 24,070,569 rows, **143 quarters**, 1990Q1–2025Q4
+- **Substance signals:** `substance/signals_faers_v2026-04-29.parquet` — 2.6G, 19,787,424 rows, **143 quarters**
+
+All 13 previously missing quarters (2019Q1-Q4, 2022Q4, 2023Q1-Q4, 2024Q1-Q4) recovered by the `as.double()` int32-overflow fix in `safetysignal/R/detect-all.R` commit `1f54d4e`.
+
+Local symlinks in `faers-mobi/data/` updated to v2026-04-29. Deployed to VPS at 23:39-23:41 UTC. VPS returns HTTP 200.
+
+Note: a partial intermediate deploy ran at 07:16 Apr 29 with v2026-04-28 (130 quarters). That has been overwritten on VPS by this deploy.
+
+---
+
 ## Open questions (remaining)
 
-- **C5:** anchor the 12-month "Emerging" window to `max(first_signal in dataset) - 4 quarters`, not `Sys.Date() - 12 months`. Confirmed by the boot-test finding that the parquet's max quarter is already a year+ behind wallclock.
 - **F1, G1, H1:** scoping decisions deferred — surfaced in master plan above.
-- **CLASS_EFFECT_THRESHOLD retune:** the new 1.4M-pair drug parquet shifts the distribution; threshold=3 now hides 43% of splash. Worth bumping both constants to 5 (drug: 27% hidden; substance: 28% hidden — closer to the old 18% behavior). Flagged for next pass; not breaking today. Recheck after the 26-quarter-fix reruns land — distribution may shift again.
-- **`ozempic → clorazepic` deeper fix:** length-ratio or tighter max.distance for queries above the 5-char floor.
-- **Possible additional bug:** the cumulative prior call site
-  (`window_data(ds, cum_qs)` for full prior fit) had the same
-  cross-product issue. The fix to `window_data` covers BOTH call sites
-  in one place. No additional change needed there.
+- **Track B inference:** B3 validation + B4 batch built; inference runs blocked on RTX 3090 availability (~2026-05-04). When GPU lands: `Rscript tests/triage/b3_build_fixture.R` then `Rscript tests/triage/b3_validate.R --model qwen2.5:7b-instruct-q4_K_M` (need >=16/20 pass). If pass, run `Rscript scripts/triage_signals.R --resume`.
 
+---
+
+## 2026-04-30 — Items 1–4 complete
+
+### Item 1: CLASS_EFFECT_THRESHOLD retune — DONE
+Both constants bumped 3→5 in faers-mobi and aers-mobi. Reduces splash suppression from 43% hidden to ~27%, closer to pre-24M-row baseline.
+
+### Item 2: agrep length-ratio guard — DONE
+In `.fuzzy_match_pairs` (both apps): after agrep, discard hits where candidate name is >2.5x query length + 3 chars. Prevents shared-suffix false positives ("ozempic" → "clorazepic acid"). Short queries still get exact substring; this only tightens the fuzzy branch.
+
+### Item 3: C5 Emerging window — DONE
+Added `.subtract_quarters()` helper. `pair_stats_full` now computes `is_emerging = first_signal >= (max(latest_signal) - 4 quarters)` using the dataset's own max quarter instead of `Sys.Date()`. Added `Emerging` column (amber) to DT. aers-mobi gets no Emerging column (data ends 2012, confirmed by earlier boot-test).
+
+### Item 4: Track B (LLM triage) — pre-GPU work DONE
+- `signal-compute/tests/triage/b3_ground_truth.csv` — 20-pair truth table
+- `signal-compute/tests/triage/b3_build_fixture.R` — builds parquet fixture from live data
+- `signal-compute/tests/triage/b3_validate.R` — runs Ollama + checks pass criteria (≥16/20, no pq/ic→genuine-novel)
+- `signal-compute/scripts/triage_signals.R` — B4 batch: reads signals parquet, enriches, classifies via Ollama, writes sidecar parquet; supports `--resume`
+- Inference blocked on RTX 3090. Run B3 first once GPU arrives to validate prompt quality before B4 production run.
+
+
+---
+
+## 2026-05-03 — Issue triage: ajax-error + signal-disconnection
+
+### ajax-error (aers-mobi DataTables Ajax error) — FIXED
+
+ROOT CAUSE: `local({})` block inside `datatable(options=list(searchCols=...))` read `input$search_query` directly, bypassing the 400ms debounce. This added the raw input as a reactive dependency of `renderDataTable`, triggering a full re-render on every keystroke. With ~995k pairs in aers-mobi's substance view, server-side Ajax requests outlive the re-render cadence → in-flight conflicts → "DataTables Ajax error (tn/7)".
+
+FIX: replaced `input$search_query %||% ""` with `search_query() %||% ""` (debounced reactive) inside the `searchCols` local block in both aers-mobi and faers-mobi. Branch: `fix/datatables-ajax-class-effect-filter` in aers-mobi. Same 1-line patch applied to faers-mobi on main.
+
+TEST: `aers-mobi/tests/testthat/test-class-effect-filter.R` asserts that searchCols uses `search_query()` not `input$search_query`.
+
+### signal-disconnection (MedDRA/ATC/DiAna version bridge) — OPEN, step 1 next
+
+Open question from the issue resolved: **no MSSO license needed**. The `meddra_hierarchy.parquet` is UMLS-sourced (PT → CUI via UMLS REST API), and UMLS tracks CUI history across releases. Bridge work for step 4 (MedDRA event-side) can be built via UMLS history API without MSSO.
+
+Steps 1–2 still gating. Step 1 = add version stamps to signals parquet (meddra_version, diana_version, atc_version at compute time). No external data dependencies — pure pipeline metadata. Ready to implement when prioritized.

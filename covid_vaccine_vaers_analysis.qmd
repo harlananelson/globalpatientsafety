@@ -1,0 +1,521 @@
+---
+title: "COVID-19 Vaccine Safety Signals in VAERS"
+subtitle: "Bayesian Disproportionality Analysis Across Nine Vaccine Products"
+author: "Global Patient Safety"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    code-fold: true
+    code-summary: "Show code"
+    theme: flatly
+    fig-width: 10
+    fig-height: 6
+    self-contained: true
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+---
+
+```{r setup}
+library(arrow)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(forcats)
+library(gt)
+library(scales)
+library(stringr)
+
+# Aggregated signals (no quarter column) — used for most analyses
+SIGNALS_PATH    <- "/srv/shiny-server/gps-patient/data/signals_vaers.parquet"
+# Pre-computed first-emergence table (drug, event, first_quarter) — ~85KB
+FIRST_SEEN_PATH <- "/srv/shiny-server/gps-patient/data/covid_first_seen.parquet"
+
+label_vaccine <- function(drug) {
+  case_when(
+    grepl("PFIZER.*BIVALENT|BIVALENT.*PFIZER", drug, ignore.case = TRUE) ~ "Pfizer Bivalent",
+    grepl("MODERNA.*BIVALENT|BIVALENT.*MODERNA", drug, ignore.case = TRUE) ~ "Moderna Bivalent",
+    grepl("PFIZER|BIONTECH|COMIRNATY",           drug, ignore.case = TRUE) ~ "Pfizer-BioNTech",
+    grepl("MODERNA|SPIKEVAX|MNEXSPIKE",           drug, ignore.case = TRUE) ~ "Moderna",
+    grepl("JANSSEN|JOHNSON",                      drug, ignore.case = TRUE) ~ "Janssen (J&J)",
+    grepl("NOVAVAX",                              drug, ignore.case = TRUE) ~ "Novavax",
+    TRUE ~ "Unknown"
+  )
+}
+
+vaers_raw <- open_dataset(SIGNALS_PATH) |> collect()
+
+covid <- vaers_raw |>
+  filter(grepl("COVID|SARS|BNT|MRNA", drug, ignore.case = TRUE)) |>
+  mutate(
+    vaccine  = label_vaccine(drug),
+    platform = case_when(
+      vaccine %in% c("Pfizer-BioNTech", "Moderna",
+                     "Pfizer Bivalent", "Moderna Bivalent") ~ "mRNA",
+      vaccine == "Janssen (J&J)"                            ~ "Viral vector",
+      vaccine == "Novavax"                                  ~ "Protein subunit",
+      TRUE ~ "Unknown"
+    )
+  )
+
+# First-emergence: earliest quarter each (drug, event) pair crossed ≥2 methods
+first_seen <- open_dataset(FIRST_SEEN_PATH) |>
+  collect() |>
+  mutate(vaccine = label_vaccine(drug))
+
+# Colour palette — consistent across all plots
+vaccine_colours <- c(
+  "Pfizer-BioNTech"  = "#1a6b9a",
+  "Moderna"          = "#e05f2a",
+  "Janssen (J&J)"    = "#2e8b57",
+  "Pfizer Bivalent"  = "#6baed6",
+  "Moderna Bivalent" = "#fd8d3c",
+  "Novavax"          = "#756bb1",
+  "Unknown"          = "#bdbdbd"
+)
+```
+
+## Background
+
+This report applies time-integrated Bayesian and frequentist disproportionality analysis
+to the CDC Vaccine Adverse Event Reporting System (VAERS, 1990–present) for all nine
+COVID-19 vaccine products represented in the database. Signals are detected by four
+independent methods — GPS (Gamma-Poisson Shrinker), PRR, ROR, and BCPNN/IC — and
+flagged when at least two methods independently exceed their threshold. The primary
+effect-size measure is **EB05**: the 5th-percentile lower bound of the two-component Gamma
+mixture posterior on the linear relative-risk scale (DuMouchel 1999 framework). EB05 is a
+direct posterior credible bound, not the EBGM geometric mean (which applies a log
+transformation). EB05 > 2 with ≥2 methods flagged is the conservative reporting threshold
+used here.
+
+::: callout-note
+VAERS is a passive surveillance system subject to under-reporting, stimulated reporting,
+and confounding by indication. Signals indicate statistical disproportionality within the
+reporting database, not established causation. The analysis is descriptive and
+hypothesis-generating.
+:::
+
+## Data Overview
+
+```{r overview-table}
+covid |>
+  group_by(vaccine, platform) |>
+  summarise(
+    total_event_pairs  = n(),
+    sig_2_plus_methods = sum(n_methods_flagged >= 2),
+    sig_3_plus_methods = sum(n_methods_flagged >= 3),
+    sig_4_methods      = sum(n_methods_flagged >= 4),
+    max_eb05           = round(max(eb05, na.rm = TRUE), 1),
+    .groups = "drop"
+  ) |>
+  arrange(desc(sig_2_plus_methods)) |>
+  gt() |>
+  tab_header(
+    title    = "COVID-19 Vaccine Signal Summary",
+    subtitle = "VAERS 1990–present, all methods"
+  ) |>
+  cols_label(
+    vaccine            = "Vaccine",
+    platform           = "Platform",
+    total_event_pairs  = "Total pairs",
+    sig_2_plus_methods = "≥2 methods",
+    sig_3_plus_methods = "≥3 methods",
+    sig_4_methods      = "4 methods",
+    max_eb05           = "Max EB05"
+  ) |>
+  data_color(
+    columns = sig_2_plus_methods,
+    palette = "Blues"
+  ) |>
+  tab_source_note("EB05: 5th-percentile lower bound of the two-component Gamma mixture posterior (linear RR scale; GPS framework, DuMouchel 1999). Not the EBGM geometric mean.")
+```
+
+```{r overview-bar, fig.cap="Signal pair counts by number of methods flagged and vaccine product."}
+covid |>
+  mutate(methods_label = case_when(
+    n_methods_flagged == 4 ~ "4 methods",
+    n_methods_flagged == 3 ~ "3 methods",
+    n_methods_flagged == 2 ~ "2 methods",
+    TRUE                   ~ "1 method"
+  )) |>
+  count(vaccine, methods_label) |>
+  mutate(
+    vaccine        = fct_reorder(vaccine, n, sum),
+    methods_label  = factor(methods_label,
+                            levels = c("1 method","2 methods","3 methods","4 methods"))
+  ) |>
+  ggplot(aes(n, vaccine, fill = methods_label)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Blues", direction = 1) +
+  labs(
+    x    = "Number of drug–event signal pairs",
+    y    = NULL,
+    fill = "Methods flagged",
+    title = "COVID-19 Vaccine Signal Volume by Product"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "bottom")
+```
+
+## Key Findings by Clinical Domain
+
+### Thrombosis with Thrombocytopenia Syndrome (TTS)
+
+The most product-specific signal in the dataset. Janssen (J&J) shows EB05 = 18.4 flagged
+by all four methods for TTS, corroborating the regulatory finding that ultimately led to
+Janssen's restricted and then discontinued use in the United States. Supporting diagnostic
+signals — heparin-induced thrombocytopenia tests, anti-platelet factor 4 antibody,
+cerebral thrombosis — form a consistent mechanistic cluster.
+
+```{r thrombosis-plot}
+#| fig-cap: "Thrombotic and clotting signals (EB05 > 2, ≥2 methods). Point size proportional to number of methods flagged."
+#| fig-height: 12
+#| fig-width: 10
+thromb <- covid |>
+  filter(
+    grepl("thrombo|embol|clot|coagul|disseminated|purpura|platelet|heparin|anti-platelet",
+          event, ignore.case = TRUE),
+    n_methods_flagged >= 2,
+    eb05 > 2
+  ) |>
+  mutate(event = str_trunc(event, 55))
+
+ggplot(thromb, aes(eb05, fct_reorder(event, eb05), colour = vaccine, size = n_methods_flagged)) +
+  geom_point(alpha = 0.85) +
+  scale_colour_manual(values = vaccine_colours) +
+  scale_size_continuous(range = c(2, 6), breaks = 2:4) +
+  scale_x_log10() +
+  labs(
+    x      = "EB05 (log scale)",
+    y      = NULL,
+    colour = "Vaccine",
+    size   = "Methods",
+    title  = "Thrombotic Signals — COVID-19 Vaccines"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "right",
+    axis.text.y     = element_text(size = 11)
+  )
+```
+
+```{r thrombosis-table}
+covid |>
+  filter(
+    grepl("thrombo|embol|heparin|anti-platelet|platelet factor",
+          event, ignore.case = TRUE),
+    n_methods_flagged >= 2
+  ) |>
+  left_join(first_seen |> select(drug, event, first_quarter),
+            by = c("drug", "event")) |>
+  arrange(desc(eb05)) |>
+  select(vaccine, event, eb05, n_methods_flagged, first_quarter) |>
+  head(20) |>
+  gt() |>
+  tab_header(title = "Top Thrombotic Signals (≥2 methods)") |>
+  cols_label(
+    vaccine           = "Vaccine",
+    event             = "Event",
+    eb05              = "EB05",
+    n_methods_flagged = "Methods",
+    first_quarter     = "First flagged"
+  ) |>
+  fmt_number(eb05, decimals = 1) |>
+  tab_style(
+    style     = cell_fill(color = "#fff3cd"),
+    locations = cells_body(rows = vaccine == "Janssen (J&J)")
+  )
+```
+
+### Cardiac Signals
+
+Cardiac events span all products. Immune-mediated myocarditis appears with EB05 = 36.5
+(2 methods, attributed to "Unknown" product — likely mRNA doses where manufacturer was
+not recorded). The Pfizer Bivalent booster shows the clearest product-labelled cardiac
+signal cluster: acute MI, myocardial ischaemia, and heart rate abnormalities each flagged
+by 4 methods.
+
+```{r cardiac-plot, fig.cap="Cardiac signals (EB05 > 2, ≥2 methods). Immune-mediated myocarditis is the top signal by EB05."}
+cardiac <- covid |>
+  filter(
+    grepl("myocard|pericard|cardiac|heart|tachycard|arrhyth|infarct|fibrillat|ventriculogram",
+          event, ignore.case = TRUE),
+    n_methods_flagged >= 2,
+    eb05 > 2
+  ) |>
+  arrange(desc(eb05)) |>
+  slice_head(n = 25) |>
+  mutate(event = str_trunc(event, 50))
+
+ggplot(cardiac, aes(eb05, fct_reorder(event, eb05), colour = vaccine, size = n_methods_flagged)) +
+  geom_point(alpha = 0.85) +
+  scale_colour_manual(values = vaccine_colours) +
+  scale_size_continuous(range = c(2, 6), breaks = 2:4) +
+  scale_x_log10() +
+  labs(
+    x      = "EB05 (log scale)",
+    y      = NULL,
+    colour = "Vaccine",
+    size   = "Methods",
+    title  = "Top 25 Cardiac Signals — COVID-19 Vaccines"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+### Neurological Signals
+
+Janssen carries the heaviest neurological signal burden: Guillain-Barré syndrome (EB05 = 2.75),
+chronic inflammatory demyelinating polyneuropathy (CIDP, EB05 = 3.0), and peripheral motor
+neuropathy (EB05 = 3.6), all flagged by ≥2 methods. Facial nerve/Bell's palsy and
+demyelinating conditions appear across mRNA products at lower EB05 magnitudes.
+
+```{r neuro-plot, fig.cap="Neurological signals (EB05 > 1.5, ≥2 methods)."}
+neuro <- covid |>
+  filter(
+    grepl("guillain|bell|palsy|encephalit|myelit|neuropath|seizure|convuls|stroke|facial|demyelinat|polyneurop",
+          event, ignore.case = TRUE),
+    n_methods_flagged >= 2,
+    eb05 > 1.5
+  ) |>
+  mutate(event = str_trunc(event, 52))
+
+ggplot(neuro, aes(eb05, fct_reorder(event, eb05), colour = vaccine, size = n_methods_flagged)) +
+  geom_point(alpha = 0.85) +
+  scale_colour_manual(values = vaccine_colours) +
+  scale_size_continuous(range = c(2, 6), breaks = 2:4) +
+  labs(
+    x      = "EB05",
+    y      = NULL,
+    colour = "Vaccine",
+    size   = "Methods",
+    title  = "Neurological Signals — COVID-19 Vaccines"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+### Anaphylaxis and Hypersensitivity
+
+```{r allergy-table}
+covid |>
+  filter(
+    grepl("anaphylax|hypersensit|allerg|angioedema",
+          event, ignore.case = TRUE),
+    n_methods_flagged >= 2
+  ) |>
+  arrange(desc(eb05)) |>
+  select(vaccine, event, eb05, n_methods_flagged) |>
+  gt() |>
+  tab_header(title = "Anaphylaxis and Hypersensitivity Signals (≥2 methods)") |>
+  cols_label(
+    vaccine           = "Vaccine",
+    event             = "Event",
+    eb05              = "EB05",
+    n_methods_flagged = "Methods"
+  ) |>
+  fmt_number(eb05, decimals = 2)
+```
+
+Moderna shows the strongest Type I hypersensitivity signal (EB05 = 5.0, 4 methods).
+Novavax — the protein-subunit product — shows allergy-to-vaccine and Type II
+hypersensitivity signals, consistent with its adjuvant-driven mechanism.
+
+## Pfizer-BioNTech vs Moderna: Head-to-Head Comparison
+
+Both mRNA products share a large set of co-flagged events, enabling direct comparison.
+Where both products are flagged at ≥2 methods, Pfizer's EB05 tends to exceed Moderna's
+(median ratio ≈ 1.5–2×). This likely reflects Pfizer's higher administered volume rather
+than a true difference in per-dose risk.
+
+```{r pfizer-moderna-scatter, fig.cap="Pfizer vs Moderna EB05 for events flagged by both products (≥2 methods). Dashed line = parity. Points above the line have higher Pfizer signal strength."}
+pf  <- covid |> filter(vaccine == "Pfizer-BioNTech", n_methods_flagged >= 2) |>
+       select(event, eb05_pfizer = eb05)
+mod <- covid |> filter(vaccine == "Moderna",         n_methods_flagged >= 2) |>
+       select(event, eb05_moderna = eb05)
+
+both <- inner_join(pf, mod, by = "event") |>
+  mutate(
+    domain = case_when(
+      grepl("myocard|pericard|cardiac|heart|tachycard|arrhyth|infarct", event, ignore.case=TRUE) ~ "Cardiac",
+      grepl("thrombo|embol|coagul|platelet",                            event, ignore.case=TRUE) ~ "Thrombotic",
+      grepl("guillain|neuropath|encephalit|myelit|seizure|stroke",      event, ignore.case=TRUE) ~ "Neurological",
+      grepl("anaphylax|allerg|hypersensit|angioedema",                  event, ignore.case=TRUE) ~ "Allergic",
+      TRUE ~ "Other"
+    )
+  )
+
+ggplot(both, aes(eb05_moderna, eb05_pfizer, colour = domain)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", colour = "grey50") +
+  geom_point(alpha = 0.5, size = 1.8) +
+  scale_x_log10(labels = label_number(accuracy = 0.1)) +
+  scale_y_log10(labels = label_number(accuracy = 0.1)) +
+  scale_colour_brewer(palette = "Set1") +
+  labs(
+    x      = "Moderna EB05 (log scale)",
+    y      = "Pfizer-BioNTech EB05 (log scale)",
+    colour = "Domain",
+    title  = "Pfizer vs Moderna: Matched Event Signals"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+## Signal Emergence Timeline
+
+When did each signal first cross the ≥2 method threshold? The chart below shows the
+first quarter a signal was detected for each vaccine product, ordered by emergence date.
+Signals appearing in 2020-Q4 or 2021-Q1 reflect the earliest post-authorisation reporting
+period; later emergence suggests either rare events requiring larger exposure denominators
+or signals specific to booster/bivalent formulations.
+
+```{r emergence-timeline}
+#| fig-height: 9
+#| fig-cap: "Quarter of first detection (≥2 methods) for the top 40 COVID vaccine signals by EB05. Each point is one (vaccine, event) pair."
+top40_events <- covid |>
+  filter(n_methods_flagged >= 2) |>
+  group_by(event) |>
+  summarise(max_eb05 = max(eb05), .groups = "drop") |>
+  arrange(desc(max_eb05)) |>
+  slice_head(n = 40) |>
+  pull(event)
+
+first_seen |>
+  filter(event %in% top40_events) |>
+  mutate(
+    event         = str_trunc(event, 50),
+    first_quarter = as.Date(paste0(
+      str_extract(first_quarter, "^\\d{4}"), "-",
+      sprintf("%02d", (as.integer(str_extract(first_quarter, "\\d$")) - 1L) * 3L + 1L),
+      "-01"
+    ))
+  ) |>
+  ggplot(aes(first_quarter, fct_reorder(event, first_quarter, min),
+             colour = vaccine)) +
+  geom_point(size = 3, alpha = 0.85) +
+  scale_colour_manual(values = vaccine_colours) +
+  scale_x_date(date_breaks = "6 months", date_labels = "%Y-Q%q") +
+  labs(
+    x      = "First quarter flagged",
+    y      = NULL,
+    colour = "Vaccine",
+    title  = "Signal Emergence — Top 40 COVID Vaccine Signals"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text.x = element_text(angle = 35, hjust = 1),
+    axis.text.y = element_text(size = 10)
+  )
+```
+
+```{r emergence-table}
+covid |>
+  filter(n_methods_flagged >= 2, eb05 > 3) |>
+  left_join(first_seen |> select(drug, event, first_quarter),
+            by = c("drug", "event")) |>
+  arrange(first_quarter, desc(eb05)) |>
+  select(first_quarter, vaccine, event, eb05, n_methods_flagged) |>
+  gt() |>
+  tab_header(
+    title    = "High-Magnitude Signals by First Detection Quarter",
+    subtitle = "EB05 > 3, ≥2 methods flagged"
+  ) |>
+  cols_label(
+    first_quarter     = "First flagged",
+    vaccine           = "Vaccine",
+    event             = "Event",
+    eb05              = "EB05",
+    n_methods_flagged = "Methods"
+  ) |>
+  fmt_number(eb05, decimals = 1) |>
+  tab_row_group(
+    label = "2020",
+    rows  = grepl("^2020", first_quarter)
+  ) |>
+  tab_row_group(
+    label = "2021",
+    rows  = grepl("^2021", first_quarter)
+  ) |>
+  tab_row_group(
+    label = "2022+",
+    rows  = grepl("^202[2-9]|^203", first_quarter)
+  ) |>
+  data_color(columns = eb05, palette = "Blues")
+```
+
+## Platform Comparison
+
+```{r platform-heatmap, fig.cap="Top 30 events by maximum EB05 across all products, shown for each vaccine. Grey = not flagged at ≥2 methods."}
+top_events <- covid |>
+  filter(n_methods_flagged >= 2) |>
+  group_by(event) |>
+  summarise(max_eb05 = max(eb05), .groups = "drop") |>
+  arrange(desc(max_eb05)) |>
+  slice_head(n = 30) |>
+  pull(event)
+
+heatmap_data <- covid |>
+  filter(event %in% top_events, n_methods_flagged >= 2) |>
+  select(vaccine, event, eb05) |>
+  complete(vaccine, event, fill = list(eb05 = NA)) |>
+  mutate(event = str_trunc(event, 48))
+
+ggplot(heatmap_data,
+       aes(vaccine, fct_reorder(event, eb05, max, na.rm = TRUE), fill = log10(eb05 + 0.01))) +
+  geom_tile(colour = "white", linewidth = 0.3) +
+  scale_fill_gradientn(
+    colours  = c("#f7fbff", "#6baed6", "#08519c"),
+    na.value = "#f0f0f0",
+    name     = "log₁₀(EB05)",
+    labels   = function(x) round(10^x, 1)
+  ) +
+  labs(
+    x     = NULL,
+    y     = NULL,
+    title = "Top 30 Signals by EB05 — COVID-19 Vaccines"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    axis.text.x  = element_text(angle = 35, hjust = 1),
+    panel.grid   = element_blank()
+  )
+```
+
+## Interpretation Summary
+
+| Domain | Key finding | Product(s) |
+|---|---|---|
+| Thrombosis | TTS cluster — EB05 18.4, all 4 methods | Janssen |
+| Cardiac | Immune-mediated myocarditis EB05 36.5; cardiac cluster in bivalent boosters | mRNA (unspecified); Pfizer Bivalent |
+| Neurological | GBS, CIDP, demyelinating conditions | Janssen (strongest); mRNA (lower magnitude) |
+| Allergic | Type I hypersensitivity EB05 5.0; adjuvant-related signals | Moderna; Novavax |
+| Post-COVID | Post-acute COVID-19 syndrome flagged by both mRNA products | Pfizer, Moderna |
+
+The Janssen product's disproportionate representation in thrombotic and neurological signal
+clusters — relative to its dose volume — is the dominant cross-domain finding and is
+consistent with published regulatory assessments. The mRNA products share a large,
+lower-magnitude signal landscape dominated by reactogenicity, cardiac monitoring events,
+and post-COVID sequelae.
+
+## Methods
+
+**Data source:** CDC VAERS (Vaccine Adverse Event Reporting System), 1990–present.
+
+**Signal detection:** Four independent disproportionality methods applied to each
+(vaccine, adverse event) pair:
+
+- *GPS* — Gamma-Poisson Shrinker (DuMouchel 1999 framework). EB05 is the 5th-percentile lower bound of the two-component Gamma mixture posterior on the **linear** RR scale — a direct posterior credible bound, not the EBGM geometric mean (which uses a log transformation). EB05 > 2 is the threshold.
+- *PRR* — Proportional Reporting Ratio. Flagged at PRR > 2, χ² > 4, n ≥ 3.
+- *ROR* — Reporting Odds Ratio. Lower 95% CI > 1.
+- *BCPNN/IC* — Bayesian Confidence Propagation Neural Network Information Component. IC025 > 0.
+
+**Signal definition:** Flagged by ≥2 of 4 methods. Primary effect-size metric: EB05.
+
+**Implementation:** `safetysignal` R package (GPS dual-Gamma posterior); standard formulae for PRR, ROR, IC.
+
+---
+
+*Analysis produced by [Global Patient Safety](https://globalpatientsafety.com).
+Data: public domain (CDC). Not medical advice.*

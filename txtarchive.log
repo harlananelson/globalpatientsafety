@@ -1,0 +1,325 @@
+2026-05-06 06:21:20,143 - txtarchive - INFO - Archiving files from: /home/harlan/projects/vaers-mobi
+2026-05-06 06:21:20,143 - txtarchive - INFO - Excluding directories: {'.git', '.ipynb_checkpoints', 'renv,app_cache,.git', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:21:20,143 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:21:20,143 - txtarchive - INFO - Processing file: /home/harlan/projects/vaers-mobi/app.R
+2026-05-06 06:21:20,143 - txtarchive - INFO - Archiving files from: /home/harlan/projects/safetysignal
+2026-05-06 06:21:20,144 - txtarchive - INFO - Excluding directories: {'.git', '.ipynb_checkpoints', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:21:20,144 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:21:20,144 - txtarchive - INFO - Processing file: /home/harlan/projects/vaers-mobi/dependencies.R
+2026-05-06 06:21:20,144 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/.gitignore
+2026-05-06 06:21:20,144 - txtarchive - INFO - Processing file: /home/harlan/projects/vaers-mobi/app/main.R
+2026-05-06 06:21:20,145 - txtarchive - INFO - Archiving files from: /home/harlan/projects/faers-mobi
+2026-05-06 06:21:20,145 - txtarchive - INFO - Excluding directories: {'.git', '.ipynb_checkpoints', 'renv,app_cache,.git', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:21:20,145 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:21:20,145 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app.R
+2026-05-06 06:21:20,145 - txtarchive - INFO - Processing file: /home/harlan/projects/vaers-mobi/app/logic/__init__.R
+2026-05-06 06:21:20,146 - txtarchive - INFO - Processing file: /home/harlan/projects/vaers-mobi/app/view/signal_timeline.R
+2026-05-06 06:21:20,146 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/.gitignore
+2026-05-06 06:21:20,146 - txtarchive - INFO - Processing file: /home/harlan/projects/vaers-mobi/app/view/__init__.R
+2026-05-06 06:21:20,146 - txtarchive - INFO - Processing file: /home/harlan/projects/vaers-mobi/app/view/signal_table.R
+2026-05-06 06:21:20,147 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/dependencies.R
+2026-05-06 06:21:20,147 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat.R
+2026-05-06 06:21:20,148 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/gamma-mle.R
+2026-05-06 06:21:20,148 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/percentile.R
+2026-05-06 06:21:20,148 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/main.R
+2026-05-06 06:21:20,148 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/gps-detect.R
+2026-05-06 06:21:20,149 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/prr.R
+2026-05-06 06:21:20,149 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/prior.R
+2026-05-06 06:21:20,149 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/posterior.R
+2026-05-06 06:21:20,149 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/.gitignore
+2026-05-06 06:21:20,149 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/ror.R
+2026-05-06 06:21:20,150 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/observed-expected.R
+2026-05-06 06:21:20,150 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/activate.R
+2026-05-06 06:21:20,150 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/bcpnn.R
+2026-05-06 06:21:20,150 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/safetysignal-package.R
+2026-05-06 06:21:20,150 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/signal.R
+2026-05-06 06:21:20,150 - txtarchive - INFO - Archive created at: /tmp/sage-review/vaers-mobi.txt
+2026-05-06 06:21:20,150 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/detect-all.R
+2026-05-06 06:21:20,151 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/R/contingency.R
+2026-05-06 06:21:20,160 - txtarchive - INFO - Archiving files from: /home/harlan/projects/pico-dag
+2026-05-06 06:21:20,160 - txtarchive - INFO - Excluding directories: {'.git', '.ipynb_checkpoints', 'renv,app_cache,.git', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:21:20,161 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:21:20,161 - txtarchive - INFO - Processing file: /home/harlan/projects/pico-dag/app.R
+2026-05-06 06:21:20,161 - txtarchive - INFO - Archiving files from: /home/harlan/projects/aers-mobi
+2026-05-06 06:21:20,161 - txtarchive - INFO - Processing file: /home/harlan/projects/pico-dag/.gitignore
+2026-05-06 06:21:20,161 - txtarchive - INFO - Excluding directories: {'.git', '.ipynb_checkpoints', 'renv,app_cache,.git', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:21:20,161 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:21:20,162 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app.R
+2026-05-06 06:21:20,162 - txtarchive - INFO - Processing file: /home/harlan/projects/pico-dag/app/app.R
+2026-05-06 06:21:20,163 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/.gitignore
+2026-05-06 06:21:20,163 - txtarchive - INFO - Processing file: /home/harlan/projects/pico-dag/scripts/build_umls_db.R
+2026-05-06 06:21:20,163 - txtarchive - INFO - Archiving files from: /home/harlan/projects/globalpatientsafety
+2026-05-06 06:21:20,163 - txtarchive - INFO - Excluding directories: {'.git', '.ipynb_checkpoints', 'renv,app_cache,.git', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:21:20,163 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:21:20,163 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app.R
+2026-05-06 06:21:20,164 - txtarchive - INFO - Processing file: /home/harlan/projects/pico-dag/app/R/umls_client_duckdb.R
+2026-05-06 06:21:20,164 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/.gitignore
+2026-05-06 06:21:20,164 - txtarchive - INFO - Processing file: /home/harlan/projects/pico-dag/app/R/code_lists.R
+2026-05-06 06:21:20,165 - txtarchive - INFO - Processing file: /home/harlan/projects/pico-dag/app/R/umls_client.R
+2026-05-06 06:21:20,165 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/dependencies.R
+2026-05-06 06:21:20,165 - txtarchive - INFO - Processing file: /home/harlan/projects/pico-dag/app/R/dag_walker.R
+2026-05-06 06:21:20,165 - txtarchive - INFO - Processing file: /home/harlan/projects/pico-dag/app/R/network_viz.R
+2026-05-06 06:21:20,166 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/dependencies.R
+2026-05-06 06:21:20,166 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/main.R
+2026-05-06 06:21:20,168 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/.gitignore
+2026-05-06 06:21:20,168 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app/main.R
+2026-05-06 06:21:20,168 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/activate.R
+2026-05-06 06:21:20,169 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/.gitignore
+2026-05-06 06:21:20,170 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/activate.R
+2026-05-06 06:21:20,172 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/logic/__init__.R
+2026-05-06 06:21:20,173 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/logic/signal_engine.R
+2026-05-06 06:21:20,173 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/view/signal_timeline.R
+2026-05-06 06:21:20,174 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/view/__init__.R
+2026-05-06 06:21:20,174 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/view/signal_table.R
+2026-05-06 06:21:20,175 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/tests/testthat/test-class-effect-filter.R
+2026-05-06 06:21:20,175 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/tests/testthat/test-main.R
+2026-05-06 06:21:20,175 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/tests/cypress/.gitignore
+2026-05-06 06:21:20,177 - txtarchive - INFO - Archive created at: /tmp/sage-review/pico-dag.txt
+2026-05-06 06:21:20,201 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/python.R
+2026-05-06 06:21:20,202 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/packrat.R
+2026-05-06 06:21:20,203 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/ci.R
+2026-05-06 06:21:20,204 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/rsconnect.R
+2026-05-06 06:21:20,205 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/docker.R
+2026-05-06 06:21:20,206 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/packages.R
+2026-05-06 06:21:20,206 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/package-sources.R
+2026-05-06 06:21:20,207 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/package-install.R
+2026-05-06 06:21:20,207 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/renv.R
+2026-05-06 06:21:20,207 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/profiles.R
+2026-05-06 06:21:20,208 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/faq.R
+2026-05-06 06:21:20,211 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/watchdog-process.R
+2026-05-06 06:21:20,211 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/activate.R
+2026-05-06 06:21:20,213 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/vendor/renv.R
+2026-05-06 06:21:20,219 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/python.R
+2026-05-06 06:21:20,219 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/packrat.R
+2026-05-06 06:21:20,220 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/ci.R
+2026-05-06 06:21:20,221 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/rsconnect.R
+2026-05-06 06:21:20,222 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/docker.R
+2026-05-06 06:21:20,223 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/packages.R
+2026-05-06 06:21:20,223 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/package-sources.R
+2026-05-06 06:21:20,224 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/package-install.R
+2026-05-06 06:21:20,224 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/renv.R
+2026-05-06 06:21:20,225 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/profiles.R
+2026-05-06 06:21:20,226 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/faq.R
+2026-05-06 06:21:20,229 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/watchdog-process.R
+2026-05-06 06:21:20,229 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/activate.R
+2026-05-06 06:21:20,231 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/vendor/renv.R
+2026-05-06 06:21:20,273 - txtarchive - INFO - Archive created at: /tmp/sage-review/aers-mobi.txt
+2026-05-06 06:21:21,308 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-prior.R
+2026-05-06 06:21:21,308 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app/logic/tools.R
+2026-05-06 06:21:21,313 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-percentile.R
+2026-05-06 06:21:21,313 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app/logic/articles.R
+2026-05-06 06:21:21,313 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app/logic/__init__.R
+2026-05-06 06:21:21,313 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-posterior.R
+2026-05-06 06:21:21,313 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app/logic/signal_engine.R
+2026-05-06 06:21:21,313 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-contingency.R
+2026-05-06 06:21:21,313 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app/view/articles.R
+2026-05-06 06:21:21,313 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/logic/__init__.R
+2026-05-06 06:21:21,314 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-gamma-mle.R
+2026-05-06 06:21:21,314 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/logic/signal_engine.R
+2026-05-06 06:21:21,314 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app/view/article_covid_vaccine.R
+2026-05-06 06:21:21,314 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/view/signal_timeline.R
+2026-05-06 06:21:21,314 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-prr.R
+2026-05-06 06:21:21,314 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app/view/portal.R
+2026-05-06 06:21:21,314 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app/view/__init__.R
+2026-05-06 06:21:21,314 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-observed-expected.R
+2026-05-06 06:21:21,314 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/view/__init__.R
+2026-05-06 06:21:21,314 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/app/view/signal_table.R
+2026-05-06 06:21:21,315 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/view/signal_table.R
+2026-05-06 06:21:21,315 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-detect-all.R
+2026-05-06 06:21:21,315 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/tests/testthat/test-main.R
+2026-05-06 06:21:21,315 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/tests/testthat/test-main.R
+2026-05-06 06:21:21,315 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-ror.R
+2026-05-06 06:21:21,315 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/tests/cypress/.gitignore
+2026-05-06 06:21:21,315 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/tests/cypress/.gitignore
+2026-05-06 06:21:21,315 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-signal.R
+2026-05-06 06:21:21,316 - txtarchive - INFO - Processing file: /home/harlan/projects/safetysignal/tests/testthat/test-bcpnn.R
+2026-05-06 06:21:21,332 - txtarchive - INFO - Archive created at: /tmp/sage-review/safetysignal.txt
+2026-05-06 06:21:21,332 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/python.R
+2026-05-06 06:21:21,333 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/python.R
+2026-05-06 06:21:21,333 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/packrat.R
+2026-05-06 06:21:21,333 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/packrat.R
+2026-05-06 06:21:21,334 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/ci.R
+2026-05-06 06:21:21,334 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/ci.R
+2026-05-06 06:21:21,335 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/rsconnect.R
+2026-05-06 06:21:21,335 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/rsconnect.R
+2026-05-06 06:21:21,336 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/docker.R
+2026-05-06 06:21:21,336 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/docker.R
+2026-05-06 06:21:21,337 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/packages.R
+2026-05-06 06:21:21,337 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/package-sources.R
+2026-05-06 06:21:21,337 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/packages.R
+2026-05-06 06:21:21,338 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/package-sources.R
+2026-05-06 06:21:21,338 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/package-install.R
+2026-05-06 06:21:21,338 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/renv.R
+2026-05-06 06:21:21,338 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/package-install.R
+2026-05-06 06:21:21,338 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/profiles.R
+2026-05-06 06:21:21,338 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/renv.R
+2026-05-06 06:21:21,339 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/profiles.R
+2026-05-06 06:21:21,339 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/faq.R
+2026-05-06 06:21:21,340 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/faq.R
+2026-05-06 06:21:21,342 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/watchdog-process.R
+2026-05-06 06:21:21,342 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/activate.R
+2026-05-06 06:21:21,342 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/watchdog-process.R
+2026-05-06 06:21:21,342 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/activate.R
+2026-05-06 06:21:21,344 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/vendor/renv.R
+2026-05-06 06:21:21,344 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/vendor/renv.R
+2026-05-06 06:21:21,350 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/python.R
+2026-05-06 06:21:21,351 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/packrat.R
+2026-05-06 06:21:21,351 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/python.R
+2026-05-06 06:21:21,352 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/packrat.R
+2026-05-06 06:21:21,352 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/ci.R
+2026-05-06 06:21:21,353 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/ci.R
+2026-05-06 06:21:21,353 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/rsconnect.R
+2026-05-06 06:21:21,354 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/rsconnect.R
+2026-05-06 06:21:21,354 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/docker.R
+2026-05-06 06:21:21,355 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/docker.R
+2026-05-06 06:21:21,355 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/packages.R
+2026-05-06 06:21:21,356 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/package-sources.R
+2026-05-06 06:21:21,356 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/packages.R
+2026-05-06 06:21:21,356 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/package-install.R
+2026-05-06 06:21:21,356 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/package-sources.R
+2026-05-06 06:21:21,356 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/renv.R
+2026-05-06 06:21:21,357 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/package-install.R
+2026-05-06 06:21:21,357 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/profiles.R
+2026-05-06 06:21:21,357 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/renv.R
+2026-05-06 06:21:21,357 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/profiles.R
+2026-05-06 06:21:21,358 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/faq.R
+2026-05-06 06:21:21,359 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/faq.R
+2026-05-06 06:21:21,360 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/watchdog-process.R
+2026-05-06 06:21:21,361 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/activate.R
+2026-05-06 06:21:21,361 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/watchdog-process.R
+2026-05-06 06:21:21,361 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/activate.R
+2026-05-06 06:21:21,362 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/vendor/renv.R
+2026-05-06 06:21:21,363 - txtarchive - INFO - Processing file: /home/harlan/projects/globalpatientsafety/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/vendor/renv.R
+2026-05-06 06:21:21,411 - txtarchive - INFO - Archive created at: /tmp/sage-review/globalpatientsafety.txt
+2026-05-06 06:21:21,416 - txtarchive - INFO - Archive created at: /tmp/sage-review/faers-mobi.txt
+2026-05-06 06:21:46,459 - txtarchive - INFO - Archiving files from: /home/harlan/projects/aers-mobi
+2026-05-06 06:21:46,459 - txtarchive - INFO - Excluding directories: {'renv,app_cache,.git,library,resources', '.git', '.ipynb_checkpoints', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:21:46,459 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:21:46,459 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app.R
+2026-05-06 06:21:46,460 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/.gitignore
+2026-05-06 06:21:46,461 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/dependencies.R
+2026-05-06 06:21:46,462 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/main.R
+2026-05-06 06:21:46,462 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/.gitignore
+2026-05-06 06:21:46,463 - txtarchive - INFO - Archiving files from: /home/harlan/projects/faers-mobi
+2026-05-06 06:21:46,463 - txtarchive - INFO - Excluding directories: {'renv,app_cache,.git,library,resources', '.git', '.ipynb_checkpoints', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:21:46,463 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/activate.R
+2026-05-06 06:21:46,463 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:21:46,463 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app.R
+2026-05-06 06:21:46,464 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/.gitignore
+2026-05-06 06:21:46,465 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/dependencies.R
+2026-05-06 06:21:46,465 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/logic/__init__.R
+2026-05-06 06:21:46,465 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/logic/signal_engine.R
+2026-05-06 06:21:46,465 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/view/signal_timeline.R
+2026-05-06 06:21:46,466 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/view/__init__.R
+2026-05-06 06:21:46,466 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/main.R
+2026-05-06 06:21:46,466 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/app/view/signal_table.R
+2026-05-06 06:21:46,467 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/tests/testthat/test-class-effect-filter.R
+2026-05-06 06:21:46,467 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/tests/testthat/test-main.R
+2026-05-06 06:21:46,467 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/.gitignore
+2026-05-06 06:21:46,467 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/tests/cypress/.gitignore
+2026-05-06 06:21:46,467 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/activate.R
+2026-05-06 06:21:46,484 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/python.R
+2026-05-06 06:21:46,485 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/packrat.R
+2026-05-06 06:21:46,486 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/ci.R
+2026-05-06 06:21:46,486 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/rsconnect.R
+2026-05-06 06:21:46,487 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/docker.R
+2026-05-06 06:21:46,488 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/packages.R
+2026-05-06 06:21:46,488 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/package-sources.R
+2026-05-06 06:21:46,489 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/package-install.R
+2026-05-06 06:21:46,489 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/renv.R
+2026-05-06 06:21:46,489 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/profiles.R
+2026-05-06 06:21:46,490 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/faq.R
+2026-05-06 06:21:46,492 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/watchdog-process.R
+2026-05-06 06:21:46,493 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/activate.R
+2026-05-06 06:21:46,494 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/vendor/renv.R
+2026-05-06 06:21:46,500 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/python.R
+2026-05-06 06:21:46,500 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/packrat.R
+2026-05-06 06:21:46,502 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/ci.R
+2026-05-06 06:21:46,502 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/rsconnect.R
+2026-05-06 06:21:46,503 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/docker.R
+2026-05-06 06:21:46,504 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/packages.R
+2026-05-06 06:21:46,504 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/package-sources.R
+2026-05-06 06:21:46,505 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/package-install.R
+2026-05-06 06:21:46,505 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/renv.R
+2026-05-06 06:21:46,505 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/profiles.R
+2026-05-06 06:21:46,506 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/faq.R
+2026-05-06 06:21:46,509 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/watchdog-process.R
+2026-05-06 06:21:46,509 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/activate.R
+2026-05-06 06:21:46,510 - txtarchive - INFO - Processing file: /home/harlan/projects/aers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/vendor/renv.R
+2026-05-06 06:21:46,553 - txtarchive - INFO - Archive created at: /tmp/sage-review/aers-mobi.txt
+2026-05-06 06:21:47,609 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/logic/__init__.R
+2026-05-06 06:21:47,609 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/logic/signal_engine.R
+2026-05-06 06:21:47,610 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/view/signal_timeline.R
+2026-05-06 06:21:47,610 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/view/__init__.R
+2026-05-06 06:21:47,610 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/app/view/signal_table.R
+2026-05-06 06:21:47,611 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/tests/testthat/test-main.R
+2026-05-06 06:21:47,611 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/tests/cypress/.gitignore
+2026-05-06 06:21:47,629 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/python.R
+2026-05-06 06:21:47,629 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/packrat.R
+2026-05-06 06:21:47,630 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/ci.R
+2026-05-06 06:21:47,631 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/rsconnect.R
+2026-05-06 06:21:47,631 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/docker.R
+2026-05-06 06:21:47,632 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/packages.R
+2026-05-06 06:21:47,633 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/package-sources.R
+2026-05-06 06:21:47,633 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/package-install.R
+2026-05-06 06:21:47,633 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/renv.R
+2026-05-06 06:21:47,634 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/profiles.R
+2026-05-06 06:21:47,635 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/doc/faq.R
+2026-05-06 06:21:47,637 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/watchdog-process.R
+2026-05-06 06:21:47,637 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/activate.R
+2026-05-06 06:21:47,639 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/R-4.4/x86_64-pc-linux-gnu/renv/resources/vendor/renv.R
+2026-05-06 06:21:47,645 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/python.R
+2026-05-06 06:21:47,645 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/packrat.R
+2026-05-06 06:21:47,646 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/ci.R
+2026-05-06 06:21:47,647 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/rsconnect.R
+2026-05-06 06:21:47,648 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/docker.R
+2026-05-06 06:21:47,649 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/packages.R
+2026-05-06 06:21:47,649 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/package-sources.R
+2026-05-06 06:21:47,649 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/package-install.R
+2026-05-06 06:21:47,650 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/renv.R
+2026-05-06 06:21:47,650 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/profiles.R
+2026-05-06 06:21:47,651 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/doc/faq.R
+2026-05-06 06:21:47,653 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/watchdog-process.R
+2026-05-06 06:21:47,653 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/activate.R
+2026-05-06 06:21:47,655 - txtarchive - INFO - Processing file: /home/harlan/projects/faers-mobi/renv/library/linux-ubuntu-noble/R-4.5/x86_64-pc-linux-gnu/renv/resources/vendor/renv.R
+2026-05-06 06:21:47,707 - txtarchive - INFO - Archive created at: /tmp/sage-review/faers-mobi.txt
+2026-05-06 06:22:01,429 - txtarchive - INFO - Archiving files from: /home/harlan/projects/aers-mobi
+2026-05-06 06:22:01,430 - txtarchive - INFO - Excluding directories: {'.git', '.ipynb_checkpoints', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:22:01,430 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:22:01,430 - txtarchive - INFO - Using explicit file list mode with 6 files
+2026-05-06 06:22:01,430 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/aers-mobi/app/logic/__init__.R
+2026-05-06 06:22:01,430 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/aers-mobi/app/logic/signal_engine.R
+2026-05-06 06:22:01,430 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/aers-mobi/app/main.R
+2026-05-06 06:22:01,430 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/aers-mobi/app/view/__init__.R
+2026-05-06 06:22:01,431 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/aers-mobi/app/view/signal_table.R
+2026-05-06 06:22:01,431 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/aers-mobi/app/view/signal_timeline.R
+2026-05-06 06:22:01,431 - txtarchive - INFO - Processed 6 explicit files
+2026-05-06 06:22:01,431 - txtarchive - INFO - Archive created at: /tmp/sage-review/aers-mobi.txt
+2026-05-06 06:22:01,903 - txtarchive - INFO - Archiving files from: /home/harlan/projects/faers-mobi
+2026-05-06 06:22:01,903 - txtarchive - INFO - Excluding directories: {'.git', '.ipynb_checkpoints', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:22:01,903 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:22:01,903 - txtarchive - INFO - Using explicit file list mode with 6 files
+2026-05-06 06:22:01,904 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/faers-mobi/app/logic/__init__.R
+2026-05-06 06:22:01,904 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/faers-mobi/app/logic/signal_engine.R
+2026-05-06 06:22:01,904 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/faers-mobi/app/main.R
+2026-05-06 06:22:01,904 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/faers-mobi/app/view/__init__.R
+2026-05-06 06:22:01,904 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/faers-mobi/app/view/signal_table.R
+2026-05-06 06:22:01,904 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/faers-mobi/app/view/signal_timeline.R
+2026-05-06 06:22:01,905 - txtarchive - INFO - Processed 6 explicit files
+2026-05-06 06:22:01,905 - txtarchive - INFO - Archive created at: /tmp/sage-review/faers-mobi.txt
+2026-05-06 06:22:10,318 - txtarchive - INFO - Archiving files from: /home/harlan/projects/globalpatientsafety
+2026-05-06 06:22:10,319 - txtarchive - INFO - Excluding directories: {'.git', '.ipynb_checkpoints', '.venv', '.pytest_cache', 'build', '__pycache__'}
+2026-05-06 06:22:10,319 - txtarchive - INFO - Ensured output directory exists: /tmp/sage-review
+2026-05-06 06:22:10,319 - txtarchive - INFO - Using explicit file list mode with 10 files
+2026-05-06 06:22:10,319 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/globalpatientsafety/app/logic/articles.R
+2026-05-06 06:22:10,319 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/globalpatientsafety/app/logic/__init__.R
+2026-05-06 06:22:10,319 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/globalpatientsafety/app/logic/signal_engine.R
+2026-05-06 06:22:10,319 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/globalpatientsafety/app/logic/tools.R
+2026-05-06 06:22:10,319 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/globalpatientsafety/app/main.R
+2026-05-06 06:22:10,320 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/globalpatientsafety/app/view/article_covid_vaccine.R
+2026-05-06 06:22:10,320 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/globalpatientsafety/app/view/articles.R
+2026-05-06 06:22:10,320 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/globalpatientsafety/app/view/__init__.R
+2026-05-06 06:22:10,320 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/globalpatientsafety/app/view/portal.R
+2026-05-06 06:22:10,320 - txtarchive - INFO - Processing explicit file: /home/harlan/projects/globalpatientsafety/app/view/signal_table.R
+2026-05-06 06:22:10,320 - txtarchive - INFO - Processed 10 explicit files
+2026-05-06 06:22:10,321 - txtarchive - INFO - Archive created at: /tmp/sage-review/globalpatientsafety.txt
