@@ -1077,3 +1077,100 @@ TEST: `aers-mobi/tests/testthat/test-class-effect-filter.R` asserts that searchC
 Open question from the issue resolved: **no MSSO license needed**. The `meddra_hierarchy.parquet` is UMLS-sourced (PT → CUI via UMLS REST API), and UMLS tracks CUI history across releases. Bridge work for step 4 (MedDRA event-side) can be built via UMLS history API without MSSO.
 
 Steps 1–2 still gating. Step 1 = add version stamps to signals parquet (meddra_version, diana_version, atc_version at compute time). No external data dependencies — pure pipeline metadata. Ready to implement when prioritized.
+
+## 2026-05-16 — pico-dag review-fix loop (4-model AskSage)
+
+Ran multi-model review-fix loop on `/home/harlan/projects/pico-dag` to address user-reported issues with the DAG explorer: bare CUI labels, `isa`/`inverse_isa` jargon, Atrial Tumor (C0741300) procedures-tab/graph desync, star-pattern clutter, missing CSV grouping factor, sparse lab/procedure recall.
+
+**Models:** claude-47-opus, gpt-5, gemini-2.5-pro, grok-4-20-reasoning.
+
+**Commits:** baseline `3e158c9`, round-2 `bd14aa6`, round-4 `5936cc0`. Converged after 4 logical passes.
+
+**What landed:** `umls_preferred_name` bulk resolver with mrconso fallback; `RELA_DISPLAY` table + `display_rela()`; `reclassify_by_sty` post-walk pass using MRSTY semantic type (38 types across 5 categories); `mrsty_typed_fallback` tier-4 densifier; `cluster_id` (igraph::components) on exported nodes.csv and edges.csv; `combine_dags::bind_distinct` keyed on `(from_cui, related_cui, rela)` (fixes click-to-extend edge loss); IN-list chunking at 500; namespaced GraphML keys; dead `umls_client.R` deleted; fix for `parent_drug_name` crash in `download_pull_request`.
+
+**Open P0s surfaced, not auto-applied:** visNetwork `visClusterByGroup` UI toggle (cluster_id is in exports but not yet in the viz); `medrt_get_relations` synchronous RxNav latency on first walk (~10-30s); MRSTY-first vs rela-first as the primary classifier (currently rela-first with MRSTY corrector); Incognito-by-default for PHI; per-session DuckDB connection; telemetry coverage of the rendered graph.
+
+**Reviews preserved** under `pico-dag/reviews/{round-2,round-3,round-5-convergence.md}` + `pico-dag/reviews/SUMMARY.md` for audit.
+
+## 2026-05-16 — pico-dag P0 follow-ups (commit 77566f6)
+
+User picked four of the six P0 items surfaced after the review-fix loop:
+
+- **#1 viz clustering toggle (DO)** — visClusterByGroup with `checkboxInput("cluster_stars")` default OFF. .compute_cluster_ids moved to network_viz.R (shared with dag_export.R). Off-root components render as diamond cluster nodes when toggled on.
+- **#2 medrt latency (UNDERSTAND FIRST)** — explained inline: NLM strips drug-disease relations from public RRF; medrt_rxnav.R hits NLM RxNav with 4 HTTP calls per CUI; first walk on unseen seed is 10-30s. Three resolution options offered, awaiting decision.
+- **#3 mrsty-first classifier (WAIT)** — held per user request.
+- **#4 Incognito default ON (DO)** — flipped value=FALSE → TRUE. Help text rewritten to opt-in framing. Clinical-research context warrants opt-in not opt-out.
+- **#5 per-session DuckDB (FIX)** — umls_db_connect detects shiny::getDefaultReactiveDomain() and stores connection in session$userData with onSessionEnded teardown. Scripts/console keep using process-global.
+- **#6 render telemetry (FIX)** — new summarize_dag_render() replays the same node/edge assembly + cap logic build_dag_network uses; dag_build event extended with n_rendered_nodes, n_rendered_edges, n_clipped_by_cap, cluster_count, n_unnamed_nodes, n_components_off_root, has_etiology.
+
+Open: how to resolve medrt latency (prefetch only seed, async via future/mirai, or just progress-message wait). Awaiting user direction.
+
+## 2026-05-29 — UMLS duckdb localized to this workstation
+
+The UMLS Metathesaurus was **not** on this workstation — only the API key
+(`UMLS_API_KEY`), the build scripts (`pico-dag/scripts/{download_umls.sh,build_umls_db.R}`),
+and docs. The actual data lives on the VPS (`root@5.78.69.136`, the Hetzner host serving
+globalpatientsafety.com + picodag) at `/srv/umls/umls.duckdb` (3.9 GB, built 2026-05-09).
+
+- **Verified VPS db** — 14 tables, fully populated: mrconso 9,460,633 · mrrel 17,297,278 ·
+  mrrel_bidir 34,594,556 · mrhier 10,998,526 · mrsty 3,876,927 · concept_preferred 1,381,424 ·
+  concept_definition 297,836 · mrdef 479,504 · mrhier_cui_edges 586,199 · mrsat_loinc 6,002 ·
+  mrdoc 3,673 · mrrank 947 · rela_inverse 1,040 · rel_inverse 12. The raw RRFs in
+  `/srv/umls/rrf/` were partially cleaned post-build (only MRHIER/MRDEF/MRRANK remain), but
+  MRCONSO/MRREL/MRSTY are all loaded into the duckdb — so the missing RRFs are moot.
+- **Copied to** `~/data/umls/umls.duckdb` (scp from VPS). Verified locally: 14 tables,
+  row counts match the VPS exactly. Opens read-only via duckdb/DBI from the global R library
+  (not in this project's renv).
+- **Wired up `/srv/umls`** — `build_umls_db.R` and the pico-dag local backend expect
+  `/srv/umls/umls.duckdb`. Symlinked there (needs sudo, run by user):
+  `sudo mkdir -p /srv/umls && sudo ln -sfn ~/data/umls/umls.duckdb /srv/umls/umls.duckdb`.
+
+## 2026-05-30 — pico-dag VPS divergence is this project's review-fix work (not an "SCD agent" artifact)
+
+Read the two pico-dag snapshots (`snapshots/2026-05-30-vps-code-divergence.md` + `…-claude-assessment.md`). They flagged ~1,200 uncommitted lines on the prod VPS and hypothesized an "SCD agent improvement" existing in exactly one place (urgent, unique).
+
+**Finding (verified read-only in the local pico-dag repo):** the diverging files are *this project's* 2026-05-16 review-fix-loop work, already committed and pushed to `origin/main`. The three "COLLIDES" untracked files on the VPS (`dag_export.R`, `medrt_rxnav.R`, `telemetry.R`) were *created* by that loop and are now tracked upstream; the VPS at `d8f095b` predates them, so a file-copy deploy left them untracked. `d8f095b` is an ancestor of my baseline `3e158c9`; the 18 commits `d8f095b..origin/main` are my loop (`3e158c9 bd14aa6 5936cc0 8ceec96 77566f6`) + Harlan's 2026-05-29 fixes. `umls_client.R` (still modified on VPS) was deleted as dead code by the loop and is correctly untracked upstream — confirming the VPS tree is *behind*, not forked.
+
+**Revised reading:** deploy-hygiene problem (code reached prod by scp/hand-edit onto a stale checkout instead of `git pull`), not a lost-masterpiece problem. Preserve-first is still right, but urgency downgraded. Cannot rule out a prod-only delta without one diff (`ssh root@5.78.69.136 'git diff --stat origin/main'`). Wrote the analysis to `pico-dag/snapshots/2026-05-30-vps-divergence-globalpatientsafety-agent-note.md`.
+
+### 2026-05-30 (follow-up) — SCD agent reviewed; three snapshots now agree
+
+The SCD agent read the globalpatientsafety note and updated the two pico-dag snapshots: added a "⚠️ CORRECTION" header to the primary (`2026-05-30-vps-code-divergence.md`) and a correction header + "Code & document locations" section to the claude-assessment note. All three now concur: VPS is ~18 commits *behind* `origin/main` via deploy-by-copy onto a stale checkout, not a forked unique artifact; **confirming diff is the agreed next step**; preserve-first before any reset.
+
+Re-verified the SCD agent's two additions against the live repo — both correct, one sharper than mine:
+- `git merge-base --is-ancestor d8f095b origin/main` → **true** (clean ancestor — stronger than my "ancestor of my baseline 3e158c9").
+- The `umls_client` change is a **functional rename**, not a bare deletion: baseline `3e158c9` added `umls_client_duckdb.R` (tracked upstream), round-4 `5936cc0` deleted old `umls_client.R`. Justifies excluding `umls_client*` from the confirming diff (stale-vs-renamed add/delete noise). Aligned my note's table row + diff command to match.
+
+Agreed confirming diff (read-only, run by globalpatientsafety agent): `ssh root@5.78.69.136 'cd /srv/shiny-server/pico-dag && git fetch -q origin && git diff --stat origin/main -- ":!.Renviron" ":!app/R/umls_client*"'`. Empty → capture-then-fast-forward; non-empty → genuine prod-only residual to preserve.
+
+### 2026-05-30 (resolved) — confirming diff run; no prod-only delta, VPS is just stale
+
+Ran the agreed read-only confirming diff on the VPS (`ssh root@5.78.69.136`, `git fetch` + `git diff --stat origin/main`; nothing changed). VPS HEAD still `d8f095b`. Result: **24 files, 117 insertions / 10,446 deletions.** The 10,446 deletions are origin/main content absent from the behind-by-18 checkout (reviews/, .asksage-archive.txt, scripts/, and the untracked dag_export/medrt_rxnav/telemetry read as missing by git diff). Inspected all 117 insertions line-by-line across code_lists.R, dag_walker.R, network_viz.R, app.R — **every line is an older form of code already in origin/main** (pre-rewrite purrr::map code-list generators, earlier bfs_walk/walk_concept_dag signatures, DOMAIN_COLORS/visGroups, telemetry field lists, privacy help text). **No novel functionality, no prod-only residual.**
+
+**Conclusion:** VPS is a stale copy of already-committed/pushed work; the "1,200 uncommitted lines / unique artifact" reading is closed as not applicable. Recommended path (for the user to run on the VPS): (1) preserve branch `git checkout -b vps-snapshot-2026-05-30 && git add -A && git commit` (also captures the untracked collide files); (2) `git checkout main && git reset --hard origin/main`; (3) `systemctl restart shiny-server` + smoke-test; (4) fix workflow to deploy via `git pull`, never file-copy onto prod. Result recorded in the globalpatientsafety companion note's "Confirming-diff RESULT" section.
+
+### 2026-05-30 (executed) — VPS preserved + fast-forwarded to origin/main
+
+Ran steps 1–2 on the VPS (`root@5.78.69.136:/srv/shiny-server/pico-dag`):
+- **Step 1 — preserve:** branch `vps-snapshot-2026-05-30` @ `3afe8cd` captures the full stale tree (incl. the untracked collide files and `.Renviron`). Local-only, **never pushed** (contains `.Renviron`). Needed a repo-local git identity (`deploy@globalpatientsafety.com`, not --global) to commit.
+- **Step 2 — fast-forward:** `main` reset --hard from `d8f095b` → `origin/main` HEAD `560740d` (18 commits). `.Renviron` (untracked, secrets) was backed up to `/root/Renviron.vps-backup-2026-05-30` first because `git add -A` had committed it onto the snapshot branch (so a branch switch would have deleted it); restored after reset — back as `-rw------- shiny:shiny`, untracked.
+- **Verified:** `git diff --stat origin/main` (excl `.Renviron`) is empty (tree identical to upstream); `dag_export.R`/`medrt_rxnav.R`/`telemetry.R`/`umls_client_duckdb.R` now tracked+present; stale `umls_client.R` removed; preserve branch intact.
+
+**Not done (left for user):** step 3 `systemctl restart shiny-server` + smoke-test `picodag.globalpatientsafety.com`; step 4 fix deploy workflow to use `git pull`. `vps-snapshot-2026-05-30` and `/root/Renviron.vps-backup-2026-05-30` can be deleted once the restart is confirmed healthy.
+
+### 2026-05-30 (deployed) — shiny-server restarted, smoke-test passed
+
+Step 3 done. `systemctl restart shiny-server` on the VPS → service `active (running)` since 10:15:46 UTC. Smoke-test: `https://picodag.globalpatientsafety.com/` returns **HTTP 200** (35 KB, shiny page). Fresh app log `pico-dag-shiny-20260530-101605` shows a clean R startup (tidyverse attached, "Listening on 127.0.0.1:33913", no errors/Terminated) — i.e. a real session launched on `origin/main` code (`560740d`).
+
+pico-dag VPS is now fully deployed at `origin/main` and healthy. Remaining: step 4 (switch deploy workflow to `git pull`); optional cleanup of `vps-snapshot-2026-05-30` branch + `/root/Renviron.vps-backup-2026-05-30` now that the restart is confirmed healthy.
+
+### 2026-05-30 (step 4 done) — git-pull-only deploy script + prod-edit ban
+
+Root-cause fix for the divergence, committed to pico-dag `origin/main` (HEAD now `f1c7643`):
+- **`scripts/deploy.sh`** — canonical deploy (git fetch → guard → `git pull --ff-only` → restart → HTTP 200 smoke-test). Guard refuses to deploy only on real hazards: modified/deleted *tracked* files, or untracked files that collide with a path `origin/main` tracks; harmless runtime untracked files (app_cache/, logs, .salt, .Renviron) don't block. (Fixed two iterations: too-blunt "any dirty" guard, then a `set -e` propagation bug in the `git cat-file -e` collision check.)
+- **`CLAUDE.md`** — Deployment section: flow is commit → push → `scripts/deploy.sh`; **never edit/scp/rsync onto the prod clone**; deploy.sh aborts on a dirty prod tree by design.
+- **`.gitignore`** — added `app/app_cache/`, `.Renviron`, `app/logs/.salt`.
+
+Validated end-to-end: deploy.sh fast-forwarded VPS `560740d → f1c7643`, restart OK, smoke-test HTTP 200.
+
+**Manual cleanup due ~2026-06-06** (no automated routine — a cloud routine can't SSH the VPS): once prod is confirmed healthy, on the VPS run `cd /srv/shiny-server/pico-dag && git branch -D vps-snapshot-2026-05-30 && rm -f /root/Renviron.vps-backup-2026-05-30`. These are the only recovery artifacts left from the divergence cleanup; the snapshot branch holds `.Renviron` so it was never pushed.
