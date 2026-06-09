@@ -36,6 +36,9 @@
             arrow
             DT
 
+            # UMLS duckdb access (~/data/umls/umls.duckdb via /srv/umls)
+            duckdb
+
             # Dev
             languageserver
           ];

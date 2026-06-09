@@ -8,9 +8,11 @@
 
 box::use(
   shiny[
-    NS, moduleServer, navbarPage, tabPanel, insertTab, showTab,
-    updateNavbarPage, observeEvent, reactive, tags, div, p, a, span,
-    h2, h3, h4, hr, HTML, tagList
+    NS, moduleServer, navbarPage, navbarMenu, tabPanel, insertTab, showTab,
+    updateNavbarPage, observeEvent, observe, reactive,
+    getQueryString, updateQueryString, isolate,
+    tags, div, p, a, span, h2, h3, h4, hr, HTML, tagList,
+    showNotification
   ],
   bslib[bs_theme, font_google],
 )
@@ -19,8 +21,53 @@ box::use(
   app/view/portal,
   app/view/articles,
   app/view/article_covid_vaccine,
+  app/view/article_shingles,
   app/logic/articles[ARTICLES],
 )
+
+# Registry mapping article id -> imported view module. Adding a new article
+# requires (1) a row in ARTICLES, (2) a file app/view/article_<id>.R, and
+# (3) one entry in this list. The UI builder and server then handle the rest.
+.ARTICLE_MODULES <- list(
+  shingles      = article_shingles,
+  covid_vaccine = article_covid_vaccine
+)
+
+# ── Articles dropdown builder ────────────────────────────────────────────────
+# Constructs a navbarMenu("Articles", ...) populated from ARTICLES and the
+# .ARTICLE_MODULES registry. Each menu item is a hidden tabPanel rendered
+# only when activated; the final item is a "View all articles" link to the
+# card-grid index. Articles whose status is not 'published' are skipped.
+.build_articles_menu <- function(ns) {
+  pub <- ARTICLES[ARTICLES$status == "published", , drop = FALSE]
+  article_tabs <- lapply(seq_len(nrow(pub)), function(i) {
+    row <- pub[i, ]
+    mod <- .ARTICLE_MODULES[[row$id]]
+    if (is.null(mod)) return(NULL)
+    tabPanel(
+      row$title,
+      value = paste0("article_", row$id),
+      mod$ui(ns(paste0("article_", row$id)))
+    )
+  })
+  article_tabs <- article_tabs[!vapply(article_tabs, is.null, logical(1))]
+
+  do.call(
+    navbarMenu,
+    c(
+      list("Articles"),
+      article_tabs,
+      list(
+        "----",
+        tabPanel(
+          "View all articles →",
+          value = "articles",
+          articles$ui(ns("articles"))
+        )
+      )
+    )
+  )
+}
 
 # ── Featured article card shown on the Home tab ───────────────────────────────
 
@@ -127,18 +174,14 @@ ui <- function(id) {
       )
     ),
 
-    # ── Articles index ────────────────────────────────────────────────────────
-    tabPanel(
-      "Articles", value = "articles",
-      articles$ui(ns("articles"))
-    ),
-
-    # ── Individual article tabs (pre-rendered, hidden until opened) ───────────
-    tabPanel(
-      "COVID-19 Vaccine Signals",
-      value = "article_covid_vaccine",
-      article_covid_vaccine$ui(ns("article_covid_vaccine"))
-    ),
+    # ── Articles dropdown ─────────────────────────────────────────────────────
+    # Dropdown lists every published article + a "View all" entry that opens
+    # the card-grid index. Each article is a normal tabPanel addressable via
+    # ?article=<id> in the URL. New articles flow through:
+    #   1. Row in ARTICLES (status='published')
+    #   2. .ARTICLE_MODULES list entry
+    #   3. File app/view/article_<id>.R
+    .build_articles_menu(ns),
 
     # ── About ─────────────────────────────────────────────────────────────────
     tabPanel(
@@ -211,7 +254,18 @@ server <- function(id) {
     ns <- session$ns
 
     portal$server("portal")
-    article_covid_vaccine$server("article_covid_vaccine")
+
+    # Mount each published article's server. Modules whose UI was emitted by
+    # .build_articles_menu must also have their server functions invoked
+    # here using the matching namespace.
+    pub <- ARTICLES[ARTICLES$status == "published", , drop = FALSE]
+    for (i in seq_len(nrow(pub))) {
+      row <- pub[i, ]
+      mod <- .ARTICLE_MODULES[[row$id]]
+      if (!is.null(mod) && is.function(mod$server)) {
+        mod$server(paste0("article_", row$id))
+      }
+    }
 
     # Navigate to an article tab by id
     nav_to_article <- function(article_id) {
@@ -224,6 +278,34 @@ server <- function(id) {
     # Featured article button on Home tab
     observeEvent(input$open_featured, {
       nav_to_article(input$open_featured)
+    })
+
+    # ── Permalinks ───────────────────────────────────────────────────────────
+    # On session start, read ?article=<id> and switch to that tab. After that,
+    # whenever the user changes tabs, push the new URL so the address bar
+    # always shows a shareable link. mode = "replace" avoids cluttering the
+    # browser back-stack with tab clicks.
+
+    deep_link_applied <- FALSE
+    observe({
+      if (deep_link_applied) return()
+      q <- getQueryString()
+      deep_link_applied <<- TRUE
+      if (is.null(q$article) || !nzchar(q$article)) return()
+      # Only deep-link to known published article ids
+      if (!(q$article %in% pub$id)) return()
+      nav_to_article(q$article)
+    })
+
+    observeEvent(input$nav, ignoreInit = TRUE, {
+      tab <- if (is.null(input$nav)) "" else input$nav
+      if (startsWith(tab, "article_")) {
+        article_id <- sub("^article_", "", tab)
+        updateQueryString(paste0("?article=", article_id), mode = "replace")
+      } else if (tab %in% c("home", "articles", "about")) {
+        # Clear ?article on non-article tabs so the URL is honest
+        updateQueryString("?", mode = "replace")
+      }
     })
   })
 }

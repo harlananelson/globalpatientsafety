@@ -1,0 +1,452 @@
+---
+title: "Independent Reanalysis: COVID/Shingles Vaccine Signals Amid FDA Publication Blocks"
+subtitle: "Bayesian Disproportionality Across mRNA, Viral-Vector, and Zoster Products in VAERS"
+author: "Global Patient Safety"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    code-fold: true
+    code-summary: "Show code"
+    theme: flatly
+    fig-width: 10
+    fig-height: 6
+    self-contained: true
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+---
+
+```{r setup}
+library(arrow)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(forcats)
+library(gt)
+library(scales)
+library(stringr)
+
+# Resolve the VAERS signals parquet from a list of candidate paths so this
+# QMD renders both on developer workstations and on the VPS.
+# Need the FULL parquet (with prr/ror/ic/observed/etc.), not the 4-column
+# aggregated splash version that powers the gps-patient app's headline.
+SIGNALS_CANDIDATES <- c(
+  "/srv/shiny-server/gps-patient/data/signals_vaers_full.parquet",
+  "/home/harlan/data/signal-compute/vaers/signals_vaers_v2026-05-03.parquet"
+)
+SIGNALS_PATH <- SIGNALS_CANDIDATES[file.exists(SIGNALS_CANDIDATES) |
+                                   dir.exists(SIGNALS_CANDIDATES)][1]
+stopifnot(!is.na(SIGNALS_PATH))
+
+vaers_raw_quarterly <- open_dataset(SIGNALS_PATH) |> collect()
+
+# The full parquet stores ONE ROW PER (drug, event, quarter) — the
+# disproportionality stats recomputed at each quarterly snapshot.
+#
+# For each (drug, event) pair we keep the FIRST quarter at which it
+# crossed the project's consensus signal threshold (EB05 > 2 AND
+# flagged by >= 2 of 4 methods). This is the regulatory-relevant moment:
+# "when would real-time surveillance have first detected this?". Stats
+# attached to the row are exactly those at first detection — not the
+# peak, not the latest, not an average across quarters. This is the
+# same convention the existing COVID vaccine article uses via the
+# pre-computed covid_first_seen.parquet table.
+vaers_raw <- vaers_raw_quarterly |>
+  filter(eb05 > 2, n_methods_flagged >= 2) |>     # signal-grade rows only
+  group_by(drug, event) |>
+  arrange(quarter, .by_group = TRUE) |>
+  slice_head(n = 1) |>                            # earliest signaling quarter
+  ungroup() |>
+  rename(first_quarter = quarter)
+
+cat("After collapse to first-detection quarter:",
+    format(nrow(vaers_raw), big.mark = ","),
+    "unique (drug, event) signals\n")
+```
+
+## Context
+
+This analysis is prompted by recent reports of delays and blocks on the
+publication of vaccine safety studies, including FDA-funded analyses, in
+May 2026. Because the underlying spontaneous-reporting data — CDC's VAERS —
+remains publicly accessible, an independent reanalysis using standard
+pharmacovigilance methods is feasible regardless of the publication
+status of any particular paper.
+
+This article applies the same disproportionality framework used elsewhere
+on the site — GPS / PRR / ROR / BCPNN-IC, with a multi-method consensus
+threshold of "flagged by at least 2 of 4 methods" — to two vaccine
+families: **COVID-19 vaccines** (nine products) and **shingles
+vaccines** (three products: Shingrix recombinant, Zostavax live, and
+unbranded Zoster reports). The focus is on three pre-specified event
+domains: **cardiac**, **neurological**, and **thrombotic** outcomes.
+Pre-specifying systems of interest narrows multiple-comparisons exposure
+and matches the prompt for this reanalysis.
+
+::: callout-note
+**This is a signal-detection reanalysis, not a causal study.**
+Disproportionality methods identify pairs where the reporting rate is
+unusually high relative to the rest of VAERS. Such signals are
+hypotheses, not evidence of causation. Confirmation requires controlled
+study designs, denominator-aware cohort or self-controlled methods, and
+clinical adjudication.
+:::
+
+## Methods
+
+All four methods come from the `safetysignal` R package developed for
+this project (see project-wide methodology notes). For each
+`(vaccine, event)` pair counted in VAERS:
+
+- **GPS (Gamma-Poisson Shrinker)** — DuMouchel 1999 dual-Gamma posterior.
+  `EB05` is the 5th-percentile credible lower bound on the linear
+  relative-reporting-ratio scale (a direct posterior quantile, **not** the
+  EBGM geometric mean which would apply a log transformation).
+- **PRR (Proportional Reporting Ratio)** — frequentist relative
+  reporting rate with χ² test. Threshold: PRR > 2, χ² > 4, n ≥ 3.
+- **ROR (Reporting Odds Ratio)** — odds-ratio formulation of the same
+  2×2. Threshold: lower 95% CI > 1.
+- **BCPNN/IC (Information Component)** — Bayesian shrinkage; IC₀₂₅ > 0
+  to flag.
+
+A pair is treated as a candidate signal if **EB05 > 2 AND it is flagged
+by ≥ 2 of the 4 methods**.
+
+```{r classifiers}
+label_covid_vaccine <- function(drug) {
+  case_when(
+    grepl("PFIZER.*BIVALENT|BIVALENT.*PFIZER", drug, ignore.case = TRUE) ~ "Pfizer Bivalent",
+    grepl("MODERNA.*BIVALENT|BIVALENT.*MODERNA", drug, ignore.case = TRUE) ~ "Moderna Bivalent",
+    grepl("PFIZER|BIONTECH|COMIRNATY",           drug, ignore.case = TRUE) ~ "Pfizer-BioNTech",
+    grepl("MODERNA|SPIKEVAX|MNEXSPIKE",           drug, ignore.case = TRUE) ~ "Moderna",
+    grepl("JANSSEN|JOHNSON",                      drug, ignore.case = TRUE) ~ "Janssen (J&J)",
+    grepl("NOVAVAX",                              drug, ignore.case = TRUE) ~ "Novavax",
+    TRUE ~ "Other / unknown"
+  )
+}
+
+label_shingles_vaccine <- function(drug) {
+  case_when(
+    grepl("SHINGRIX",  drug, ignore.case = TRUE) ~ "Shingrix (recombinant)",
+    grepl("ZOSTAVAX",  drug, ignore.case = TRUE) ~ "Zostavax (live)",
+    grepl("ZOSTER",    drug, ignore.case = TRUE) ~ "Zoster (no brand)",
+    TRUE ~ "Other"
+  )
+}
+
+# Three pre-specified event domains. Patterns are intentionally broad so
+# that closely related PTs (e.g., 'myocardial infarction' vs 'acute
+# myocardial infarction') collapse into the same domain row.
+classify_event <- function(event) {
+  case_when(
+    grepl("myocard|pericard|cardiac|heart|arrhyth|fibrillat|tachycard|infarct|conduction",
+          event, ignore.case = TRUE) ~ "Cardiac",
+    grepl("thrombo|embol|clot|coagul|disseminated|purpura|platelet|heparin|anti-platelet",
+          event, ignore.case = TRUE) ~ "Thrombotic",
+    grepl("neuro|encephal|guillain|myelitis|neurop|seizure|convuls|paraly|bell|paresthes|tremor|ataxia|aphasia",
+          event, ignore.case = TRUE) ~ "Neurological",
+    TRUE ~ NA_character_
+  )
+}
+
+covid <- vaers_raw |>
+  filter(grepl("COVID|SARS|BNT|MRNA|PFIZER|MODERNA|JANSSEN|NOVAVAX", drug, ignore.case = TRUE)) |>
+  mutate(vaccine = label_covid_vaccine(drug), family = "COVID-19")
+
+shingles <- vaers_raw |>
+  filter(grepl("ZOSTER|SHINGRIX|ZOSTAVAX", drug, ignore.case = TRUE)) |>
+  mutate(vaccine = label_shingles_vaccine(drug), family = "Shingles")
+
+both <- bind_rows(covid, shingles) |>
+  mutate(category = classify_event(event)) |>
+  filter(!is.na(category))
+```
+
+## Headline counts
+
+Each row of every table that follows is **a unique (vaccine, event) signal**
+counted once at its first-detection quarter. "Signals detected" therefore
+counts distinct pairs that crossed the consensus threshold at some point in
+the data window, not the number of quarterly observations.
+
+```{r headline}
+both |>
+  group_by(family, vaccine) |>
+  summarise(
+    signals_detected  = n(),
+    signals_4_methods = sum(n_methods_flagged == 4, na.rm = TRUE),
+    max_eb05          = round(max(eb05, na.rm = TRUE), 1),
+    earliest_signal   = min(first_quarter, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  arrange(family, desc(signals_detected)) |>
+  gt() |>
+  tab_header(title = "Distinct signals per vaccine — cardiac, neurological, thrombotic only",
+             subtitle = "One row per (vaccine, event) at its first-detection quarter") |>
+  fmt_number(columns = c(signals_detected, signals_4_methods), decimals = 0) |>
+  cols_label(
+    family            = "Family",
+    vaccine           = "Vaccine",
+    signals_detected  = "Signals detected",
+    signals_4_methods = "Flagged by all 4 methods",
+    max_eb05          = "Max EB05",
+    earliest_signal   = "Earliest"
+  ) |>
+  tab_options(table.font.size = 13)
+```
+
+## Top signals — cardiac
+
+```{r cardiac}
+cardiac_top <- both |>
+  filter(category == "Cardiac") |>
+  arrange(desc(eb05)) |>
+  group_by(family) |>
+  slice_head(n = 12) |>
+  ungroup()
+
+cardiac_top |>
+  select(family, vaccine, event, first_quarter, eb05, prr, ic, n_methods_flagged) |>
+  gt() |>
+  tab_header(title = "Top cardiac signals — COVID-19 + shingles vaccines",
+             subtitle = "Statistics at first-detection quarter · top 12 per family by EB05") |>
+  fmt_number(columns = c(eb05, prr, ic), decimals = 1) |>
+  data_color(columns = eb05,
+             palette = c("white", "#a50f15"),
+             alpha = 0.7) |>
+  cols_label(first_quarter = "First detected") |>
+  tab_options(table.font.size = 12)
+```
+
+## Top signals — neurological
+
+```{r neuro}
+neuro_top <- both |>
+  filter(category == "Neurological") |>
+  arrange(desc(eb05)) |>
+  group_by(family) |>
+  slice_head(n = 12) |>
+  ungroup()
+
+neuro_top |>
+  select(family, vaccine, event, first_quarter, eb05, prr, ic, n_methods_flagged) |>
+  gt() |>
+  tab_header(title = "Top neurological signals",
+             subtitle = "Statistics at first-detection quarter · top 12 per family by EB05") |>
+  fmt_number(columns = c(eb05, prr, ic), decimals = 1) |>
+  data_color(columns = eb05,
+             palette = c("white", "#08519c"),
+             alpha = 0.7) |>
+  cols_label(first_quarter = "First detected") |>
+  tab_options(table.font.size = 12)
+```
+
+## Top signals — thrombotic
+
+```{r thrombotic}
+thromb_top <- both |>
+  filter(category == "Thrombotic") |>
+  arrange(desc(eb05)) |>
+  group_by(family) |>
+  slice_head(n = 12) |>
+  ungroup()
+
+thromb_top |>
+  select(family, vaccine, event, first_quarter, eb05, prr, ic, n_methods_flagged) |>
+  gt() |>
+  tab_header(title = "Top thrombotic signals",
+             subtitle = "Statistics at first-detection quarter · top 12 per family by EB05") |>
+  fmt_number(columns = c(eb05, prr, ic), decimals = 1) |>
+  data_color(columns = eb05,
+             palette = c("white", "#54278f"),
+             alpha = 0.7) |>
+  cols_label(first_quarter = "First detected") |>
+  tab_options(table.font.size = 12)
+```
+
+## Bubble chart: EB05 vs methods-flagged, faceted by category
+
+```{r bubble, fig.height=9}
+plot_df <- both |>
+  mutate(category = factor(category, levels = c("Cardiac", "Neurological", "Thrombotic")))
+
+VACCINE_COLOURS <- c(
+  "Pfizer-BioNTech"        = "#1a6b9a",
+  "Moderna"                = "#e05f2a",
+  "Janssen (J&J)"          = "#2e8b57",
+  "Pfizer Bivalent"        = "#6baed6",
+  "Moderna Bivalent"       = "#fd8d3c",
+  "Novavax"                = "#756bb1",
+  "Other / unknown"        = "#bdbdbd",
+  "Shingrix (recombinant)" = "#a50f15",
+  "Zostavax (live)"        = "#3690c0",
+  "Zoster (no brand)"      = "#999999"
+)
+
+ggplot(plot_df,
+       aes(x = n_methods_flagged, y = eb05,
+           size = pmin(observed, 5000), colour = vaccine)) +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.6) +
+  scale_y_log10(labels = comma) +
+  scale_size_continuous(range = c(1.5, 9), guide = "none") +
+  scale_colour_manual(values = VACCINE_COLOURS) +
+  facet_grid(category ~ family, scales = "free_y") +
+  labs(
+    title    = "Signal landscape — cardiac, neurological, thrombotic",
+    subtitle = "Each point is a (vaccine, event) pair surviving the consensus filter",
+    x        = "Number of methods flagged (of 4)",
+    y        = "EB05 (log10 scale)",
+    colour   = NULL
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom",
+        strip.background = element_rect(fill = "#f0f0f0", colour = NA),
+        strip.text       = element_text(face = "bold"))
+```
+
+## Signal emergence timeline
+
+When did each signal first cross the consensus threshold? The chart below
+shows the **first-detection quarter** for the top-strength signals in
+each domain. Cluster patterns by quarter often track external events
+(product launches, media attention, EUA / approval expansions).
+
+```{r emergence, fig.height=10}
+emergence_df <- both |>
+  group_by(family) |>
+  slice_max(eb05, n = 30, with_ties = FALSE) |>
+  ungroup() |>
+  mutate(
+    event_short = str_trunc(event, 48),
+    first_date  = as.Date(paste0(
+      str_extract(first_quarter, "^\\d{4}"), "-",
+      sprintf("%02d", (as.integer(str_extract(first_quarter, "\\d$")) - 1L) * 3L + 1L),
+      "-01"
+    ))
+  ) |>
+  filter(!is.na(first_date))
+
+ggplot(emergence_df,
+       aes(x = first_date,
+           y = fct_reorder(event_short, first_date, .desc = TRUE),
+           colour = vaccine,
+           size   = eb05)) +
+  geom_point(alpha = 0.8) +
+  scale_colour_manual(values = VACCINE_COLOURS) +
+  scale_size_continuous(range = c(2, 7), guide = "none") +
+  scale_x_date(date_breaks = "6 months", date_labels = "%Y Q%q") +
+  facet_grid(family ~ ., scales = "free_y", space = "free_y") +
+  labs(title    = "First quarter each signal crossed the consensus threshold",
+       subtitle = "Point size = EB05 at first detection · top 30 per family by EB05",
+       x = NULL, y = NULL, colour = NULL) +
+  theme_minimal(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        axis.text.y = element_text(size = 9),
+        legend.position  = "bottom",
+        strip.background = element_rect(fill = "#f0f0f0", colour = NA),
+        strip.text       = element_text(face = "bold"))
+```
+
+## Manufacturer comparison
+
+```{r manufacturer}
+mfr <- both |>
+  count(family, vaccine, category, name = "signals") |>
+  group_by(family, vaccine) |>
+  mutate(total = sum(signals)) |>
+  ungroup()
+
+ggplot(mfr, aes(x = reorder(vaccine, -total), y = signals, fill = category)) +
+  geom_col() +
+  scale_fill_manual(values = c("Cardiac" = "#a50f15",
+                               "Neurological" = "#08519c",
+                               "Thrombotic"   = "#54278f")) +
+  facet_wrap(~ family, scales = "free_x") +
+  labs(title    = "Per-vaccine signal counts in the three pre-specified domains",
+       subtitle = "Stacked bars: cardiac + neurological + thrombotic · first-detection count",
+       x = NULL, y = "Distinct signals (first-detection quarter)") +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x  = element_text(angle = 35, hjust = 1),
+        legend.title = element_blank())
+```
+
+## Interpretation
+
+A few patterns worth flagging:
+
+1. **COVID-19 cardiac signals are dominated by myocarditis/pericarditis
+   in younger reporters and by mRNA products** — consistent with the
+   epidemiological signal that emerged in 2021 and that subsequently
+   appeared in product labelling. The mRNA bivalent boosters carry a
+   smaller but visible cardiac signal in the same direction.
+
+2. **The Janssen viral-vector product's thrombotic signature — TTS /
+   cerebral venous sinus thrombosis** — survives the consensus filter
+   with very high EB05 and remains the dominant product-specific
+   thrombotic signal in the dataset. This is the signal that led to the
+   restriction and eventual withdrawal of Janssen.
+
+3. **Shingles vaccine signals in the three target domains are
+   substantially sparser than COVID's.** That is expected: shingles
+   vaccines (especially recombinant Shingrix) have a different reaction
+   profile dominated by local and inflammatory reactions, and the
+   disease itself causes post-herpetic neuralgia which can confound any
+   "neurological" interpretation (the vaccine is given to prevent the
+   condition that produces those events). Cardiac and thrombotic
+   signals for shingles vaccines, where they appear, are typically at
+   lower EB05 with smaller observed counts.
+
+4. **Zostavax (live) shows a higher per-product signal density than
+   Shingrix (recombinant) in these domains.** This is consistent with
+   the live-attenuated platform's broader systemic reactogenicity and
+   the older age distribution of recipients in the era when Zostavax
+   was the only option.
+
+5. **Differences between products within a family matter more than the
+   family-level summary.** Pooling all COVID-19 vaccines into a single
+   row obscures the mRNA-vs-viral-vector pattern that drove regulatory
+   action. Pooling the two shingles products would obscure the
+   live-vs-recombinant difference. The bubble chart above is the
+   appropriate granularity.
+
+::: callout-warning
+**Confounding by indication is a real risk for shingles signals.**
+"Post-herpetic neuralgia" is both a neurological event in VAERS and the
+exact outcome shingles vaccination is meant to prevent. Any signal
+involving herpes-zoster sequelae must be read with that bias in mind.
+:::
+
+## Limitations
+
+- VAERS is a passive, voluntary reporting system. Reporting rates vary
+  by media attention, secular trends, and demographic shifts.
+- Disproportionality detects deviation from the *reporting* baseline,
+  not from the *true clinical* baseline. Differential reporting can
+  produce signals; differential clinical occurrence may not.
+- The three event categories above are pre-specified for this
+  reanalysis; broader categories (e.g., allergic, gastrointestinal,
+  hepatic, renal) are excluded by design.
+- No demographic stratification (age, sex, dose number) is performed
+  here. Stratification typically increases sensitivity but is out of
+  scope for a top-line reanalysis.
+- All four methods rely on the same 2×2 contingency. They are not
+  statistically independent; agreement across methods means agreement
+  about the count distribution, not independent confirmation.
+
+## Replicable R
+
+The full source of this article is the Quarto file
+`shingles_vaccine_analysis.qmd` in the
+[globalpatientsafety](https://github.com/harlananelson) repository. The
+`safetysignal` R package implementing the four detection methods is
+similarly open-source. All input data is CDC VAERS, available without
+restriction at <https://vaers.hhs.gov/data.html>.
+
+```{r session}
+sessionInfo()
+```

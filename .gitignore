@@ -1,1 +1,4 @@
 .npm-packages/
+
+# PHI scan artifacts (may contain flagged snippets)
+logs/phi-scan-results*.json

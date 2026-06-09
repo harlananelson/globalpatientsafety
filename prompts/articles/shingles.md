@@ -1,0 +1,3 @@
+**Breaking topic:** FDA blocking publication of recent COVID/shingles vaccine safety studies (May 2026).
+
+**Prompt:** "Using the provided FDA VAERS/FAERS drug and vaccine data, generate a Quarto article analyzing EB05 safety signals (>2, ≥2 methods) for COVID-19 and shingles vaccines. Focus on cardiac, neurological, thrombotic events. Include top signals table, bubble chart, manufacturer comparisons, interpretation, replicable R code, and context on FDA study suppression controversy. Title: 'Independent Reanalysis: COVID/Shingles Vaccine Signals Amid FDA Publication Blocks'."
