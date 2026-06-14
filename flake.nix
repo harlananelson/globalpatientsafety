@@ -31,6 +31,9 @@
             tibble
             dplyr
 
+            # Article rendering (articles/*.qmd setup chunks use gt tables)
+            gt
+
             # faers-mobi / aers-mobi runtime deps
             # (these apps live in sibling repos but are run from this dev shell)
             arrow
@@ -51,6 +54,7 @@
           packages = [
             rWithPkgs
             pkgs.nodejs       # sass: node (rhino.yml) + claude-code install
+            pkgs.quarto       # render articles/*.qmd -> app/static/<id>.html
             pkgs.git
             pkgs.tmux
             pkgs.mistral-vibe # Mistral CLI coding agent

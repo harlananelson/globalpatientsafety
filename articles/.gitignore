@@ -1,0 +1,7 @@
+/.quarto/
+**/*.quarto_ipynb
+# Quarto per-document resource dirs (libs/) — the rendered HTML is embed-resources,
+# the self-contained copy lives in app/static/<id>.html
+*_files/
+# Rendered HTML stays in app/static/, not here
+*.html

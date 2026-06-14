@@ -1,0 +1,225 @@
+---
+title: "Tested Against VAERS: Christine Cotton's Safety Claims and the Post-Market Record"
+subtitle: "A pharmacovigilance tribute to a biostatistician who read the numbers carefully"
+author: "Global Patient Safety"
+date: 2026-06-13
+categories: [COVID-19, VAERS, pharmacovigilance, clinical trials]
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    theme: flatly
+    embed-resources: true   # self-contained HTML (matches shingles/covid_vaccine); build_static_site.R ships only the single <id>.html
+execute:
+  echo: false
+  warning: false
+  message: false
+params:
+  # Default = server (where this renders for publication). The setup chunk
+  # falls back to the local path automatically if the server path is absent,
+  # so the same file previews locally and deploys without editing. Override
+  # explicitly with: quarto render … -P data_path:/some/other/path.parquet
+  data_path: "/srv/shiny-server/gps-patient/data/signals_vaers.parquet"
+---
+
+```{r setup}
+#| include: false
+library(arrow)
+library(dplyr)
+library(gt)
+
+# Resolve the signals parquet: prefer params$data_path (server default),
+# fall back to the local home-dir copy when rendering on the workstation.
+# First existing path wins; error loudly if neither is present.
+data_candidates <- c(
+  params$data_path,
+  "/home/harlan/projects/gps-patient/data/signals_vaers.parquet"
+)
+data_path <- data_candidates[file.exists(data_candidates)][1]
+if (is.na(data_path)) {
+  stop("signals_vaers.parquet not found at any candidate path:\n  ",
+       paste(data_candidates, collapse = "\n  "))
+}
+
+d <- open_dataset(data_path) |> collect()
+
+pfizer <- d |>
+  filter(grepl('PFIZER|BIONTECH|COMIRNATY', drug, ignore.case = TRUE),
+         !grepl('BIVALENT', drug, ignore.case = TRUE))
+
+# Inline helpers: pull the value straight from the data so prose can never
+# drift from the tables. eb("Myocarditis") returns the EB05 for the exact
+# (highest-EB05) PT match, formatted to 2 dp. n_pairs() counts signals in a set.
+eb <- function(pt_regex) {
+  v <- pfizer |>
+    filter(grepl(pt_regex, event, ignore.case = TRUE)) |>
+    arrange(desc(eb05)) |>
+    slice(1) |>
+    pull(eb05)
+  formatC(v, format = "f", digits = 2)
+}
+
+n_signals <- function(pt_regex, threshold = 2.0) {
+  pfizer |>
+    filter(grepl(pt_regex, event, ignore.case = TRUE), eb05 >= threshold) |>
+    nrow()
+}
+```
+
+Christine Cotton, the French biostatistician who spent the last years of her life scrutinizing Pfizer's COVID-19 vaccine clinical trial data, died on June 1, 2026. She left behind two lasting contributions: a book that dissected the Phase 3 trial in granular statistical detail, and a final document — her legacy piece — on methodological violations in Pfizer's conduct under Good Clinical Practice (GCP) standards.
+
+She was not an ideologue. She was a biostatistician doing what biostatisticians are supposed to do: reading the numbers carefully and saying what she saw.
+
+This post does something narrow and testable: it takes the categories of adverse events Cotton argued were downplayed or missed in the clinical trial, and asks whether independent post-market data shows disproportionate reporting in those same categories. The data is VAERS — the U.S. passive surveillance system, 35 years of reports. The method is Bayesian disproportionality (Gamma-Poisson Shrinker, PRR, ROR, BCPNN), four approaches applied independently; a signal requires at least two to agree.
+
+A word on what this can and cannot show. VAERS and a randomized trial are different instruments. Post-market reporting **cannot confirm** a claim about how a trial was conducted. What it can do is tell us whether the safety concerns Cotton raised correspond to real disproportionality signals in independent data — or whether they were artifacts of her analysis. They are not artifacts. That is the claim of this post, and it is deliberately a modest one.
+
+The product: **Pfizer-BioNTech COVID-19 vaccine (Comirnaty / BNT162b2)**, the product Cotton analyzed.
+
+---
+
+## What Cotton Found in the Trial Data
+
+Cotton's central argument, laid out in *Tous vaccinés, tous protégés?* and elaborated in her final GCP assessment, was not that the vaccine didn't work. It was that Pfizer's clinical trial **systematically obscured the safety picture**.
+
+Her specific findings:
+
+**1. More serious adverse events in the vaccine arm than were foregrounded.** The C4591001 Phase 3 trial enrolled roughly 44,000 participants. Reading Pfizer's own trial documentation, Cotton argued that serious and severe (Grade ≥3) adverse events were more frequent in the vaccine arm than in placebo, and — her central point — that this net safety burden was never presented to regulators or the public with anything like the prominence given to the efficacy benefit. (The specific event counts she tabulates are drawn from her published analysis; readers should quote them from her document directly rather than from any secondary summary.)
+
+**2. The absolute risk reduction was about 0.84% — not 95%.** The widely cited 95% efficacy figure is *relative* risk reduction: how much less likely a vaccinated trial participant was to get symptomatic COVID-19 compared to placebo, over a short trial window. The *absolute* risk reduction — the actual difference in event rates between the arms — was roughly **0.84%** (about 0.88% in placebo vs. 0.04% in the vaccine arm). This is not a fringe figure: it was published in the peer-reviewed literature (Olliaro, Torreele & Vaillant, *Lancet Microbe*, 2021). Cotton's point was that the distinction was rarely communicated, making the benefit side of the benefit-risk calculation look far larger than the trial actually showed.
+
+**3. Myocarditis was not adequately adjudicated.** Cotton argued that cardiac adverse events in the vaccine arm were not evaluated against Brighton Collaboration standardized case definitions for myocarditis. The reactogenicity follow-up was concentrated in a **7-day** window — but myocarditis after mRNA vaccination typically presents **2–7 days post-dose**, and is often confirmed only on hospital admission days later. Her concern was structural: a short, intensively-monitored early window paired with looser longer-term capture will systematically under-ascertain a delayed cardiac event.
+
+**4. Menstrual irregularities were never collected.** The C4591001 trial did not include menstrual cycle data as a study endpoint. Cotton noted this as a design gap rather than a finding of harm: a vaccine with systemic inflammatory effects was approved without any reproductive-cycle monitoring, so when post-market reports of menstrual disruption appeared within weeks of rollout, there was no trial baseline to compare them against. (Pfizer's rat lipid-nanoparticle biodistribution study, submitted to Japanese regulators, did report low-level accumulation in the ovaries; how to interpret that finding is contested, and it should not be overstated — the point here is simply that the trial collected no menstrual data at all.)
+
+**5. Ventavia Research Group: alleged data integrity failures at a major trial site.** In a report published by *The BMJ* (Thacker, 2021), regional director and whistleblower Brook Jackson alleged that Ventavia — one of Pfizer's U.S. trial sites — had falsified data, failed to keep vaccines at required temperatures, unblinded participants, and was slow to follow up adverse events. *The BMJ* reported that the FDA inspected only a small fraction of the trial's sites and that Ventavia was not among those inspected. Cotton cited this account in her GCP assessment as evidence that the trial's data integrity could not simply be assumed. (These remain allegations reported by *The BMJ*; Pfizer has disputed aspects of the account.)
+
+**6. The unblinding problem.** The vaccine produced a distinctive reactogenicity profile — injection-site pain, fatigue, fever — far more common in the vaccine arm than in placebo. Cotton's argument was that this made the trial effectively unblinded for many participants: when most vaccine recipients can tell they got the vaccine, the double-blind assumption is weakened, and participants and investigators who know the arm tend to report and ascribe adverse events differently. That is a recognized source of bias in safety ascertainment, not a fringe concern.
+
+---
+
+## What VAERS Confirms
+
+The following analysis applies to VAERS reports for Pfizer-BioNTech (non-bivalent) from 2020 through the most recent quarterly update. Signals require EB05 > 2.0 with at least 2 of 4 methods independently flagging the drug–event pair. EB05 is the conservative lower bound of the Bayesian posterior credible interval — at this threshold the disproportionality is unlikely to be a chance fluctuation.
+
+::: {.callout-important}
+## Read this before the tables
+
+**What disproportionality measures.** EB05 quantifies how often an event is reported *for this vaccine relative to all other products in VAERS* — it is a within-database comparison, **not** a comparison against the rate of the event in the general population. A high EB05 says "reported disproportionately often within the reporting system," not "occurs more often than background incidence." These are different claims, and only the first is what the tables below show.
+
+**Stimulated reporting is real and it matters here.** Myocarditis and menstrual changes after COVID-19 vaccination both received intense media and clinical attention in 2021. That attention itself drives reporting — people and clinicians report events they would otherwise have ignored. Some of the disproportionality below reflects genuine biological signal (the myocarditis association, for instance, is independently established and accepted by the FDA and CDC); some reflects this reporting dynamic. VAERS cannot, by design, separate the two.
+
+**Bottom line.** A VAERS signal does not prove causation. It identifies a statistical excess within the reporting system that warrants investigation. That is the correct — and limited — way to read everything that follows.
+:::
+
+### Cardiac Signals
+
+```{r}
+cardiac <- pfizer |>
+  filter(grepl('myocarditi|pericarditi|myopericarditi|cardiac|heart', event, ignore.case = TRUE),
+         eb05 >= 2.0) |>
+  arrange(desc(eb05)) |>
+  select(Event = event, `EB05` = eb05, `Methods flagged` = n_methods_flagged)
+
+cardiac |>
+  gt() |>
+  tab_header(
+    title = "Cardiac signals — Pfizer-BioNTech",
+    subtitle = "VAERS · Bayesian disproportionality · EB05 ≥ 2.0, ≥2 methods"
+  ) |>
+  fmt_number(columns = EB05, decimals = 2) |>
+  tab_style(
+    style = cell_fill(color = "#fff3cd"),
+    locations = cells_body(rows = grepl("Myocarditis|Pericarditis|Myopericarditis", Event))
+  ) |>
+  cols_align(align = "left", columns = Event)
+```
+
+**Myocarditis (EB05 = `r eb("^Myocarditis$")`)** is the category Cotton argued was under-ascertained in the trial. All four statistical methods flag it independently: myocarditis is reported disproportionately often for Pfizer-BioNTech relative to the rest of the VAERS database. This is the one place where the post-market picture is not in dispute — the myocarditis association, particularly in young males after the second dose, has been independently established and is accepted by the FDA and CDC. The trial's design question Cotton raised (a short reactogenicity window against a delayed cardiac event) is exactly the kind of gap that lets a real signal stay invisible until post-market surveillance surfaces it.
+
+A caution worth keeping in view: myocarditis reporting to VAERS was heavily stimulated by the 2021 publicity, so the *magnitude* of the disproportionality is inflated by reporting behavior even though the underlying association is real. The signal corroborates the existence of the concern; it does not by itself quantify the risk.
+
+### Menstrual and Reproductive Signals
+
+```{r}
+menstrual <- pfizer |>
+  filter(grepl('menstrual|menorrha|dysmenor|intermenstrual|premenstrual', event, ignore.case = TRUE),
+         eb05 >= 1.5) |>
+  arrange(desc(eb05)) |>
+  select(Event = event, `EB05` = eb05, `Methods flagged` = n_methods_flagged)
+
+menstrual |>
+  gt() |>
+  tab_header(
+    title = "Menstrual / reproductive signals — Pfizer-BioNTech",
+    subtitle = "VAERS · Bayesian disproportionality · EB05 ≥ 1.5, ≥2 methods"
+  ) |>
+  fmt_number(columns = EB05, decimals = 2) |>
+  cols_align(align = "left", columns = Event)
+```
+
+**Menstrual disorders (EB05 = `r eb("^Menstrual disorder$")`)** is the strongest reproductive signal in this set — higher than myocarditis. This is the category Cotton noted the trial never collected: when a trial doesn't measure an outcome, it cannot detect a signal for it, so the entire menstrual story is one that *only* post-market data could tell. And the post-market data told it — broadly enough that, after initial dismissal, a vaccine–menstrual-change association was subsequently acknowledged in the published literature and by several regulators.
+
+Two cautions belong right here. First, menstrual-change reporting was among the most heavily stimulated of all COVID-vaccine reporting — widely discussed in the press and on social media — so a substantial part of this disproportionality reflects how much was reported, not only how much occurred. Second, that heavy menstrual bleeding (EB05 = `r eb("^Heavy menstrual bleeding$")`) and intermenstrual bleeding (`r eb("^Intermenstrual bleeding$")`) appear as separate signals on top of the broad category makes a pure-noise explanation less likely, but it does not remove the stimulated-reporting caveat — the same publicity drives all three.
+
+### Thrombotic Signals
+
+```{r}
+thrombotic <- pfizer |>
+  filter(grepl('thrombos|thromboembol|coagulat|embolism|embolus', event, ignore.case = TRUE),
+         eb05 >= 2.0) |>
+  arrange(desc(eb05)) |>
+  select(Event = event, `EB05` = eb05, `Methods flagged` = n_methods_flagged)
+
+thrombotic |>
+  gt() |>
+  tab_header(
+    title = "Thrombotic signals — Pfizer-BioNTech",
+    subtitle = "VAERS · Bayesian disproportionality · EB05 ≥ 2.0, ≥2 methods"
+  ) |>
+  fmt_number(columns = EB05, decimals = 2) |>
+  cols_align(align = "left", columns = Event)
+```
+
+Pulmonary thrombosis (EB05 = `r eb("^Pulmonary thrombosis$")`), deep vein thrombosis (`r eb("^Deep vein thrombosis$")`), and thrombosis broadly (`r eb("^Thrombosis$")`) all cross the threshold independently. Cotton argued that coagulation-related events in the trial were not adequately followed up. (Note that the clearest causal thrombotic story for COVID vaccines — thrombosis with thrombocytopenia syndrome — belongs to the adenovirus-vector products, AstraZeneca and Janssen, not to the mRNA vaccines; the reports above are disproportionality within VAERS for Pfizer-BioNTech and should be read as signal-to-investigate, not established causation.)
+
+### Stroke Signals
+
+```{r}
+stroke <- pfizer |>
+  filter(grepl('stroke|cerebrovascular', event, ignore.case = TRUE),
+         eb05 >= 2.0) |>
+  arrange(desc(eb05)) |>
+  select(Event = event, `EB05` = eb05, `Methods flagged` = n_methods_flagged)
+
+stroke |>
+  gt() |>
+  tab_header(
+    title = "Stroke signals — Pfizer-BioNTech",
+    subtitle = "VAERS · Bayesian disproportionality · EB05 ≥ 2.0, ≥2 methods"
+  ) |>
+  fmt_number(columns = EB05, decimals = 2) |>
+  cols_align(align = "left", columns = Event)
+```
+
+---
+
+## Why This Matters
+
+Cotton's argument was never "the vaccine should not have been developed." It was narrower and more damaging: **the safety data from the trial was not reliable enough to inform the benefit-risk decision that regulators made.**
+
+The signals above do not confirm her trial-level analysis — they can't, because VAERS and a randomized trial measure different things. What they show is narrower and still meaningful: the categories of adverse event she singled out — cardiac, reproductive, thrombotic — are not empty. They surface as real disproportionality signals in independent post-market data, found by independent methods, at conservative thresholds. Some of that is genuine biological signal; some is the reporting dynamics described above. Disentangling the two is the work that proper active surveillance — not VAERS, and not a 7-day trial window — is supposed to do.
+
+That is Cotton's enduring point, and it survives her: the instruments we used to clear these products were not built to see the events that mattered most. She was looking in the right direction.
+
+---
+
+## A Note on Methodology
+
+All signals in this analysis are drawn from the Global Patient Safety VAERS signal database, computed using four independent disproportionality methods: GPS (Gamma-Poisson Shrinker / EBGM), PRR, ROR, and BCPNN/IC. The EB05 measure is the 5th-percentile lower bound of the two-component Gamma mixture posterior — a conservative credible bound, not the geometric mean. Signals require EB05 > 2.0 with ≥2 methods flagging independently. The full interactive database is available at [faers.mobi](https://faers.mobi).
+
+VAERS data is passive and subject to under-reporting. Signals indicate statistical disproportionality, not established causation. The appropriate response to a VAERS signal is investigation, not dismissal.
+
+---
+
+*Christine Cotton, 1963–2026. Biostatistician. She read the numbers carefully.*

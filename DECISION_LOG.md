@@ -1174,3 +1174,57 @@ Root-cause fix for the divergence, committed to pico-dag `origin/main` (HEAD now
 Validated end-to-end: deploy.sh fast-forwarded VPS `560740d → f1c7643`, restart OK, smoke-test HTTP 200.
 
 **Manual cleanup due ~2026-06-06** (no automated routine — a cloud routine can't SSH the VPS): once prod is confirmed healthy, on the VPS run `cd /srv/shiny-server/pico-dag && git branch -D vps-snapshot-2026-05-30 && rm -f /root/Renviron.vps-backup-2026-05-30`. These are the only recovery artifacts left from the divergence cleanup; the snapshot branch holds `.Renviron` so it was never pushed.
+
+## 2026-06-13 — Cotton deploy note corrected; article registered
+
+**Finding:** the prior `articles/DEPLOY-christine-cotton.md` blocker was wrong. It
+claimed the publication mechanism lived on the VPS and required inspecting the live box
+(and that the site was Shiny, needing `touch restart.txt`, rendered on the box). In
+fact publication is fully in-repo and static:
+- `app/logic/articles.R` (`ARTICLES` tribble, `featured = TRUE` flag) = source of truth.
+- `app/static/<id>.html` = rendered Quarto input.
+- `scripts/build_static_site.R` builds `static_site/`; deploy is
+  `rsync -av --delete static_site/ root@5.78.69.136:/var/www/globalpatientsafety/`.
+- The `articles/shingles.md` stub misled the prior note — the live shingles article is
+  `app/static/shingles.html`, not that stub.
+
+**Real blockers (both repo-local to fix, not "inspect the box"):** (1) no local
+`quarto`/`rmarkdown` (only `knitr`) to render the qmd → `app/static/christine_cotton.html`;
+(2) SSH for the final rsync (`ssh-copy-id` the existing GitHub key — do NOT regenerate it).
+
+**Action taken:** registered the article in `app/logic/articles.R` as id
+`christine_cotton`, `featured = TRUE`; flipped `shingles` to `featured = FALSE`.
+Rewrote `DEPLOY-christine-cotton.md` to the corrected mechanism + step list.
+
+## 2026-06-13 — Cotton article rendered + site built locally (only SSH/rsync remains)
+
+Added `pkgs.quarto` + `pkgs.rPackages.gt` to `flake.nix`, then rendered
+`articles/christine-cotton-vaers.qmd` → `app/static/christine_cotton.html` and ran
+`scripts/build_static_site.R`. Verified: Cotton is the ★ featured card on the landing
+page, 16 gt tables intact, all inline EB05 numbers present, `/articles` lists all three.
+
+**Two non-obvious env vars are required to render in the nix shell** (now documented in
+the deploy doc):
+- `RENV_CONFIG_AUTOLOADER_ENABLED=FALSE` — the project's renv `.Rprofile` shadows the
+  nix R library, so `library(gt)`/arrow/dplyr are invisible until the autoloader is off.
+- `QUARTO_R="$(command -v Rscript)"` — without it quarto runs `/usr/bin/Rscript` (system
+  R), which dies on a GLIBC mismatch under the shell's `LD_LIBRARY_PATH`.
+Harmless `jog.lua: Don't know how to traverse TableBody` errors print per gt table; output
+is correct regardless. Pre-existing harmless sprintf warning in `build_static_site.R`'s
+`NAV_INJECTION()` (arg passed to a template with no `%s`) — not fixed (out of scope).
+
+Only remaining blocker: SSH access for `rsync static_site/ root@5.78.69.136:...`.
+
+## 2026-06-13 — Cotton article: embed-resources fix + gitignores
+
+The first render referenced an external `christine-cotton-vaers_files/libs/` dir (12
+refs, 84 KB) — would deploy with broken CSS/JS, since `build_static_site.R` ships only
+the single `<id>.html`. The working articles (shingles, covid_vaccine) are self-contained.
+Fix (the real one, matching the working pattern): added `embed-resources: true` to the
+qmd `format.html`. Must render **from inside `articles/`** (not repo root) or the embed
+post-process fails with `NotFound … quarto-html/quarto.js` (libs dir resolves relative to
+cwd). Result: `app/static/christine_cotton.html` is now 1.56 MB, 0 `_files/` refs, 16 gt
+tables, all EB05 numbers present.
+
+Gitignored: `static_site/` (build output, root `.gitignore`); `*_files/` and `*.html`
+in `articles/.gitignore` (render artifacts — the canonical HTML lives in `app/static/`).
