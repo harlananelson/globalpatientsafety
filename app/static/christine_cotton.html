@@ -2174,15 +2174,15 @@ vertical-align: -.125em;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-cotton-found-in-the-trial-data" id="toc-what-cotton-found-in-the-trial-data" class="nav-link active" data-scroll-target="#what-cotton-found-in-the-trial-data">What Cotton Found in the Trial Data</a></li>
-  <li><a href="#what-vaers-confirms" id="toc-what-vaers-confirms" class="nav-link" data-scroll-target="#what-vaers-confirms">What VAERS Confirms</a>
+  <li><a href="#cottons-claims-about-the-trial" id="toc-cottons-claims-about-the-trial" class="nav-link active" data-scroll-target="#cottons-claims-about-the-trial">Cotton’s Claims About the Trial</a></li>
+  <li><a href="#vaers-disproportionality-in-the-categories-cotton-flagged" id="toc-vaers-disproportionality-in-the-categories-cotton-flagged" class="nav-link" data-scroll-target="#vaers-disproportionality-in-the-categories-cotton-flagged">VAERS Disproportionality in the Categories Cotton Flagged</a>
   <ul class="collapse">
   <li><a href="#cardiac-signals" id="toc-cardiac-signals" class="nav-link" data-scroll-target="#cardiac-signals">Cardiac Signals</a></li>
   <li><a href="#menstrual-and-reproductive-signals" id="toc-menstrual-and-reproductive-signals" class="nav-link" data-scroll-target="#menstrual-and-reproductive-signals">Menstrual and Reproductive Signals</a></li>
   <li><a href="#thrombotic-signals" id="toc-thrombotic-signals" class="nav-link" data-scroll-target="#thrombotic-signals">Thrombotic Signals</a></li>
   <li><a href="#stroke-signals" id="toc-stroke-signals" class="nav-link" data-scroll-target="#stroke-signals">Stroke Signals</a></li>
   </ul></li>
-  <li><a href="#why-this-matters" id="toc-why-this-matters" class="nav-link" data-scroll-target="#why-this-matters">Why This Matters</a></li>
+  <li><a href="#what-this-can-and-cannot-say" id="toc-what-this-can-and-cannot-say" class="nav-link" data-scroll-target="#what-this-can-and-cannot-say">What This Can and Cannot Say</a></li>
   <li><a href="#a-note-on-methodology" id="toc-a-note-on-methodology" class="nav-link" data-scroll-target="#a-note-on-methodology">A Note on Methodology</a></li>
   </ul>
 </nav>
@@ -2230,11 +2230,12 @@ vertical-align: -.125em;
 <p>Christine Cotton, the French biostatistician who spent the last years of her life scrutinizing Pfizer’s COVID-19 vaccine clinical trial data, died on June 1, 2026. She left behind two lasting contributions: a book that dissected the Phase 3 trial in granular statistical detail, and a final document — her legacy piece — on methodological violations in Pfizer’s conduct under Good Clinical Practice (GCP) standards.</p>
 <p>She was not an ideologue. She was a biostatistician doing what biostatisticians are supposed to do: reading the numbers carefully and saying what she saw.</p>
 <p>This post does something narrow and testable: it takes the categories of adverse events Cotton argued were downplayed or missed in the clinical trial, and asks whether independent post-market data shows disproportionate reporting in those same categories. The data is VAERS — the U.S. passive surveillance system, 35 years of reports. The method is Bayesian disproportionality (Gamma-Poisson Shrinker, PRR, ROR, BCPNN), four approaches applied independently; a signal requires at least two to agree.</p>
-<p>A word on what this can and cannot show. VAERS and a randomized trial are different instruments. Post-market reporting <strong>cannot confirm</strong> a claim about how a trial was conducted. What it can do is tell us whether the safety concerns Cotton raised correspond to real disproportionality signals in independent data — or whether they were artifacts of her analysis. They are not artifacts. That is the claim of this post, and it is deliberately a modest one.</p>
+<p>A word on what this can and cannot show. VAERS and a randomized trial are different instruments. Post-market reporting <strong>cannot confirm</strong> a claim about how a trial was conducted. What it can do is narrower: show whether the <em>categories</em> of concern Cotton raised correspond to disproportionality signals in independent reporting data. They do. Whether each such signal reflects biology, reporting dynamics, or both is a separate question this post does not try to settle. That is the deliberately modest claim here.</p>
+<p>This is an exercise in honestly applying one method, not in adjudicating the truth about the vaccine. VAERS is U.S. passive surveillance; the analysis is bounded to what that single system, read through disproportionality, can show. Other surveillance systems and epidemiological studies have reached their own conclusions about benefit and risk — those are independent of this analysis and outside its scope. Nothing here is a verdict on whether Comirnaty’s benefits outweigh its risks; that is not the question this method answers.</p>
 <p>The product: <strong>Pfizer-BioNTech COVID-19 vaccine (Comirnaty / BNT162b2)</strong>, the product Cotton analyzed.</p>
 <hr>
-<section id="what-cotton-found-in-the-trial-data" class="level2">
-<h2 class="anchored" data-anchor-id="what-cotton-found-in-the-trial-data">What Cotton Found in the Trial Data</h2>
+<section id="cottons-claims-about-the-trial" class="level2">
+<h2 class="anchored" data-anchor-id="cottons-claims-about-the-trial">Cotton’s Claims About the Trial</h2>
 <p>Cotton’s central argument, laid out in <em>Tous vaccinés, tous protégés?</em> and elaborated in her final GCP assessment, was not that the vaccine didn’t work. It was that Pfizer’s clinical trial <strong>systematically obscured the safety picture</strong>.</p>
 <p>Her specific findings:</p>
 <p><strong>1. More serious adverse events in the vaccine arm than were foregrounded.</strong> The C4591001 Phase 3 trial enrolled roughly 44,000 participants. Reading Pfizer’s own trial documentation, Cotton argued that serious and severe (Grade ≥3) adverse events were more frequent in the vaccine arm than in placebo, and — her central point — that this net safety burden was never presented to regulators or the public with anything like the prominence given to the efficacy benefit. (The specific event counts she tabulates are drawn from her published analysis; readers should quote them from her document directly rather than from any secondary summary.)</p>
@@ -2245,9 +2246,9 @@ vertical-align: -.125em;
 <p><strong>6. The unblinding problem.</strong> The vaccine produced a distinctive reactogenicity profile — injection-site pain, fatigue, fever — far more common in the vaccine arm than in placebo. Cotton’s argument was that this made the trial effectively unblinded for many participants: when most vaccine recipients can tell they got the vaccine, the double-blind assumption is weakened, and participants and investigators who know the arm tend to report and ascribe adverse events differently. That is a recognized source of bias in safety ascertainment, not a fringe concern.</p>
 <hr>
 </section>
-<section id="what-vaers-confirms" class="level2">
-<h2 class="anchored" data-anchor-id="what-vaers-confirms">What VAERS Confirms</h2>
-<p>The following analysis applies to VAERS reports for Pfizer-BioNTech (non-bivalent) from 2020 through the most recent quarterly update. Signals require EB05 &gt; 2.0 with at least 2 of 4 methods independently flagging the drug–event pair. EB05 is the conservative lower bound of the Bayesian posterior credible interval — at this threshold the disproportionality is unlikely to be a chance fluctuation.</p>
+<section id="vaers-disproportionality-in-the-categories-cotton-flagged" class="level2">
+<h2 class="anchored" data-anchor-id="vaers-disproportionality-in-the-categories-cotton-flagged">VAERS Disproportionality in the Categories Cotton Flagged</h2>
+<p>The following analysis applies to VAERS reports for Pfizer-BioNTech (non-bivalent) from 2020 through the most recent quarterly update. A single rule is applied uniformly to every category below — <strong>EB05 ≥ 2.0 with at least 2 of 4 methods independently flagging the drug–event pair</strong> — fixed before inspecting which events appeared, with no per-category tuning. EB05 is the conservative lower bound of the Bayesian posterior credible interval; at this threshold the disproportionality is unlikely to be a chance fluctuation. Investigation and procedure Preferred Terms (e.g. <em>Cardiac stress test</em>, <em>Coagulation test</em>) are excluded from the clinical-event tables, since they reflect diagnostic work-up rather than adverse events.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2267,20 +2268,20 @@ vertical-align: -.125em;
 <h3 class="anchored" data-anchor-id="cardiac-signals">Cardiac Signals</h3>
 <div class="cell">
 <div class="cell-output-display">
-<div id="iedqaentmb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#iedqaentmb table {
+<div id="goqhjbcsck" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#goqhjbcsck table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#iedqaentmb thead, #iedqaentmb tbody, #iedqaentmb tfoot, #iedqaentmb tr, #iedqaentmb td, #iedqaentmb th {
+#goqhjbcsck thead, #goqhjbcsck tbody, #goqhjbcsck tfoot, #goqhjbcsck tr, #goqhjbcsck td, #goqhjbcsck th {
 border-style: none;
 }
-#iedqaentmb p {
+#goqhjbcsck p {
 margin: 0;
 padding: 0;
 }
-#iedqaentmb .gt_table {
+#goqhjbcsck .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -2305,11 +2306,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#iedqaentmb .gt_caption {
+#goqhjbcsck .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#iedqaentmb .gt_title {
+#goqhjbcsck .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -2320,7 +2321,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#iedqaentmb .gt_subtitle {
+#goqhjbcsck .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -2331,7 +2332,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#iedqaentmb .gt_heading {
+#goqhjbcsck .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -2342,12 +2343,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#iedqaentmb .gt_bottom_border {
+#goqhjbcsck .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#iedqaentmb .gt_col_headings {
+#goqhjbcsck .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -2361,7 +2362,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#iedqaentmb .gt_col_heading {
+#goqhjbcsck .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2380,7 +2381,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#iedqaentmb .gt_column_spanner_outer {
+#goqhjbcsck .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2391,13 +2392,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#iedqaentmb .gt_column_spanner_outer:first-child {
+#goqhjbcsck .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#iedqaentmb .gt_column_spanner_outer:last-child {
+#goqhjbcsck .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#iedqaentmb .gt_column_spanner {
+#goqhjbcsck .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -2408,10 +2409,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#iedqaentmb .gt_spanner_row {
+#goqhjbcsck .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#iedqaentmb .gt_group_heading {
+#goqhjbcsck .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2436,7 +2437,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#iedqaentmb .gt_empty_group_heading {
+#goqhjbcsck .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -2450,13 +2451,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#iedqaentmb .gt_from_md > :first-child {
+#goqhjbcsck .gt_from_md > :first-child {
 margin-top: 0;
 }
-#iedqaentmb .gt_from_md > :last-child {
+#goqhjbcsck .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#iedqaentmb .gt_row {
+#goqhjbcsck .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2474,7 +2475,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#iedqaentmb .gt_stub {
+#goqhjbcsck .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2486,7 +2487,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#iedqaentmb .gt_stub_row_group {
+#goqhjbcsck .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2499,13 +2500,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#iedqaentmb .gt_row_group_first td {
+#goqhjbcsck .gt_row_group_first td {
 border-top-width: 2px;
 }
-#iedqaentmb .gt_row_group_first th {
+#goqhjbcsck .gt_row_group_first th {
 border-top-width: 2px;
 }
-#iedqaentmb .gt_summary_row {
+#goqhjbcsck .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -2514,14 +2515,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#iedqaentmb .gt_first_summary_row {
+#goqhjbcsck .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#iedqaentmb .gt_first_summary_row.thick {
+#goqhjbcsck .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#iedqaentmb .gt_last_summary_row {
+#goqhjbcsck .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2530,7 +2531,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#iedqaentmb .gt_grand_summary_row {
+#goqhjbcsck .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -2539,7 +2540,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#iedqaentmb .gt_first_grand_summary_row {
+#goqhjbcsck .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2548,7 +2549,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#iedqaentmb .gt_last_grand_summary_row_top {
+#goqhjbcsck .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2557,10 +2558,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#iedqaentmb .gt_striped {
+#goqhjbcsck .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#iedqaentmb .gt_table_body {
+#goqhjbcsck .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -2568,7 +2569,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#iedqaentmb .gt_footnotes {
+#goqhjbcsck .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -2581,7 +2582,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#iedqaentmb .gt_footnote {
+#goqhjbcsck .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -2589,7 +2590,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#iedqaentmb .gt_sourcenotes {
+#goqhjbcsck .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -2602,64 +2603,64 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#iedqaentmb .gt_sourcenote {
+#goqhjbcsck .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#iedqaentmb .gt_left {
+#goqhjbcsck .gt_left {
 text-align: left;
 }
-#iedqaentmb .gt_center {
+#goqhjbcsck .gt_center {
 text-align: center;
 }
-#iedqaentmb .gt_right {
+#goqhjbcsck .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#iedqaentmb .gt_font_normal {
+#goqhjbcsck .gt_font_normal {
 font-weight: normal;
 }
-#iedqaentmb .gt_font_bold {
+#goqhjbcsck .gt_font_bold {
 font-weight: bold;
 }
-#iedqaentmb .gt_font_italic {
+#goqhjbcsck .gt_font_italic {
 font-style: italic;
 }
-#iedqaentmb .gt_super {
+#goqhjbcsck .gt_super {
 font-size: 65%;
 }
-#iedqaentmb .gt_footnote_marks {
+#goqhjbcsck .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#iedqaentmb .gt_asterisk {
+#goqhjbcsck .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#iedqaentmb .gt_indent_1 {
+#goqhjbcsck .gt_indent_1 {
 text-indent: 5px;
 }
-#iedqaentmb .gt_indent_2 {
+#goqhjbcsck .gt_indent_2 {
 text-indent: 10px;
 }
-#iedqaentmb .gt_indent_3 {
+#goqhjbcsck .gt_indent_3 {
 text-indent: 15px;
 }
-#iedqaentmb .gt_indent_4 {
+#goqhjbcsck .gt_indent_4 {
 text-indent: 20px;
 }
-#iedqaentmb .gt_indent_5 {
+#goqhjbcsck .gt_indent_5 {
 text-indent: 25px;
 }
-#iedqaentmb .katex-display {
+#goqhjbcsck .katex-display {
 display: inline-flex !important;
 margin-bottom: 0.75em !important;
 }
-#iedqaentmb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#goqhjbcsck div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
 height: 0px !important;
 }
 </style>
@@ -2680,43 +2681,13 @@ height: 0px !important;
 </thead>
 <tbody class="gt_table_body">
 <tr class="odd">
-<td class="gt_row gt_left" headers="Event">Heart rate</td>
-<td class="gt_row gt_right" headers="EB05">3.86</td>
-<td class="gt_row gt_right" headers="Methods flagged">4</td>
-</tr>
-<tr class="even">
 <td class="gt_row gt_left" headers="Event" style="background-color: #FFF3CD">Myocarditis</td>
 <td class="gt_row gt_right" headers="EB05" style="background-color: #FFF3CD">3.14</td>
 <td class="gt_row gt_right" headers="Methods flagged" style="background-color: #FFF3CD">4</td>
 </tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="Event">Heart rate increased</td>
-<td class="gt_row gt_right" headers="EB05">3.10</td>
-<td class="gt_row gt_right" headers="Methods flagged">4</td>
-</tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="Event">Magnetic resonance imaging heart</td>
-<td class="gt_row gt_right" headers="EB05">3.00</td>
-<td class="gt_row gt_right" headers="Methods flagged">4</td>
-</tr>
-<tr class="odd">
 <td class="gt_row gt_left" headers="Event">Cardiac disorder</td>
 <td class="gt_row gt_right" headers="EB05">2.61</td>
-<td class="gt_row gt_right" headers="Methods flagged">4</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="Event">Heart sounds</td>
-<td class="gt_row gt_right" headers="EB05">2.57</td>
-<td class="gt_row gt_right" headers="Methods flagged">4</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="Event">Catheterisation cardiac</td>
-<td class="gt_row gt_right" headers="EB05">2.41</td>
-<td class="gt_row gt_right" headers="Methods flagged">4</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="Event">Cardiac stress test</td>
-<td class="gt_row gt_right" headers="EB05">2.39</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
 <tr class="odd">
@@ -2725,41 +2696,26 @@ height: 0px !important;
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="Event">Cardiac function test</td>
-<td class="gt_row gt_right" headers="EB05">2.30</td>
-<td class="gt_row gt_right" headers="Methods flagged">4</td>
-</tr>
-<tr class="odd">
 <td class="gt_row gt_left" headers="Event" style="background-color: #FFF3CD">Pericarditis</td>
 <td class="gt_row gt_right" headers="EB05" style="background-color: #FFF3CD">2.27</td>
 <td class="gt_row gt_right" headers="Methods flagged" style="background-color: #FFF3CD">4</td>
 </tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="Event">Cardiac imaging procedure</td>
-<td class="gt_row gt_right" headers="EB05">2.27</td>
-<td class="gt_row gt_right" headers="Methods flagged">4</td>
-</tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers="Event">Heart rate abnormal</td>
-<td class="gt_row gt_right" headers="EB05">2.22</td>
-<td class="gt_row gt_right" headers="Methods flagged">4</td>
-</tr>
-<tr class="even">
 <td class="gt_row gt_left" headers="Event" style="background-color: #FFF3CD">Myopericarditis</td>
 <td class="gt_row gt_right" headers="EB05" style="background-color: #FFF3CD">2.14</td>
 <td class="gt_row gt_right" headers="Methods flagged" style="background-color: #FFF3CD">4</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td class="gt_row gt_left" headers="Event">Cardiac discomfort</td>
 <td class="gt_row gt_right" headers="EB05">2.09</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td class="gt_row gt_left" headers="Event">Cardiac valve disease</td>
 <td class="gt_row gt_right" headers="EB05">2.07</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td class="gt_row gt_left" headers="Event">Cardiac failure</td>
 <td class="gt_row gt_right" headers="EB05">2.06</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
@@ -2777,20 +2733,20 @@ height: 0px !important;
 <h3 class="anchored" data-anchor-id="menstrual-and-reproductive-signals">Menstrual and Reproductive Signals</h3>
 <div class="cell">
 <div class="cell-output-display">
-<div id="lpsgygsjdl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#lpsgygsjdl table {
+<div id="bsjcdqfltk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bsjcdqfltk table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#lpsgygsjdl thead, #lpsgygsjdl tbody, #lpsgygsjdl tfoot, #lpsgygsjdl tr, #lpsgygsjdl td, #lpsgygsjdl th {
+#bsjcdqfltk thead, #bsjcdqfltk tbody, #bsjcdqfltk tfoot, #bsjcdqfltk tr, #bsjcdqfltk td, #bsjcdqfltk th {
 border-style: none;
 }
-#lpsgygsjdl p {
+#bsjcdqfltk p {
 margin: 0;
 padding: 0;
 }
-#lpsgygsjdl .gt_table {
+#bsjcdqfltk .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -2815,11 +2771,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_caption {
+#bsjcdqfltk .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#lpsgygsjdl .gt_title {
+#bsjcdqfltk .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -2830,7 +2786,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#lpsgygsjdl .gt_subtitle {
+#bsjcdqfltk .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -2841,7 +2797,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#lpsgygsjdl .gt_heading {
+#bsjcdqfltk .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -2852,12 +2808,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_bottom_border {
+#bsjcdqfltk .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_col_headings {
+#bsjcdqfltk .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -2871,7 +2827,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_col_heading {
+#bsjcdqfltk .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2890,7 +2846,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#lpsgygsjdl .gt_column_spanner_outer {
+#bsjcdqfltk .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2901,13 +2857,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#lpsgygsjdl .gt_column_spanner_outer:first-child {
+#bsjcdqfltk .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#lpsgygsjdl .gt_column_spanner_outer:last-child {
+#bsjcdqfltk .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#lpsgygsjdl .gt_column_spanner {
+#bsjcdqfltk .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -2918,10 +2874,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#lpsgygsjdl .gt_spanner_row {
+#bsjcdqfltk .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#lpsgygsjdl .gt_group_heading {
+#bsjcdqfltk .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2946,7 +2902,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#lpsgygsjdl .gt_empty_group_heading {
+#bsjcdqfltk .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -2960,13 +2916,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#lpsgygsjdl .gt_from_md > :first-child {
+#bsjcdqfltk .gt_from_md > :first-child {
 margin-top: 0;
 }
-#lpsgygsjdl .gt_from_md > :last-child {
+#bsjcdqfltk .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#lpsgygsjdl .gt_row {
+#bsjcdqfltk .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2984,7 +2940,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#lpsgygsjdl .gt_stub {
+#bsjcdqfltk .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2996,7 +2952,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#lpsgygsjdl .gt_stub_row_group {
+#bsjcdqfltk .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3009,13 +2965,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#lpsgygsjdl .gt_row_group_first td {
+#bsjcdqfltk .gt_row_group_first td {
 border-top-width: 2px;
 }
-#lpsgygsjdl .gt_row_group_first th {
+#bsjcdqfltk .gt_row_group_first th {
 border-top-width: 2px;
 }
-#lpsgygsjdl .gt_summary_row {
+#bsjcdqfltk .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3024,14 +2980,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#lpsgygsjdl .gt_first_summary_row {
+#bsjcdqfltk .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_first_summary_row.thick {
+#bsjcdqfltk .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#lpsgygsjdl .gt_last_summary_row {
+#bsjcdqfltk .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3040,7 +2996,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_grand_summary_row {
+#bsjcdqfltk .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3049,7 +3005,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#lpsgygsjdl .gt_first_grand_summary_row {
+#bsjcdqfltk .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3058,7 +3014,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_last_grand_summary_row_top {
+#bsjcdqfltk .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3067,10 +3023,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_striped {
+#bsjcdqfltk .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#lpsgygsjdl .gt_table_body {
+#bsjcdqfltk .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3078,7 +3034,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_footnotes {
+#bsjcdqfltk .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3091,7 +3047,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_footnote {
+#bsjcdqfltk .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -3099,7 +3055,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#lpsgygsjdl .gt_sourcenotes {
+#bsjcdqfltk .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3112,64 +3068,64 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#lpsgygsjdl .gt_sourcenote {
+#bsjcdqfltk .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#lpsgygsjdl .gt_left {
+#bsjcdqfltk .gt_left {
 text-align: left;
 }
-#lpsgygsjdl .gt_center {
+#bsjcdqfltk .gt_center {
 text-align: center;
 }
-#lpsgygsjdl .gt_right {
+#bsjcdqfltk .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#lpsgygsjdl .gt_font_normal {
+#bsjcdqfltk .gt_font_normal {
 font-weight: normal;
 }
-#lpsgygsjdl .gt_font_bold {
+#bsjcdqfltk .gt_font_bold {
 font-weight: bold;
 }
-#lpsgygsjdl .gt_font_italic {
+#bsjcdqfltk .gt_font_italic {
 font-style: italic;
 }
-#lpsgygsjdl .gt_super {
+#bsjcdqfltk .gt_super {
 font-size: 65%;
 }
-#lpsgygsjdl .gt_footnote_marks {
+#bsjcdqfltk .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#lpsgygsjdl .gt_asterisk {
+#bsjcdqfltk .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#lpsgygsjdl .gt_indent_1 {
+#bsjcdqfltk .gt_indent_1 {
 text-indent: 5px;
 }
-#lpsgygsjdl .gt_indent_2 {
+#bsjcdqfltk .gt_indent_2 {
 text-indent: 10px;
 }
-#lpsgygsjdl .gt_indent_3 {
+#bsjcdqfltk .gt_indent_3 {
 text-indent: 15px;
 }
-#lpsgygsjdl .gt_indent_4 {
+#bsjcdqfltk .gt_indent_4 {
 text-indent: 20px;
 }
-#lpsgygsjdl .gt_indent_5 {
+#bsjcdqfltk .gt_indent_5 {
 text-indent: 25px;
 }
-#lpsgygsjdl .katex-display {
+#bsjcdqfltk .katex-display {
 display: inline-flex !important;
 margin-bottom: 0.75em !important;
 }
-#lpsgygsjdl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#bsjcdqfltk div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
 height: 0px !important;
 }
 </style>
@@ -3180,7 +3136,7 @@ height: 0px !important;
 <td colspan="3" class="gt_heading gt_title gt_font_normal">Menstrual / reproductive signals — Pfizer-BioNTech</td>
 </tr>
 <tr class="gt_heading even">
-<td colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">VAERS · Bayesian disproportionality · EB05 ≥ 1.5, ≥2 methods</td>
+<td colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">VAERS · Bayesian disproportionality · EB05 ≥ 2.0, ≥2 methods</td>
 </tr>
 <tr class="gt_col_headings header">
 <th id="Event" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Event</th>
@@ -3204,31 +3160,6 @@ height: 0px !important;
 <td class="gt_row gt_right" headers="EB05">2.64</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="Event">Dysmenorrhoea</td>
-<td class="gt_row gt_right" headers="EB05">1.88</td>
-<td class="gt_row gt_right" headers="Methods flagged">3</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="Event">Premenstrual dysphoric disorder</td>
-<td class="gt_row gt_right" headers="EB05">1.84</td>
-<td class="gt_row gt_right" headers="Methods flagged">3</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="Event">Premenstrual syndrome</td>
-<td class="gt_row gt_right" headers="EB05">1.70</td>
-<td class="gt_row gt_right" headers="Methods flagged">3</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="Event">Menstrual clots</td>
-<td class="gt_row gt_right" headers="EB05">1.59</td>
-<td class="gt_row gt_right" headers="Methods flagged">3</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="Event">Menorrhagia</td>
-<td class="gt_row gt_right" headers="EB05">1.56</td>
-<td class="gt_row gt_right" headers="Methods flagged">3</td>
-</tr>
 </tbody>
 </table>
 
@@ -3242,20 +3173,20 @@ height: 0px !important;
 <h3 class="anchored" data-anchor-id="thrombotic-signals">Thrombotic Signals</h3>
 <div class="cell">
 <div class="cell-output-display">
-<div id="pkzrgakazu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#pkzrgakazu table {
+<div id="lygnxpwxen" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#lygnxpwxen table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#pkzrgakazu thead, #pkzrgakazu tbody, #pkzrgakazu tfoot, #pkzrgakazu tr, #pkzrgakazu td, #pkzrgakazu th {
+#lygnxpwxen thead, #lygnxpwxen tbody, #lygnxpwxen tfoot, #lygnxpwxen tr, #lygnxpwxen td, #lygnxpwxen th {
 border-style: none;
 }
-#pkzrgakazu p {
+#lygnxpwxen p {
 margin: 0;
 padding: 0;
 }
-#pkzrgakazu .gt_table {
+#lygnxpwxen .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -3280,11 +3211,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#pkzrgakazu .gt_caption {
+#lygnxpwxen .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#pkzrgakazu .gt_title {
+#lygnxpwxen .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -3295,7 +3226,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#pkzrgakazu .gt_subtitle {
+#lygnxpwxen .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -3306,7 +3237,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#pkzrgakazu .gt_heading {
+#lygnxpwxen .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -3317,12 +3248,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#pkzrgakazu .gt_bottom_border {
+#lygnxpwxen .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#pkzrgakazu .gt_col_headings {
+#lygnxpwxen .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3336,7 +3267,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#pkzrgakazu .gt_col_heading {
+#lygnxpwxen .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3355,7 +3286,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#pkzrgakazu .gt_column_spanner_outer {
+#lygnxpwxen .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3366,13 +3297,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#pkzrgakazu .gt_column_spanner_outer:first-child {
+#lygnxpwxen .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#pkzrgakazu .gt_column_spanner_outer:last-child {
+#lygnxpwxen .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#pkzrgakazu .gt_column_spanner {
+#lygnxpwxen .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -3383,10 +3314,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#pkzrgakazu .gt_spanner_row {
+#lygnxpwxen .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#pkzrgakazu .gt_group_heading {
+#lygnxpwxen .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3411,7 +3342,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#pkzrgakazu .gt_empty_group_heading {
+#lygnxpwxen .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -3425,13 +3356,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#pkzrgakazu .gt_from_md > :first-child {
+#lygnxpwxen .gt_from_md > :first-child {
 margin-top: 0;
 }
-#pkzrgakazu .gt_from_md > :last-child {
+#lygnxpwxen .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#pkzrgakazu .gt_row {
+#lygnxpwxen .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3449,7 +3380,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#pkzrgakazu .gt_stub {
+#lygnxpwxen .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3461,7 +3392,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#pkzrgakazu .gt_stub_row_group {
+#lygnxpwxen .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3474,13 +3405,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#pkzrgakazu .gt_row_group_first td {
+#lygnxpwxen .gt_row_group_first td {
 border-top-width: 2px;
 }
-#pkzrgakazu .gt_row_group_first th {
+#lygnxpwxen .gt_row_group_first th {
 border-top-width: 2px;
 }
-#pkzrgakazu .gt_summary_row {
+#lygnxpwxen .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3489,14 +3420,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#pkzrgakazu .gt_first_summary_row {
+#lygnxpwxen .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#pkzrgakazu .gt_first_summary_row.thick {
+#lygnxpwxen .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#pkzrgakazu .gt_last_summary_row {
+#lygnxpwxen .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3505,7 +3436,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#pkzrgakazu .gt_grand_summary_row {
+#lygnxpwxen .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3514,7 +3445,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#pkzrgakazu .gt_first_grand_summary_row {
+#lygnxpwxen .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3523,7 +3454,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#pkzrgakazu .gt_last_grand_summary_row_top {
+#lygnxpwxen .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3532,10 +3463,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#pkzrgakazu .gt_striped {
+#lygnxpwxen .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#pkzrgakazu .gt_table_body {
+#lygnxpwxen .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3543,7 +3474,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#pkzrgakazu .gt_footnotes {
+#lygnxpwxen .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3556,7 +3487,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#pkzrgakazu .gt_footnote {
+#lygnxpwxen .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -3564,7 +3495,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#pkzrgakazu .gt_sourcenotes {
+#lygnxpwxen .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -3577,64 +3508,64 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#pkzrgakazu .gt_sourcenote {
+#lygnxpwxen .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#pkzrgakazu .gt_left {
+#lygnxpwxen .gt_left {
 text-align: left;
 }
-#pkzrgakazu .gt_center {
+#lygnxpwxen .gt_center {
 text-align: center;
 }
-#pkzrgakazu .gt_right {
+#lygnxpwxen .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#pkzrgakazu .gt_font_normal {
+#lygnxpwxen .gt_font_normal {
 font-weight: normal;
 }
-#pkzrgakazu .gt_font_bold {
+#lygnxpwxen .gt_font_bold {
 font-weight: bold;
 }
-#pkzrgakazu .gt_font_italic {
+#lygnxpwxen .gt_font_italic {
 font-style: italic;
 }
-#pkzrgakazu .gt_super {
+#lygnxpwxen .gt_super {
 font-size: 65%;
 }
-#pkzrgakazu .gt_footnote_marks {
+#lygnxpwxen .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#pkzrgakazu .gt_asterisk {
+#lygnxpwxen .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#pkzrgakazu .gt_indent_1 {
+#lygnxpwxen .gt_indent_1 {
 text-indent: 5px;
 }
-#pkzrgakazu .gt_indent_2 {
+#lygnxpwxen .gt_indent_2 {
 text-indent: 10px;
 }
-#pkzrgakazu .gt_indent_3 {
+#lygnxpwxen .gt_indent_3 {
 text-indent: 15px;
 }
-#pkzrgakazu .gt_indent_4 {
+#lygnxpwxen .gt_indent_4 {
 text-indent: 20px;
 }
-#pkzrgakazu .gt_indent_5 {
+#lygnxpwxen .gt_indent_5 {
 text-indent: 25px;
 }
-#pkzrgakazu .katex-display {
+#lygnxpwxen .katex-display {
 display: inline-flex !important;
 margin-bottom: 0.75em !important;
 }
-#pkzrgakazu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#lygnxpwxen div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
 height: 0px !important;
 }
 </style>
@@ -3660,36 +3591,31 @@ height: 0px !important;
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="Event">Coagulation test</td>
-<td class="gt_row gt_right" headers="EB05">2.85</td>
-<td class="gt_row gt_right" headers="Methods flagged">4</td>
-</tr>
-<tr class="odd">
 <td class="gt_row gt_left" headers="Event">Deep vein thrombosis</td>
 <td class="gt_row gt_right" headers="EB05">2.73</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td class="gt_row gt_left" headers="Event">Thrombosis</td>
 <td class="gt_row gt_right" headers="EB05">2.65</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td class="gt_row gt_left" headers="Event">Pulmonary embolism</td>
 <td class="gt_row gt_right" headers="EB05">2.54</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td class="gt_row gt_left" headers="Event">Venous thrombosis limb</td>
 <td class="gt_row gt_right" headers="EB05">2.35</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td class="gt_row gt_left" headers="Event">Venous thrombosis</td>
 <td class="gt_row gt_right" headers="EB05">2.34</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td class="gt_row gt_left" headers="Event">Transverse sinus thrombosis</td>
 <td class="gt_row gt_right" headers="EB05">2.10</td>
 <td class="gt_row gt_right" headers="Methods flagged">4</td>
@@ -3706,20 +3632,20 @@ height: 0px !important;
 <h3 class="anchored" data-anchor-id="stroke-signals">Stroke Signals</h3>
 <div class="cell">
 <div class="cell-output-display">
-<div id="ooxstnzqbo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ooxstnzqbo table {
+<div id="gfxeakhulq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gfxeakhulq table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#ooxstnzqbo thead, #ooxstnzqbo tbody, #ooxstnzqbo tfoot, #ooxstnzqbo tr, #ooxstnzqbo td, #ooxstnzqbo th {
+#gfxeakhulq thead, #gfxeakhulq tbody, #gfxeakhulq tfoot, #gfxeakhulq tr, #gfxeakhulq td, #gfxeakhulq th {
 border-style: none;
 }
-#ooxstnzqbo p {
+#gfxeakhulq p {
 margin: 0;
 padding: 0;
 }
-#ooxstnzqbo .gt_table {
+#gfxeakhulq .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -3744,11 +3670,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_caption {
+#gfxeakhulq .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#ooxstnzqbo .gt_title {
+#gfxeakhulq .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -3759,7 +3685,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#ooxstnzqbo .gt_subtitle {
+#gfxeakhulq .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -3770,7 +3696,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#ooxstnzqbo .gt_heading {
+#gfxeakhulq .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -3781,12 +3707,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_bottom_border {
+#gfxeakhulq .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_col_headings {
+#gfxeakhulq .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -3800,7 +3726,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_col_heading {
+#gfxeakhulq .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3819,7 +3745,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#ooxstnzqbo .gt_column_spanner_outer {
+#gfxeakhulq .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3830,13 +3756,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#ooxstnzqbo .gt_column_spanner_outer:first-child {
+#gfxeakhulq .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#ooxstnzqbo .gt_column_spanner_outer:last-child {
+#gfxeakhulq .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#ooxstnzqbo .gt_column_spanner {
+#gfxeakhulq .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -3847,10 +3773,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#ooxstnzqbo .gt_spanner_row {
+#gfxeakhulq .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#ooxstnzqbo .gt_group_heading {
+#gfxeakhulq .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3875,7 +3801,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#ooxstnzqbo .gt_empty_group_heading {
+#gfxeakhulq .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -3889,13 +3815,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#ooxstnzqbo .gt_from_md > :first-child {
+#gfxeakhulq .gt_from_md > :first-child {
 margin-top: 0;
 }
-#ooxstnzqbo .gt_from_md > :last-child {
+#gfxeakhulq .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#ooxstnzqbo .gt_row {
+#gfxeakhulq .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3913,7 +3839,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#ooxstnzqbo .gt_stub {
+#gfxeakhulq .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3925,7 +3851,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ooxstnzqbo .gt_stub_row_group {
+#gfxeakhulq .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -3938,13 +3864,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#ooxstnzqbo .gt_row_group_first td {
+#gfxeakhulq .gt_row_group_first td {
 border-top-width: 2px;
 }
-#ooxstnzqbo .gt_row_group_first th {
+#gfxeakhulq .gt_row_group_first th {
 border-top-width: 2px;
 }
-#ooxstnzqbo .gt_summary_row {
+#gfxeakhulq .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3953,14 +3879,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ooxstnzqbo .gt_first_summary_row {
+#gfxeakhulq .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_first_summary_row.thick {
+#gfxeakhulq .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#ooxstnzqbo .gt_last_summary_row {
+#gfxeakhulq .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3969,7 +3895,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_grand_summary_row {
+#gfxeakhulq .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -3978,7 +3904,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ooxstnzqbo .gt_first_grand_summary_row {
+#gfxeakhulq .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3987,7 +3913,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_last_grand_summary_row_top {
+#gfxeakhulq .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -3996,10 +3922,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_striped {
+#gfxeakhulq .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#ooxstnzqbo .gt_table_body {
+#gfxeakhulq .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4007,7 +3933,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_footnotes {
+#gfxeakhulq .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4020,7 +3946,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_footnote {
+#gfxeakhulq .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -4028,7 +3954,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ooxstnzqbo .gt_sourcenotes {
+#gfxeakhulq .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4041,64 +3967,64 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ooxstnzqbo .gt_sourcenote {
+#gfxeakhulq .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ooxstnzqbo .gt_left {
+#gfxeakhulq .gt_left {
 text-align: left;
 }
-#ooxstnzqbo .gt_center {
+#gfxeakhulq .gt_center {
 text-align: center;
 }
-#ooxstnzqbo .gt_right {
+#gfxeakhulq .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#ooxstnzqbo .gt_font_normal {
+#gfxeakhulq .gt_font_normal {
 font-weight: normal;
 }
-#ooxstnzqbo .gt_font_bold {
+#gfxeakhulq .gt_font_bold {
 font-weight: bold;
 }
-#ooxstnzqbo .gt_font_italic {
+#gfxeakhulq .gt_font_italic {
 font-style: italic;
 }
-#ooxstnzqbo .gt_super {
+#gfxeakhulq .gt_super {
 font-size: 65%;
 }
-#ooxstnzqbo .gt_footnote_marks {
+#gfxeakhulq .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#ooxstnzqbo .gt_asterisk {
+#gfxeakhulq .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#ooxstnzqbo .gt_indent_1 {
+#gfxeakhulq .gt_indent_1 {
 text-indent: 5px;
 }
-#ooxstnzqbo .gt_indent_2 {
+#gfxeakhulq .gt_indent_2 {
 text-indent: 10px;
 }
-#ooxstnzqbo .gt_indent_3 {
+#gfxeakhulq .gt_indent_3 {
 text-indent: 15px;
 }
-#ooxstnzqbo .gt_indent_4 {
+#gfxeakhulq .gt_indent_4 {
 text-indent: 20px;
 }
-#ooxstnzqbo .gt_indent_5 {
+#gfxeakhulq .gt_indent_5 {
 text-indent: 25px;
 }
-#ooxstnzqbo .katex-display {
+#gfxeakhulq .katex-display {
 display: inline-flex !important;
 margin-bottom: 0.75em !important;
 }
-#ooxstnzqbo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#gfxeakhulq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
 height: 0px !important;
 }
 </style>
@@ -4142,17 +4068,19 @@ height: 0px !important;
 <hr>
 </section>
 </section>
-<section id="why-this-matters" class="level2">
-<h2 class="anchored" data-anchor-id="why-this-matters">Why This Matters</h2>
-<p>Cotton’s argument was never “the vaccine should not have been developed.” It was narrower and more damaging: <strong>the safety data from the trial was not reliable enough to inform the benefit-risk decision that regulators made.</strong></p>
-<p>The signals above do not confirm her trial-level analysis — they can’t, because VAERS and a randomized trial measure different things. What they show is narrower and still meaningful: the categories of adverse event she singled out — cardiac, reproductive, thrombotic — are not empty. They surface as real disproportionality signals in independent post-market data, found by independent methods, at conservative thresholds. Some of that is genuine biological signal; some is the reporting dynamics described above. Disentangling the two is the work that proper active surveillance — not VAERS, and not a 7-day trial window — is supposed to do.</p>
-<p>That is Cotton’s enduring point, and it survives her: the instruments we used to clear these products were not built to see the events that mattered most. She was looking in the right direction.</p>
+<section id="what-this-can-and-cannot-say" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-can-and-cannot-say">What This Can and Cannot Say</h2>
+<p>Cotton’s argument was never that the vaccine should not have been developed. Her claim, in her own assessment, was narrower: that the trial’s safety data was not reliable enough to inform the benefit-risk decision regulators made. That is Cotton’s interpretation — Pfizer has disputed it, and no major regulator has adopted it. This analysis takes no position on it.</p>
+<p>What this analysis <em>can</em> say is bounded. The signals above do not confirm her trial-level analysis — they can’t, because VAERS and a randomized trial measure different things. What they show is narrower: the categories of adverse event she singled out — cardiac, reproductive, thrombotic — are not empty in VAERS. They surface as disproportionality signals in independent post-market data, found by independent methods, at a uniform conservative threshold. Some of that is likely genuine biological signal; some is the reporting dynamics described above. VAERS, by design, cannot disentangle the two — that is the work of active surveillance.</p>
+<p>Whether any of this means Cotton was <em>right</em> about the trial is a question VAERS cannot answer, and this post does not claim it does. The narrower, defensible point is methodological: signal detection and a short, intensively-monitored trial window are different instruments, and the events that reach post-market surveillance are not always the ones a trial was built to catch.</p>
 <hr>
 </section>
 <section id="a-note-on-methodology" class="level2">
 <h2 class="anchored" data-anchor-id="a-note-on-methodology">A Note on Methodology</h2>
-<p>All signals in this analysis are drawn from the Global Patient Safety VAERS signal database, computed using four independent disproportionality methods: GPS (Gamma-Poisson Shrinker / EBGM), PRR, ROR, and BCPNN/IC. The EB05 measure is the 5th-percentile lower bound of the two-component Gamma mixture posterior — a conservative credible bound, not the geometric mean. Signals require EB05 &gt; 2.0 with ≥2 methods flagging independently. The full interactive database is available at <a href="https://faers.mobi">faers.mobi</a>.</p>
-<p>VAERS data is passive and subject to under-reporting. Signals indicate statistical disproportionality, not established causation. The appropriate response to a VAERS signal is investigation, not dismissal.</p>
+<p>All signals in this analysis are drawn from the Global Patient Safety VAERS signal database, computed using four independent disproportionality methods: GPS (Gamma-Poisson Shrinker / EBGM), PRR, ROR, and BCPNN/IC. The EB05 measure is the 5th-percentile lower bound of the two-component Gamma mixture posterior — a conservative credible bound, not the geometric mean.</p>
+<p><strong>One pre-specified rule, applied uniformly.</strong> Every category in this post uses the same inclusion rule — EB05 ≥ 2.0 with at least 2 of the 4 methods flagging independently — fixed in advance and applied identically to cardiac, menstrual/reproductive, thrombotic, and stroke terms. No threshold was tuned per category. Preferred Terms that denote investigations or procedures rather than adverse events (e.g. <em>Cardiac stress test</em>, <em>Cardiac function test</em>, <em>Magnetic resonance imaging heart</em>, <em>Coagulation test</em>, heart-rate measurements) are excluded from the clinical-event tables, because they reflect diagnostic work-up prompted by clinical concern and would otherwise inflate the apparent signal count.</p>
+<p>VAERS data is passive and subject to under-reporting and to stimulated (notoriety-driven) reporting. Signals indicate statistical disproportionality within the reporting system, not established causation. The appropriate response to a VAERS signal is investigation, not dismissal — and equally, not alarm.</p>
+<p><strong>Disclosure.</strong> The Global Patient Safety VAERS signal database and the interactive tool at <a href="https://faers.mobi">faers.mobi</a> are produced by Global Patient Safety, the publisher of this article.</p>
 <hr>
 <p><em>Christine Cotton, 1963–2026. Biostatistician. She read the numbers carefully.</em></p>
 </section>

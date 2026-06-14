@@ -64,6 +64,17 @@ n_signals <- function(pt_regex, threshold = 2.0) {
     filter(grepl(pt_regex, event, ignore.case = TRUE), eb05 >= threshold) |>
     nrow()
 }
+
+# Procedural / investigation Preferred Terms to exclude from clinical-event
+# tables. These are MedDRA "Investigations" or procedure PTs (imaging, tests,
+# catheterisation, heart-rate measurements, coagulation panels) — they reflect
+# diagnostic work-up prompted by clinical concern, not adverse events, and would
+# otherwise inflate the apparent number of "cardiac" / "thrombotic" signals.
+proc_exclude <- "imaging|catheter|stress test|function test|heart rate|heart sounds|coagulation test|monitoring|\\btest\\b|\\bscan\\b|procedure"
+
+# Single pre-specified rule applied uniformly to every category below:
+# EB05 >= 2.0 with at least 2 of 4 methods flagging. No per-category tuning.
+EB_THRESHOLD <- 2.0
 ```
 
 Christine Cotton, the French biostatistician who spent the last years of her life scrutinizing Pfizer's COVID-19 vaccine clinical trial data, died on June 1, 2026. She left behind two lasting contributions: a book that dissected the Phase 3 trial in granular statistical detail, and a final document — her legacy piece — on methodological violations in Pfizer's conduct under Good Clinical Practice (GCP) standards.
@@ -72,13 +83,15 @@ She was not an ideologue. She was a biostatistician doing what biostatisticians 
 
 This post does something narrow and testable: it takes the categories of adverse events Cotton argued were downplayed or missed in the clinical trial, and asks whether independent post-market data shows disproportionate reporting in those same categories. The data is VAERS — the U.S. passive surveillance system, 35 years of reports. The method is Bayesian disproportionality (Gamma-Poisson Shrinker, PRR, ROR, BCPNN), four approaches applied independently; a signal requires at least two to agree.
 
-A word on what this can and cannot show. VAERS and a randomized trial are different instruments. Post-market reporting **cannot confirm** a claim about how a trial was conducted. What it can do is tell us whether the safety concerns Cotton raised correspond to real disproportionality signals in independent data — or whether they were artifacts of her analysis. They are not artifacts. That is the claim of this post, and it is deliberately a modest one.
+A word on what this can and cannot show. VAERS and a randomized trial are different instruments. Post-market reporting **cannot confirm** a claim about how a trial was conducted. What it can do is narrower: show whether the *categories* of concern Cotton raised correspond to disproportionality signals in independent reporting data. They do. Whether each such signal reflects biology, reporting dynamics, or both is a separate question this post does not try to settle. That is the deliberately modest claim here.
+
+This is an exercise in honestly applying one method, not in adjudicating the truth about the vaccine. VAERS is U.S. passive surveillance; the analysis is bounded to what that single system, read through disproportionality, can show. Other surveillance systems and epidemiological studies have reached their own conclusions about benefit and risk — those are independent of this analysis and outside its scope. Nothing here is a verdict on whether Comirnaty's benefits outweigh its risks; that is not the question this method answers.
 
 The product: **Pfizer-BioNTech COVID-19 vaccine (Comirnaty / BNT162b2)**, the product Cotton analyzed.
 
 ---
 
-## What Cotton Found in the Trial Data
+## Cotton's Claims About the Trial
 
 Cotton's central argument, laid out in *Tous vaccinés, tous protégés?* and elaborated in her final GCP assessment, was not that the vaccine didn't work. It was that Pfizer's clinical trial **systematically obscured the safety picture**.
 
@@ -98,9 +111,9 @@ Her specific findings:
 
 ---
 
-## What VAERS Confirms
+## VAERS Disproportionality in the Categories Cotton Flagged
 
-The following analysis applies to VAERS reports for Pfizer-BioNTech (non-bivalent) from 2020 through the most recent quarterly update. Signals require EB05 > 2.0 with at least 2 of 4 methods independently flagging the drug–event pair. EB05 is the conservative lower bound of the Bayesian posterior credible interval — at this threshold the disproportionality is unlikely to be a chance fluctuation.
+The following analysis applies to VAERS reports for Pfizer-BioNTech (non-bivalent) from 2020 through the most recent quarterly update. A single rule is applied uniformly to every category below — **EB05 ≥ 2.0 with at least 2 of 4 methods independently flagging the drug–event pair** — fixed before inspecting which events appeared, with no per-category tuning. EB05 is the conservative lower bound of the Bayesian posterior credible interval; at this threshold the disproportionality is unlikely to be a chance fluctuation. Investigation and procedure Preferred Terms (e.g. *Cardiac stress test*, *Coagulation test*) are excluded from the clinical-event tables, since they reflect diagnostic work-up rather than adverse events.
 
 ::: {.callout-important}
 ## Read this before the tables
@@ -117,7 +130,8 @@ The following analysis applies to VAERS reports for Pfizer-BioNTech (non-bivalen
 ```{r}
 cardiac <- pfizer |>
   filter(grepl('myocarditi|pericarditi|myopericarditi|cardiac|heart', event, ignore.case = TRUE),
-         eb05 >= 2.0) |>
+         !grepl(proc_exclude, event, ignore.case = TRUE),
+         eb05 >= EB_THRESHOLD) |>
   arrange(desc(eb05)) |>
   select(Event = event, `EB05` = eb05, `Methods flagged` = n_methods_flagged)
 
@@ -144,7 +158,8 @@ A caution worth keeping in view: myocarditis reporting to VAERS was heavily stim
 ```{r}
 menstrual <- pfizer |>
   filter(grepl('menstrual|menorrha|dysmenor|intermenstrual|premenstrual', event, ignore.case = TRUE),
-         eb05 >= 1.5) |>
+         !grepl(proc_exclude, event, ignore.case = TRUE),
+         eb05 >= EB_THRESHOLD) |>
   arrange(desc(eb05)) |>
   select(Event = event, `EB05` = eb05, `Methods flagged` = n_methods_flagged)
 
@@ -152,7 +167,7 @@ menstrual |>
   gt() |>
   tab_header(
     title = "Menstrual / reproductive signals — Pfizer-BioNTech",
-    subtitle = "VAERS · Bayesian disproportionality · EB05 ≥ 1.5, ≥2 methods"
+    subtitle = "VAERS · Bayesian disproportionality · EB05 ≥ 2.0, ≥2 methods"
   ) |>
   fmt_number(columns = EB05, decimals = 2) |>
   cols_align(align = "left", columns = Event)
@@ -167,7 +182,8 @@ Two cautions belong right here. First, menstrual-change reporting was among the 
 ```{r}
 thrombotic <- pfizer |>
   filter(grepl('thrombos|thromboembol|coagulat|embolism|embolus', event, ignore.case = TRUE),
-         eb05 >= 2.0) |>
+         !grepl(proc_exclude, event, ignore.case = TRUE),
+         eb05 >= EB_THRESHOLD) |>
   arrange(desc(eb05)) |>
   select(Event = event, `EB05` = eb05, `Methods flagged` = n_methods_flagged)
 
@@ -188,7 +204,8 @@ Pulmonary thrombosis (EB05 = `r eb("^Pulmonary thrombosis$")`), deep vein thromb
 ```{r}
 stroke <- pfizer |>
   filter(grepl('stroke|cerebrovascular', event, ignore.case = TRUE),
-         eb05 >= 2.0) |>
+         !grepl(proc_exclude, event, ignore.case = TRUE),
+         eb05 >= EB_THRESHOLD) |>
   arrange(desc(eb05)) |>
   select(Event = event, `EB05` = eb05, `Methods flagged` = n_methods_flagged)
 
@@ -204,21 +221,25 @@ stroke |>
 
 ---
 
-## Why This Matters
+## What This Can and Cannot Say
 
-Cotton's argument was never "the vaccine should not have been developed." It was narrower and more damaging: **the safety data from the trial was not reliable enough to inform the benefit-risk decision that regulators made.**
+Cotton's argument was never that the vaccine should not have been developed. Her claim, in her own assessment, was narrower: that the trial's safety data was not reliable enough to inform the benefit-risk decision regulators made. That is Cotton's interpretation — Pfizer has disputed it, and no major regulator has adopted it. This analysis takes no position on it.
 
-The signals above do not confirm her trial-level analysis — they can't, because VAERS and a randomized trial measure different things. What they show is narrower and still meaningful: the categories of adverse event she singled out — cardiac, reproductive, thrombotic — are not empty. They surface as real disproportionality signals in independent post-market data, found by independent methods, at conservative thresholds. Some of that is genuine biological signal; some is the reporting dynamics described above. Disentangling the two is the work that proper active surveillance — not VAERS, and not a 7-day trial window — is supposed to do.
+What this analysis *can* say is bounded. The signals above do not confirm her trial-level analysis — they can't, because VAERS and a randomized trial measure different things. What they show is narrower: the categories of adverse event she singled out — cardiac, reproductive, thrombotic — are not empty in VAERS. They surface as disproportionality signals in independent post-market data, found by independent methods, at a uniform conservative threshold. Some of that is likely genuine biological signal; some is the reporting dynamics described above. VAERS, by design, cannot disentangle the two — that is the work of active surveillance.
 
-That is Cotton's enduring point, and it survives her: the instruments we used to clear these products were not built to see the events that mattered most. She was looking in the right direction.
+Whether any of this means Cotton was *right* about the trial is a question VAERS cannot answer, and this post does not claim it does. The narrower, defensible point is methodological: signal detection and a short, intensively-monitored trial window are different instruments, and the events that reach post-market surveillance are not always the ones a trial was built to catch.
 
 ---
 
 ## A Note on Methodology
 
-All signals in this analysis are drawn from the Global Patient Safety VAERS signal database, computed using four independent disproportionality methods: GPS (Gamma-Poisson Shrinker / EBGM), PRR, ROR, and BCPNN/IC. The EB05 measure is the 5th-percentile lower bound of the two-component Gamma mixture posterior — a conservative credible bound, not the geometric mean. Signals require EB05 > 2.0 with ≥2 methods flagging independently. The full interactive database is available at [faers.mobi](https://faers.mobi).
+All signals in this analysis are drawn from the Global Patient Safety VAERS signal database, computed using four independent disproportionality methods: GPS (Gamma-Poisson Shrinker / EBGM), PRR, ROR, and BCPNN/IC. The EB05 measure is the 5th-percentile lower bound of the two-component Gamma mixture posterior — a conservative credible bound, not the geometric mean.
 
-VAERS data is passive and subject to under-reporting. Signals indicate statistical disproportionality, not established causation. The appropriate response to a VAERS signal is investigation, not dismissal.
+**One pre-specified rule, applied uniformly.** Every category in this post uses the same inclusion rule — EB05 ≥ 2.0 with at least 2 of the 4 methods flagging independently — fixed in advance and applied identically to cardiac, menstrual/reproductive, thrombotic, and stroke terms. No threshold was tuned per category. Preferred Terms that denote investigations or procedures rather than adverse events (e.g. *Cardiac stress test*, *Cardiac function test*, *Magnetic resonance imaging heart*, *Coagulation test*, heart-rate measurements) are excluded from the clinical-event tables, because they reflect diagnostic work-up prompted by clinical concern and would otherwise inflate the apparent signal count.
+
+VAERS data is passive and subject to under-reporting and to stimulated (notoriety-driven) reporting. Signals indicate statistical disproportionality within the reporting system, not established causation. The appropriate response to a VAERS signal is investigation, not dismissal — and equally, not alarm.
+
+**Disclosure.** The Global Patient Safety VAERS signal database and the interactive tool at [faers.mobi](https://faers.mobi) are produced by Global Patient Safety, the publisher of this article.
 
 ---
 

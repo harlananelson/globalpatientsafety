@@ -5,3 +5,6 @@
 *_files/
 # Rendered HTML stays in app/static/, not here
 *.html
+# Review intermediates (regenerable); keep the model reviews themselves
+reviews/.asksage-archive.txt
+reviews/*_rendered.md

@@ -1228,3 +1228,36 @@ tables, all EB05 numbers present.
 
 Gitignored: `static_site/` (build output, root `.gitignore`); `*_files/` and `*.html`
 in `articles/.gitignore` (render artifacts — the canonical HTML lives in `app/static/`).
+
+## 2026-06-13 — Grok review of Cotton article + fixes applied
+
+Ran asksage-review (grok-4-20-reasoning; `xai-grok` is retired) on the rendered article.
+Grok rated it competent on method but reading as "memorial advocacy" with legal/reputational
+risk. Verified two concrete methodology claims against the source and confirmed both:
+- **Threshold inconsistency:** cardiac/thrombotic/stroke used EB05 ≥ 2.0 but menstrual used
+  ≥ 1.5 with no justification (outcome-dependent thresholding).
+- **Procedural codes in clinical tables:** `cardiac|heart` / `coagulat` filters swept in
+  MedDRA Investigations/procedure PTs (Magnetic resonance imaging heart, Cardiac stress/
+  function test, Catheterisation cardiac, Cardiac imaging procedure, Coagulation test).
+
+Fixes applied to `articles/christine-cotton-vaers.qmd`:
+- Single pre-specified rule `EB_THRESHOLD <- 2.0` + `proc_exclude` regex, applied uniformly
+  to all four categories; procedural/investigation PTs excluded from clinical-event tables.
+- Attribution/voice pass: headings → "Cotton's Claims About the Trial",
+  "VAERS Disproportionality in the Categories Cotton Flagged", "What This Can and Cannot Say";
+  reattributed her benefit-risk thesis to her (Pfizer disputes, no regulator adopted, post
+  takes no position); removed site-voice endorsements ("She was looking in the right direction").
+- Added scope statement: this is an honest application of one method to VAERS (US passive
+  surveillance), NOT a benefit-risk verdict; other surveillance systems are independent and
+  out of scope (per user — they are independent of this study).
+- Added conflict-of-interest disclosure (faers.mobi / GPS DB is the publisher's own tool).
+
+**Did NOT apply** Grok's fix #3 (add a "broader evidence base / other studies upheld benefit-
+risk" section): per user, those studies are independent of this analysis and out of scope; the
+article's purpose is to honestly apply a methodology, not to adjudicate truth. **Could not apply**
+Grok's "report case counts": the deployed parquet has only 4 columns (drug, event, eb05,
+n_methods_flagged) — no observed/count column — so counts would need a richer redeploy.
+
+Re-rendered self-contained (1.56 MB, 0 _files refs, 16 gt tables, inline EB05 numbers resolve),
+rebuilt static site, Cotton still featured. Grok review saved at
+`articles/reviews/christine_cotton-review-grok.md`.
