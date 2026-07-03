@@ -1261,3 +1261,69 @@ n_methods_flagged) — no observed/count column — so counts would need a riche
 Re-rendered self-contained (1.56 MB, 0 _files refs, 16 gt tables, inline EB05 numbers resolve),
 rebuilt static site, Cotton still featured. Grok review saved at
 `articles/reviews/christine_cotton-review-grok.md`.
+
+## 2026-06-14 — MedDRA SOC mapping ("D2") was never built; SSH key root cause
+
+**"Thought it was fixed" — it wasn't.** Searched the whole machine: all three
+`meddra_hierarchy.parquet` files (`~/data/diana/`, `faers-mobi/data/`, `aers-mobi/data/`)
+are the same 4-column file (`pt, cui, synonyms, definition`) — no SOC. `fetch_meddra_hierarchy.R`
+only fetches CUI + synonyms via UMLS REST for the novelty check; it was never written to fetch
+the SOC hierarchy. The PT→HLT/HLGT/SOC walk is the open "D2" task (AGENT_HANDOFF_2026-04-28,
+DECISION_LOG entries above), always logged pending. `SEARCH_REDESIGN.md:370` wrongly stated the
+app "already loads meddra_hierarchy.parquet which maps PT → … → SOC" — corrected 2026-06-14 with
+an inline status note (that false line is almost certainly the source of the "it was fixed" memory).
+
+**What it takes to finish D2 (authoritative, no LLM):** build PT→{HLT,HLGT,SOC} for all outcome
+PTs from a complete MedDRA hierarchy — either a full UMLS `MRHIER` extract (the local `umls.duckdb`
+covers only ~9,295/26,823 MDR PT CUIs ≈ 35%; needs a complete re-extract) or licensed MedDRA
+`mdhier.asc`. UMLS license already covers MedDRA-in-Metathesaurus for non-commercial use, so the
+full UMLS extract is the fastest authoritative path; no MSSO wait required. The dual-model LLM
+classification (qwen3:14b + gemma4:12b-q8, validated NOISE precision 0.987/0.990) is the bridge
+until D2 lands.
+
+**SSH-to-VPS root cause (why deploy broke).** `~/.ssh/id_ed25519` was regenerated **2026-06-09**
+(file mtime). The new key was added to GitHub (push works this session) but **never added to the
+VPS** (`root@5.78.69.136`) authorized_keys — the box still trusts the pre-Jun-9 key, which no
+longer exists locally. `known_hosts` has 0 entries for the IP (also reset). Fix = add the current
+pubkey to the VPS (needs VPS root password, so user must run it): `ssh-copy-id -i
+~/.ssh/id_ed25519.pub root@5.78.69.136`, or paste the pubkey via the Hetzner console. Do NOT
+regenerate the key again — it is now the working GitHub key.
+
+## 2026-07-02 — "Claude Tag"-style autonomous agent loops (3 loops)
+
+Modeled the Claude Tag pattern (a persistent agent triggered by mentions,
+schedules, and ambient signals) as three self-running loops for this site,
+since Claude Tag itself is Slack-bound + Enterprise/Team only.
+
+1. **Telemetry loop (local cron).** `crontab`: Mondays 08:23 local →
+   `scripts/telemetry/weekly_telemetry_review.sh`. Pulls nginx + shiny-server
+   logs from the VPS (root@5.78.69.136) via `scripts/telemetry/pull_vps_logs.sh`,
+   pre-aggregates them (`logs/telemetry/summary-*.txt`), then a headless
+   `call-claude.sh --thorough` writes `logs/telemetry/report-<date>.md`
+   against `prompts/telemetry_review_prompt.md`. Raw logs contain visitor IPs
+   → gitignored (`logs/telemetry/raw/`, `summary-*`, `cron-*`). Report is
+   report-only; no site changes.
+2. **Reflection routine (cloud).** claude.ai routine `gps-weekly-reflection`
+   (id trig_01HjzJN6HePBUyoTvoprEGDX), Opus 4.8, Wed 13:03 UTC. Reviews the
+   repo, opens a PR adding `issues/agent-review-<date>.md` (top-3 improvements,
+   evidence-cited). Report-only via PR; no deploy.
+3. **Research routine (cloud).** routine `gps-weekly-research`
+   (id trig_014RfF59TcvLqtA51Pw5i6fq), Opus 4.8, Fri 13:07 UTC, PubMed MCP +
+   WebSearch/WebFetch. Opens a PR adding `articles/proposals/<date>-ideas.md`
+   (3-5 sourced article ideas). Propose-only; no full articles, no deploy.
+
+**Design decision: autonomy stops at the PR boundary.** All three produce
+reports/PRs; a human merge + the existing multi-model review remain the release
+valve. No loop self-deploys to the live public-health site.
+
+**VPS access (resolved 2026-07-03).** This Linux workstation had **no** key on
+the VPS — the VPS was provisioned and is deployed to from a **Mac**, whose key
+is authorized; this box's `id_ed25519` (created Jun 9, after the April deploy)
+was never added. Fixed by adding this box's public key
+(`ssh-ed25519 ...harlananelson@gmail.com`) to the VPS's
+`/root/.ssh/authorized_keys` (Harlan did it via a working session after a
+Hetzner root-password reset). Verified: key-based `ssh root@5.78.69.136`
+succeeds from this box; `pull_vps_logs.sh` ran end-to-end and produced
+`logs/telemetry/summary-2026-07-03.txt`. Log paths confirmed as
+`/var/log/nginx/access.log*` + `/var/log/shiny-server/*.log`. All three loops
+now operational.
