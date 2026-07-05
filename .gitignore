@@ -10,3 +10,13 @@ static_site/
 logs/telemetry/raw/
 logs/telemetry/summary-*.txt
 logs/telemetry/cron-*.log
+
+# VAERS noise-PT classification artifacts — MedDRA-derived (PT->SOC hierarchy is
+# licensed IP), kept OUT of this public repo. Durable copies + provenance README live
+# in ~/data/faers-pipeline/noise-pts/. Methodology doc: docs/noise-pt-classification.md
+articles/reviews/noise_pts_final.csv
+articles/reviews/review_disagreements.csv
+articles/reviews/llm_gemma_preds.csv
+articles/reviews/llm_qwen_preds.csv
+articles/reviews/vaers_pt_soc_map.parquet
+articles/reviews/meddra-subscription-email.txt
