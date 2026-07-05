@@ -1380,3 +1380,19 @@ hierarchy (licensed IP)**, so the DATA must NOT be committed — same convention
 - **Open:** integration (an `is_low_information_pt` flag in the signal table) is a
   follow-up, gated on the MedDRA licensing question (does the UMLS license cover MedDRA?
   — being verified).
+
+## 2026-07-05 — Pipeline repro fixes implemented (branch) + MedDRA email v2 drafted
+
+- **faers-pipeline** branch `pipeline-repro-fixes` (pushed): `error="stop"`, integer
+  `caseversion` dedup, per-source targets stores (`_targets.yaml` + `scripts/run_pipeline.R`),
+  explicit `scripts/clean_contingency_source.R`, and `docs/pipeline-repro-fixes.md`.
+  Found PRE-EXISTING uncommitted work there = in-progress **legacy-AERS 2004-2012 backfill**
+  (`download_fda.R`, `parse_faers_raw.R`) — the source of the interleaved on-disk state;
+  left it untouched, my fixes complement it. **Pipeline NOT run** (clean rebuild is
+  destructive + long; do it after the legacy parser is committed/stable). OPEN decision:
+  event-date vs filing-quarter partitioning.
+- **MedDRA email v2** drafted at `articles/reviews/meddra-email-2026-07-05-draft.txt`
+  (gitignored — personal). Honest about the monetization trajectory: asks MSSO for the
+  non-commercial category NOW, what public display is permitted, and the path/cost to a
+  future Commercial subscription. Framed to avoid claiming non-commercial while planning to
+  monetize (see [[meddra-umls-licensing]]: UMLS covers internal use, NOT publishing).
