@@ -1327,3 +1327,56 @@ succeeds from this box; `pull_vps_logs.sh` ran end-to-end and produced
 `logs/telemetry/summary-2026-07-03.txt`. Log paths confirmed as
 `/var/log/nginx/access.log*` + `/var/log/shiny-server/*.log`. All three loops
 now operational.
+
+## 2026-07-05 — FAERS pipeline: "missing 2025Q2" is really whole-2025 dropout + non-reproducible mixed-run state
+
+Investigated FAERS/VAERS data cleaning+updating. Initial hypothesis (2025Q2 = a
+localized parse failure) was WRONG. Fable grounded-review (call-claude -m
+claude-fable-5, on faers-pipeline) overturned it; every claim verified against code+data:
+
+- **Contingency partitions on EVENT date, not filing quarter** (`contingency.R:206`
+  `date_to_quarter(event_dt)`). On-disk FAERS rows/quarter: 2023 ~130-209K, 2024
+  174K→60K (decaying), **2025 Q1=6, Q2=0(absent), Q3=1, Q4=9**. The raw 2025Q2 zip
+  parses fine (52,366 reports with 2025Q2 event dates) — the data exists but never
+  reaches contingency. So it's a whole-2025 dropout, not a Q2 parse bug.
+- **On-disk tree is a patchwork of ≥2 runs** (a modern-scope run w/ 2024 data + a
+  legacy 2004-2012 backfill). Independent confirmation: `arrow::open_dataset()` FAILS
+  — `quarter` partition has incompatible types across partitions (string vs int32).
+  Writer (`contingency.R:224-235`) never deletes stale partitions → runs interleave.
+  **Pipeline is not reproducible run-to-run.**
+- **Silent failure baked in:** `error="continue"` (`_targets.R:50`) skips errored
+  per-quarter branches while reporting success.
+- **Latent corruption bug:** dedup `slice_max(caseversion)` (`_targets.R:141`) on a
+  CHARACTER column (`cols(.default="c")`, `parse_faers_raw.R:60`) → lexicographic
+  `"9">"10"`, keeps wrong report version across the modern era.
+- Doc drift: README references `R/download.R` (actual: `download_fda.R`/`download_vaers.R`).
+
+**Revised plan (supersedes "re-parse 2025Q2"):** (1) state hygiene — per-source
+targets store, pinned quarter window, cleaning writer, `error="stop"`, fix character
+caseversion dedup; (2) one clean full-history run + per-quarter row-count verify;
+(3) recompute+redeploy signals with a row-count gate vs current deploy; (4) noise-PT
+filter = FLAG not DROP (Investigations-SOC "noise" often earliest drug-toxicity signal;
+deterministic SOC backbone, LLM labels human-reviewed suggestions only, never filter at
+signal-detection layer).
+
+**Tooling note:** Grok (call-grok) could NOT complete this review — 6 attempts, all
+configs; trivial prompts return but substantive ones come back empty (CLI-level
+failure, not auth). Use asksage-review for a Grok-4 cross-check instead.
+
+## 2026-07-05 — Noise-PT rescue: MedDRA-derived data kept out of the PUBLIC repo
+
+Rescued the stranded June-2026 VAERS noise-PT classification (was uncommitted CSVs in
+`articles/reviews/`, generating script lost). Decision: the repo is **public** and
+`vaers_pt_soc_map.parquet` + the `deterministic_soc` labels encode the **MedDRA PT→SOC
+hierarchy (licensed IP)**, so the DATA must NOT be committed — same convention as
+`~/data/diana/meddra_hierarchy.parquet` (symlinked, never committed).
+
+- Durable backup + provenance README → `~/data/faers-pipeline/noise-pts/`.
+- `.gitignore` guards the 6 `articles/reviews/` files (5 data + the personal MSSO email).
+- Committed doc-only pointer: `docs/noise-pt-classification.md` (methodology, schemas,
+  FLAG-not-DROP integration plan). Branch `noise-pt-rescue` → merged to main.
+- Data-quality note: CSV comma-quoting bug hits ~20-30 rows in EACH of the 3 CSVs (not 4);
+  qwen preds have 40 `?` rows.
+- **Open:** integration (an `is_low_information_pt` flag in the signal table) is a
+  follow-up, gated on the MedDRA licensing question (does the UMLS license cover MedDRA?
+  — being verified).
