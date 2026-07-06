@@ -1396,3 +1396,23 @@ hierarchy (licensed IP)**, so the DATA must NOT be committed — same convention
   non-commercial category NOW, what public display is permitted, and the path/cost to a
   future Commercial subscription. Framed to avoid claiming non-commercial while planning to
   monetize (see [[meddra-umls-licensing]]: UMLS covers internal use, NOT publishing).
+
+## 2026-07-05 — FAERS clean rebuild verified; filing-quarter fix works; merged
+
+Ran clean FDA rebuild 2018Q1-2025Q4 (isolated _targets-fda store; old contingency
+moved to source=faers.pre-rebuild-2026-07-05, recoverable). Result: **2025 sparseness
+FIXED** — 2025 Q1/Q2/Q3/Q4 = 318,967 / 327,016 / 384,245 / 386,782 rows (were 6/0/1/9
+under event-date partitioning). Whole 2018-2025 series consistent (~300-390K/quarter),
+10.1M rows / 31 quarters. Merged `pipeline-repro-fixes` (+ legacy-AERS commit) to
+faers-pipeline main (7097554).
+
+**Two follow-ups before recomputing/deploying signals:**
+1. **2018Q1 absent** — series starts 2018Q2 (31 quarters, expected 32). One-quarter
+   edge to diagnose (parse or filing_quarter tag for that branch).
+2. **many-to-many join warning** (3 targets) — the drug-dictionary join in
+   build_quarterly_contingency_fda detected many-to-many (dict_dedup should be
+   1-row-per-drug_raw). Could inflate `observed` counts; investigate before signals.
+
+Scope note: rebuild is modern-only (2018-2025). Deep history (legacy AERS 2004-2012Q3,
+present raw) + the 2013-2017 raw gap are deferred; live app signals NOT yet recomputed/
+redeployed (separate gated step).
