@@ -1416,3 +1416,16 @@ faers-pipeline main (7097554).
 Scope note: rebuild is modern-only (2018-2025). Deep history (legacy AERS 2004-2012Q3,
 present raw) + the 2013-2017 raw gap are deferred; live app signals NOT yet recomputed/
 redeployed (separate gated step).
+
+## 2026-07-07 — FAERS 2018Q1 recovered; contingency now complete 32/32 quarters
+
+2018Q1 was missing not from a bad download but a parser bug: FDA ships 2018Q1 as a
+corrected re-release named `DEMO18Q1_new.txt`; the strict `...Q1.txt` regex missed it and
+`parse_faers_table` returned 0 rows (a 3rd silent-drop path, uncaught by error="stop"
+because it warned rather than errored). Fix (faers-pipeline c483130): regex allows optional
+`_<alnum>` suffix (prefers suffixed file if both present); no-file-match is now a hard
+`cli_abort`. Full re-run 2018Q1-2025Q4 verified: **32/32 quarters, 2018Q1=298,574 rows,
+10.42M total**, 2025 fix intact.
+
+STILL OPEN before recompute/deploy signals: the many-to-many drug-dictionary join warning
+(may inflate `observed`); deep history (legacy AERS 2004-2012 + 2013-2017 raw gap).
