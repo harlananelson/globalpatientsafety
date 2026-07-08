@@ -1429,3 +1429,15 @@ because it warned rather than errored). Fix (faers-pipeline c483130): regex allo
 
 STILL OPEN before recompute/deploy signals: the many-to-many drug-dictionary join warning
 (may inflate `observed`); deep history (legacy AERS 2004-2012 + 2013-2017 raw gap).
+
+## 2026-07-07 — Many-to-many join warning: diagnosed BENIGN (resolved)
+
+The contingency_v1/_final warning is the intended drug×event enumeration within a report
+(drug_f ⋈ reac_f on primaryid; a report has many drugs AND many reactions), NOT the
+drug-dictionary join (that has explicit many-to-one). `distinct(primaryid, rxcui,
+outcome_name)` before `count()` makes each report contribute exactly 1 per pair — verified
+empirically (2025Q2 busiest report 249916714: 196 pairs, max per-report contribution to any
+pair = 1). NO count inflation; `observed` values are correct report counts. Annotated the
+join `relationship="many-to-many"` to document intent + silence the warning
+(faers-pipeline f084ff6). No output change, no re-run. Open items now: recompute/deploy
+signals; deep history (legacy AERS + 2013-2017 gap).
