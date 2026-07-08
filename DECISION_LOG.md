@@ -1456,3 +1456,32 @@ signals; deep history (legacy AERS + 2013-2017 gap).
    same numbers, `furrr`/`mclapply`/data.table), benchmark. Cross-quarter parallelism is
    blocked by the cumulative prior (sequential dep); only unlocked by switching to
    `per_window`, which CHANGES the statistics — user's methodological call, not automatic.
+
+## 2026-07-08 — Signals recomputed + redeployed (consistent 2018-2025 vintage) ✓
+
+Queue item 1 DONE. Recomputed drug + substance signals from the clean 32-quarter
+contingency, regenerated dicts, deployed all together.
+- Drug: signals_faers_v2026-07-08.parquet (25.4M rows, 32 qtrs, 2025 populated).
+- Substance: substance/signals_faers_v2026-07-08.parquet (19.1M rows, 32 qtrs).
+- Dicts regenerated surgically from cached Jul-7 targets (fda_reac_all 46.0M rows,
+  drug_dictionary 499,605) — the pipeline's dict targets carried a stale Jul-5
+  timestamp; rewrote via write_*_parquet on tar_read'd objects (no 30-min rebuild).
+- deploy_to_vps.sh → faers.mobi; VPS signals.parquet == local (3,606,302,954 bytes),
+  both sites HTTP 200 after shiny-server restart.
+
+**BUG FOUND (worked around, needs permanent fix):** build_substance_contingency.R has
+the SAME non-cleaning-writer bug as the main pipeline — it left April's 1990-2017
+substance partitions on disk (would have polluted substance signals with stale pre-2018
+data). Worked around by mv-ing the stale tree aside before rebuild. Permanent fix: add a
+clean-before-write (or explicit clean step) to build_substance_contingency.R. Stale tree
+backed up at contingency-substance/source=faers.pre-rebuild-2026-07-08.
+
+**Note:** live app time axis is now 2018-2025 (was deeper mixed history). Deep history
+(legacy AERS 2004-2012 + 2013-2017 raw gap) remains a deferred item.
+
+## Work queue (updated)
+1. ~~Recompute + redeploy signals~~ ✓ DONE
+2. CI fix (Rhino Test red since ~2026-04-24)
+3. Parallelize safetysignal (per-pair, method-preserving; benchmark before per_window)
+4. Fix build_substance_contingency.R non-cleaning writer (new; found during deploy)
+5. [conditional] GPU disproportionality engine — see signal-compute/docs/gpu-disproportionality-design.md
