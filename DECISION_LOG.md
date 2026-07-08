@@ -1441,3 +1441,18 @@ pair = 1). NO count inflation; `observed` values are correct report counts. Anno
 join `relationship="many-to-many"` to document intent + silence the warning
 (faers-pipeline f084ff6). No output change, no re-run. Open items now: recompute/deploy
 signals; deep history (legacy AERS + 2013-2017 gap).
+
+## 2026-07-07 — Work queue (in order)
+
+1. **(in progress)** Recompute signals from clean 32-quarter contingency (compute_quarterly.R,
+   CPU, running) → verify → `deploy_to_vps.sh` to faers.mobi. Note: new signals cover
+   2018-2025 (clean); replaces the older mixed-history deploy — live-app time axis shrinks.
+2. **CI fix** — Rhino Test red on EVERY push since ~2026-04-24 (pre-existing, unrelated to
+   this session). Causes: (a) CI renv restore not installing `rhino` (renv.lock DOES pin it),
+   (b) `.rhino/` dir absent → Cypress step fails on missing `.rhino/package-lock.json`. Does
+   NOT block deploy.
+3. **Parallelize safetysignal** — compute uses 1 of 16 cores, zero parallelism. Do option 2
+   first: parallelize the per-drug-event-pair loop inside safetysignal (method-PRESERVING,
+   same numbers, `furrr`/`mclapply`/data.table), benchmark. Cross-quarter parallelism is
+   blocked by the cumulative prior (sequential dep); only unlocked by switching to
+   `per_window`, which CHANGES the statistics — user's methodological call, not automatic.
