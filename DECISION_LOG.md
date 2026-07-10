@@ -1536,3 +1536,16 @@ user's methodological call.
 
 Queue: only item 5 (conditional GPU) remains — gated on whether 6.5x CPU is
 enough. See signal-compute/docs/gpu-disproportionality-design.md.
+
+## 2026-07-09 — safetysignal parallel version installed live; GPU PoC started
+
+- **safetysignal reinstalled** into the user library (R CMD INSTALL from source);
+  installed pkg now has `.ss_cores` -> pipeline uses the parallel version on next
+  compute. (It loads from ~/R/.../4.5/, NOT nix/local-source, so a source reinstall
+  is required to roll out safetysignal changes — remember this.)
+- **GPU PoC (item 5) begun** in ~/projects/gpu-disprop-poc/: generated a 50k-pair
+  ground-truth (parity_params.parquet: posterior params + safetysignal eb05), and
+  wrote eb05_gpu_poc.py — a JAX float64 batched bisection over gammainc computing
+  the mixture-posterior 5th-percentile (EB05). Installing jax[cuda12] (driver
+  590.48/CUDA13.1). Next: run -> prove parity vs safetysignal + benchmark GPU vs the
+  7.21s serial / 1.11s CPU-parallel baseline. Still a PoC, not a committed package.
