@@ -1518,3 +1518,21 @@ Notes for later:
 
 Queue: 3 (parallelize safetysignal), 5 (conditional GPU). Item 4 (substance
 writer) done. Items 1,2 done.
+
+## 2026-07-09 — safetysignal parallelized (queue item 3) ✓
+
+Parallelized posterior_percentile()'s per-pair uniroot solve (the compute
+bottleneck, 3 calls/window) with parallel::mclapply — method-PRESERVING
+(deterministic, identical output). Controlled by options(safetysignal.cores=N),
+default detectCores()-1, serial on non-unix / below 2000 pairs.
+Verified: parity test added + passing; benchmark 7.21s->1.11s = 6.5x on 15 cores
+(50k pairs, 0 NA drift). Full safetysignal test suite passes. safetysignal
+main = 2bc703c. Deployed signals UNCHANGED (speed-only).
+
+**Deployment note:** signal-compute must pick up the new safetysignal (flake
+input / reinstall) for the pipeline to get the speedup. per_window prior strategy
+(the statistics-changing cross-quarter parallelism) intentionally NOT done —
+user's methodological call.
+
+Queue: only item 5 (conditional GPU) remains — gated on whether 6.5x CPU is
+enough. See signal-compute/docs/gpu-disproportionality-design.md.
