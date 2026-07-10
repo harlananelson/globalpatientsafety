@@ -1485,3 +1485,13 @@ backed up at contingency-substance/source=faers.pre-rebuild-2026-07-08.
 3. Parallelize safetysignal (per-pair, method-preserving; benchmark before per_window)
 4. Fix build_substance_contingency.R non-cleaning writer (new; found during deploy)
 5. [conditional] GPU disproportionality engine — see signal-compute/docs/gpu-disproportionality-design.md
+
+## 2026-07-09 — build_substance_contingency.R non-cleaning writer FIXED ✓
+
+Queue item 4 done. Added clean-before-write to build_substance_contingency.R
+(signal-compute): wipes the destination `source=<name>` subtree before the
+per-quarter rebuild so stale partitions from a prior wider-history build can't
+survive. Verified idempotent: clean-rebuild logs "32 existing partition(s)"
+cleaned, outputs 32 (not 144). Stale backup contingency-substance/
+source=faers.pre-rebuild-2026-07-08 can be deleted once confirmed unneeded.
+Queue now: 2 (CI fix), 3 (safetysignal parallelization), 5 (conditional GPU).
