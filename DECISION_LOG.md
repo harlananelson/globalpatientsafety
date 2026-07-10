@@ -1580,3 +1580,21 @@ parallelization is insufficient. Numerics + kernel + design are ready when wante
   R_LIBS_USER (user library), not nix-pinned R packages. The parallel
   safetysignal is already installed in the user lib (R CMD INSTALL 2026-07-09),
   so the pipeline already uses it. No nix change to make.
+
+## 2026-07-10 — CUDA-on-Nix environment SET UP (nixGL); GPU EB05 39x
+
+The GPU env blocker is solved. Root problem: nix-on-Ubuntu — pip jaxlib needs the
+host driver's libcuda, but adding /usr/lib to LD_LIBRARY_PATH pulls system glibc
+and breaks every nix binary (nix glibc 2.42 vs Ubuntu's). Fix: **nixGL**
+(`nix run --impure github:nix-community/nixGL#nixGLNvidia`, NIXPKGS_ALLOW_UNFREE=1)
+bridges the host driver to nix userland without the glibc clash. Reproducible via
+`signal-compute/poc/run-gpu.sh` (creates pip venv from requirements.txt, runs under
+nixGL) — verified from a CLEAN venv end-to-end.
+
+Result (50k pairs): jax.devices() -> CudaDevice(id=0); EB05 parity vs safetysignal
+2.5e-9; **183 ms GPU vs 7210 ms serial (39x) vs 1110 ms 15-core CPU (6x)**.
+
+GPU-engine gates now BOTH cleared (numerics + env). Remaining = straight engineering
+(generalize kernel to eb50/eb95 + prior fit + PRR/ROR/IC, parquet I/O, parity/golden
+suite). Env facts: driver 590.48/CUDA13.1, float64 required, card shared w/ Ollama
+(MEM_FRACTION=0.4). See signal-compute/poc/ + docs/gpu-disproportionality-design.md.
