@@ -1495,3 +1495,26 @@ survive. Verified idempotent: clean-rebuild logs "32 existing partition(s)"
 cleaned, outputs 32 (not 144). Stale backup contingency-substance/
 source=faers.pre-rebuild-2026-07-08 can be deleted once confirmed unneeded.
 Queue now: 2 (CI fix), 3 (safetysignal parallelization), 5 (conditional GPU).
+
+## 2026-07-09 — CI fixed: Rhino Test green ✓ (queue item 2)
+
+Root cause: renv.lock drifted behind Posit PPM `latest` (16 pkgs), so
+renv::restore() 404'd on the first and installed nothing -> every rhino::* step
+failed. Fixed by making the lockfile coherent (bumped 16 to the 2026-07-08
+frozen-snapshot versions) and pinning CI restore to jammy/2026-07-08 (durable).
+Then: fixed the stale boilerplate test (checked output$message from before the
+portal redesign -> smoke test); styler + box-import hygiene; .lintr relaxations
+for content line-length + UPPERCASE constants + FOUR false-positive/contradictory
+linters (box_mod_fun_exists, unused_declared_object [flagged USED objects like
+VACCINE_COLOURS/thromb/cardiac], box_universal_import [conflicts with
+func_import_count(8) for Shiny UI], box_pkg_fun_exists [flags exported dplyr fns
++ can't resolve local safetysignal]).
+
+Notes for later:
+- Local nix box.linters version < CI's (rhino 1.12.0) caused one extra iteration.
+- signal_engine.R / signal_table.R are LEGACY, unused by the portal, and import
+  `safetysignal` which isn't in renv.lock — candidates for removal.
+- renv::status() reports out-of-sync (16 bumped pkgs had Hashes dropped) — cosmetic.
+
+Queue: 3 (parallelize safetysignal), 5 (conditional GPU). Item 4 (substance
+writer) done. Items 1,2 done.
