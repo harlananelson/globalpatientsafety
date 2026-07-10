@@ -41,8 +41,8 @@ jobs:
           # still serves the exact locked versions (2026-04-18 verified to match all
           # 16 packages that had drifted behind latest). Step-level env overrides the
           # action's default RSPM=latest for the restore.
-          RSPM: https://packagemanager.posit.co/cran/__linux__/jammy/2026-04-18
-          RENV_CONFIG_REPOS_OVERRIDE: https://packagemanager.posit.co/cran/__linux__/jammy/2026-04-18
+          RSPM: https://packagemanager.posit.co/cran/__linux__/jammy/2026-07-08
+          RENV_CONFIG_REPOS_OVERRIDE: https://packagemanager.posit.co/cran/__linux__/jammy/2026-07-08
 
       - name: Setup Node
         uses: actions/setup-node@v3

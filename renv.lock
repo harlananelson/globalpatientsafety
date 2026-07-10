@@ -75,15 +75,14 @@
     },
     "Rcpp": {
       "Package": "Rcpp",
-      "Version": "1.1.1-1",
+      "Version": "1.1.2",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "R",
         "methods",
         "utils"
-      ],
-      "Hash": "4f5d86d141cc7ee9b4ff399b466c6c10"
+      ]
     },
     "backports": {
       "Package": "backports",
@@ -162,7 +161,7 @@
     },
     "bslib": {
       "Package": "bslib",
-      "Version": "0.10.0",
+      "Version": "0.11.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -179,8 +178,7 @@
         "mime",
         "rlang",
         "sass"
-      ],
-      "Hash": "d6072fb96c4868d8cb40d4071cdc472b"
+      ]
     },
     "cachem": {
       "Package": "cachem",
@@ -195,7 +193,7 @@
     },
     "callr": {
       "Package": "callr",
-      "Version": "3.7.6",
+      "Version": "3.8.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -203,8 +201,7 @@
         "R6",
         "processx",
         "utils"
-      ],
-      "Hash": "d7e13f49c19103ece9e58ad2d83a7354"
+      ]
     },
     "cli": {
       "Package": "cli",
@@ -520,14 +517,13 @@
     },
     "logger": {
       "Package": "logger",
-      "Version": "0.4.1",
+      "Version": "0.4.2",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "R",
         "utils"
-      ],
-      "Hash": "4a982acda0c48124f0f5f2cbd7e49ce9"
+      ]
     },
     "magrittr": {
       "Package": "magrittr",
@@ -613,7 +609,7 @@
     },
     "pkgload": {
       "Package": "pkgload",
-      "Version": "1.5.1",
+      "Version": "1.5.3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -629,8 +625,7 @@
         "rlang",
         "rprojroot",
         "utils"
-      ],
-      "Hash": "3f12399d613d4b1dddc818c441e1be3b"
+      ]
     },
     "praise": {
       "Package": "praise",
@@ -641,7 +636,7 @@
     },
     "processx": {
       "Package": "processx",
-      "Version": "3.8.7",
+      "Version": "3.9.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -649,8 +644,7 @@
         "R6",
         "ps",
         "utils"
-      ],
-      "Hash": "d7417368c6178e97dd61b114135e634e"
+      ]
     },
     "promises": {
       "Package": "promises",
@@ -671,14 +665,13 @@
     },
     "ps": {
       "Package": "ps",
-      "Version": "1.9.2",
+      "Version": "1.9.3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "R",
         "utils"
-      ],
-      "Hash": "8b9df61306544c418e9052ada9f44c61"
+      ]
     },
     "purrr": {
       "Package": "purrr",
@@ -731,13 +724,12 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "1.2.2",
+      "Version": "1.2.3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "utils"
-      ],
-      "Hash": "bb69b6403b1bad0442657e9e8e57cc83"
+      ]
     },
     "rex": {
       "Package": "rex",
@@ -751,7 +743,7 @@
     },
     "rhino": {
       "Package": "rhino",
-      "Version": "1.11.0",
+      "Version": "1.12.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -776,19 +768,17 @@
         "utils",
         "withr",
         "yaml"
-      ],
-      "Hash": "65daa659ff338dcf4f1ff79ddecadb00"
+      ]
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "1.2.0",
+      "Version": "1.3.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "R",
         "utils"
-      ],
-      "Hash": "f88151fb9ca15e72dc351deb1328716e"
+      ]
     },
     "rprojroot": {
       "Package": "rprojroot",
@@ -802,10 +792,9 @@
     },
     "rstudioapi": {
       "Package": "rstudioapi",
-      "Version": "0.18.0",
+      "Version": "0.19.0",
       "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "d6e1ecf8e39b6d53c8acde372b2f92d1"
+      "Repository": "CRAN"
     },
     "sass": {
       "Package": "sass",
@@ -823,7 +812,7 @@
     },
     "shiny": {
       "Package": "shiny",
-      "Version": "1.13.0",
+      "Version": "1.14.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -852,8 +841,7 @@
         "utils",
         "withr",
         "xtable"
-      ],
-      "Hash": "3ae8521a5a4576fc4b78d00d401f22f9"
+      ]
     },
     "sourcetools": {
       "Package": "sourcetools",
@@ -977,13 +965,12 @@
     },
     "treesitter.r": {
       "Package": "treesitter.r",
-      "Version": "1.2.0",
+      "Version": "1.3.0",
       "Source": "Repository",
       "Repository": "RSPM",
       "Requirements": [
         "R"
-      ],
-      "Hash": "96cbd927eefed3dd9d8327c289223300"
+      ]
     },
     "utf8": {
       "Package": "utf8",
@@ -1026,19 +1013,18 @@
     },
     "withr": {
       "Package": "withr",
-      "Version": "3.0.2",
+      "Version": "3.0.3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "R",
         "grDevices",
         "graphics"
-      ],
-      "Hash": "cc2d62c76458d425210d1eb1478b30b4"
+      ]
     },
     "xfun": {
       "Package": "xfun",
-      "Version": "0.57",
+      "Version": "0.59",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -1046,12 +1032,11 @@
         "grDevices",
         "stats",
         "tools"
-      ],
-      "Hash": "476c8908ae56baf122e69bb2c2d9f631"
+      ]
     },
     "xml2": {
       "Package": "xml2",
-      "Version": "1.5.2",
+      "Version": "1.6.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -1059,8 +1044,7 @@
         "cli",
         "methods",
         "rlang"
-      ],
-      "Hash": "d8e98d08a4a4d03f5052acc6e6204b99"
+      ]
     },
     "xmlparsedata": {
       "Package": "xmlparsedata",
