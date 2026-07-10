@@ -2,10 +2,8 @@
 # Reads TOOLS from app/logic/tools.R and renders one card per row.
 
 box::use(
-  shiny[
-    NS, moduleServer, tagList, tags, div, a, p, span, h5, strong
-  ],
-  bslib[card, card_header, card_body, layout_column_wrap],
+  bslib[card, card_body, card_header, layout_column_wrap],
+  shiny[...],
 )
 
 box::use(
@@ -43,7 +41,8 @@ box::use(
   card(
     class = "h-100",
     card_header(
-      div(class = "d-flex justify-content-between align-items-center",
+      div(
+        class = "d-flex justify-content-between align-items-center",
         strong(row$name),
         .status_badge(row$status)
       )
@@ -57,7 +56,6 @@ box::use(
 
 #' @export
 ui <- function(id) {
-  ns <- NS(id)
   layout_column_wrap(
     width = "320px",
     gap = "1rem",

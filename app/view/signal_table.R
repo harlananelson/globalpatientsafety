@@ -1,9 +1,7 @@
 # Signal results table module
 
 box::use(
-  shiny[moduleServer, NS, reactive, req, renderTable, tableOutput,
-        selectInput, sliderInput, actionButton, observeEvent,
-        tagList, tags, div, fluidRow, column, h3, p, hr],
+  shiny[...],
 )
 
 #' @export
@@ -11,16 +9,22 @@ ui <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
-      column(4,
+      column(
+        4,
         selectInput(ns("product_filter"), "Filter by product:",
-                    choices = NULL, multiple = TRUE)
+          choices = NULL, multiple = TRUE
+        )
       ),
-      column(4,
+      column(
+        4,
         sliderInput(ns("threshold"), "EB05 signal threshold:",
-                    min = 0.5, max = 5, value = 1, step = 0.25)
+          min = 0.5, max = 5, value = 1, step = 0.25
+        )
       ),
-      column(4,
-        div(style = "margin-top: 25px;",
+      column(
+        4,
+        div(
+          style = "margin-top: 25px;",
           actionButton(ns("run"), "Detect Signals", class = "btn-primary btn-lg")
         )
       )
@@ -35,7 +39,7 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     box::use(
-      app/logic/signal_engine[run_signal_detection, get_signals],
+      app/logic/signal_engine[get_signals, run_signal_detection],
     )
 
     results <- reactive({

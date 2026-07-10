@@ -7,22 +7,16 @@
 #   About     — project background
 
 box::use(
-  shiny[
-    NS, moduleServer, navbarPage, navbarMenu, tabPanel, insertTab, showTab,
-    updateNavbarPage, observeEvent, observe, reactive,
-    getQueryString, updateQueryString, isolate,
-    tags, div, p, a, span, h2, h3, h4, hr, HTML, tagList,
-    showNotification
-  ],
   bslib[bs_theme, font_google],
+  shiny[...],
 )
 
 box::use(
-  app/view/portal,
-  app/view/articles,
+  app/logic/articles[ARTICLES],
   app/view/article_covid_vaccine,
   app/view/article_shingles,
-  app/logic/articles[ARTICLES],
+  app/view/articles,
+  app/view/portal,
 )
 
 # Registry mapping article id -> imported view module. Adding a new article
@@ -43,7 +37,9 @@ box::use(
   article_tabs <- lapply(seq_len(nrow(pub)), function(i) {
     row <- pub[i, ]
     mod <- .ARTICLE_MODULES[[row$id]]
-    if (is.null(mod)) return(NULL)
+    if (is.null(mod)) {
+      return(NULL)
+    }
     tabPanel(
       row$title,
       value = paste0("article_", row$id),
@@ -73,19 +69,23 @@ box::use(
 
 .featured_article_card <- function(ns) {
   featured <- ARTICLES[ARTICLES$featured == TRUE & ARTICLES$status == "published", ][1, ]
-  if (nrow(featured) == 0) return(NULL)
+  if (nrow(featured) == 0) {
+    return(NULL)
+  }
 
   div(
     class = "card border-primary mb-5",
-    div(class = "card-header bg-primary text-white fw-semibold",
+    div(
+      class = "card-header bg-primary text-white fw-semibold",
       "★ Featured Article"
     ),
-    div(class = "card-body",
+    div(
+      class = "card-body",
       tags$h5(class = "card-title", featured$title),
       p(class = "text-muted small mb-2", featured$date),
       p(class = "card-text", featured$subtitle),
       tags$button(
-        class   = "btn btn-primary btn-sm",
+        class = "btn btn-primary btn-sm",
         onclick = sprintf(
           "Shiny.setInputValue('%s', '%s', {priority: 'event'})",
           ns("open_featured"), featured$id
@@ -103,12 +103,12 @@ ui <- function(id) {
   ns <- NS(id)
 
   navbarPage(
-    title     = tagList(
+    title = tagList(
       tags$span("Global", style = "color:#4aa8d8;"),
       " Patient Safety"
     ),
-    id        = ns("nav"),
-    theme     = bs_theme(
+    id = ns("nav"),
+    theme = bs_theme(
       version     = 5,
       bg          = "#f8fafc",
       fg          = "#1a2332",
@@ -117,7 +117,7 @@ ui <- function(id) {
       base_font   = font_google("Inter")
     ),
     collapsible = TRUE,
-    fluid       = TRUE,
+    fluid = TRUE,
     header = tags$style(HTML("
       .navbar-brand { font-weight: 500; letter-spacing: -0.02em; }
       .nav-link     { font-size: 0.9rem; }
@@ -125,16 +125,19 @@ ui <- function(id) {
 
     # ── Home ─────────────────────────────────────────────────────────────────
     tabPanel(
-      "Home", value = "home",
+      "Home",
+      value = "home",
       # Hero
       div(
         class = "bg-primary text-white py-5 mb-4",
         div(
           class = "container text-center",
           tags$h1("Global Patient Safety", class = "display-4 fw-light mb-3"),
-          p(class = "lead mb-0",
+          p(
+            class = "lead mb-0",
             "Open tools for pharmacovigilance signal detection ",
-            "and clinical research acceleration.")
+            "and clinical research acceleration."
+          )
         )
       ),
       div(
@@ -150,21 +153,27 @@ ui <- function(id) {
           div(
             class = "col-md-8",
             h2("About", class = "fw-light"),
-            p("Global Patient Safety is a growing suite of open-source tools for ",
+            p(
+              "Global Patient Safety is a growing suite of open-source tools for ",
               "pharmacovigilance and clinical research. Signal detection produces ",
               "hypotheses, not conclusions; cohort construction should be transparent ",
-              "and auditable; and clinical data work should be reproducible."),
-            p("Built by ",
+              "and auditable; and clinical data work should be reproducible."
+            ),
+            p(
+              "Built by ",
               a("Harlan A. Nelson", href = "https://harlananelson.com", target = "_blank"),
               ". Source on ",
-              a("GitHub", href = "https://github.com/harlananelson", target = "_blank"), ".")
+              a("GitHub", href = "https://github.com/harlananelson", target = "_blank"), "."
+            )
           ),
           div(
             class = "col-md-4",
             h3("Disclaimer", class = "fw-light"),
-            p(tags$small(class = "text-muted",
+            p(tags$small(
+              class = "text-muted",
               "Signals are statistical patterns in spontaneous reporting data, ",
-              "not evidence of causation. Outputs are hypotheses requiring further investigation."))
+              "not evidence of causation. Outputs are hypotheses requiring further investigation."
+            ))
           )
         )
       ),
@@ -185,57 +194,76 @@ ui <- function(id) {
 
     # ── About ─────────────────────────────────────────────────────────────────
     tabPanel(
-      "About", value = "about",
+      "About",
+      value = "about",
       div(
         class = "container py-5",
         style = "max-width: 760px;",
-        div(class = "mb-4",
+        div(
+          class = "mb-4",
           tags$h2("About Global Patient Safety", class = "fw-light mb-3"),
-          p(class = "lead text-muted",
+          p(
+            class = "lead text-muted",
             "We analyse 35 years of FDA and CDC adverse-event data using ",
             "peer-reviewed Bayesian statistics to surface drug safety signals ",
-            "that matter to patients and clinicians."),
+            "that matter to patients and clinicians."
+          ),
           tags$hr()
         ),
-        div(class = "row g-4 mb-5",
-          div(class = "col-md-4",
-            div(class = "p-3",
+        div(
+          class = "row g-4 mb-5",
+          div(
+            class = "col-md-4",
+            div(
+              class = "p-3",
               tags$h5("Data sources", class = "fw-semibold mb-2"),
-              tags$ul(class = "text-muted small",
+              tags$ul(
+                class = "text-muted small",
                 tags$li("FDA FAERS (2018–2024)"),
                 tags$li("CDC VAERS (1990–2025)")
               )
             )
           ),
-          div(class = "col-md-4",
-            div(class = "p-3",
+          div(
+            class = "col-md-4",
+            div(
+              class = "p-3",
               tags$h5("Methods", class = "fw-semibold mb-2"),
-              tags$ul(class = "text-muted small",
+              tags$ul(
+                class = "text-muted small",
                 tags$li("GPS — 5th-percentile credible bound of two-component Gamma mixture posterior (DuMouchel 1999 framework). EB05 is a direct posterior quantile on the linear RR scale, not the EBGM geometric mean."),
                 tags$li("PRR, ROR, BCPNN/IC"),
                 tags$li("Flagged by ≥2 of 4 methods")
               )
             )
           ),
-          div(class = "col-md-4",
-            div(class = "p-3",
+          div(
+            class = "col-md-4",
+            div(
+              class = "p-3",
               tags$h5("Privacy", class = "fw-semibold mb-2"),
-              p(class = "text-muted small",
-                "No data is stored. No account required.")
+              p(
+                class = "text-muted small",
+                "No data is stored. No account required."
+              )
             )
           )
         ),
-        div(class = "mb-4",
+        div(
+          class = "mb-4",
           tags$h5("Related tools", class = "fw-semibold mb-2"),
-          div(class = "d-flex gap-3 flex-wrap",
-            a("faers.mobi",  href = "https://faers.mobi",  target = "_blank", class = "btn btn-outline-secondary btn-sm"),
-            a("aers.mobi",   href = "https://aers.mobi",   target = "_blank", class = "btn btn-outline-secondary btn-sm"),
+          div(
+            class = "d-flex gap-3 flex-wrap",
+            a("faers.mobi", href = "https://faers.mobi", target = "_blank", class = "btn btn-outline-secondary btn-sm"),
+            a("aers.mobi", href = "https://aers.mobi", target = "_blank", class = "btn btn-outline-secondary btn-sm"),
             a("vaers.globalpatientsafety.com",
               href = "https://vaers.globalpatientsafety.com", target = "_blank",
-              class = "btn btn-outline-secondary btn-sm")
+              class = "btn btn-outline-secondary btn-sm"
+            )
           )
         ),
-        div(class = "text-muted small",
+        div(
+          class = "text-muted small",
           "© Global Patient Safety. Data: public domain (FDA, CDC). ",
           "Method: ",
           a("GPS framework (DuMouchel 1999)", href = "https://doi.org/10.1177/009286159903300105", target = "_blank"),
@@ -288,12 +316,18 @@ server <- function(id) {
 
     deep_link_applied <- FALSE
     observe({
-      if (deep_link_applied) return()
+      if (deep_link_applied) {
+        return()
+      }
       q <- getQueryString()
       deep_link_applied <<- TRUE
-      if (is.null(q$article) || !nzchar(q$article)) return()
+      if (is.null(q$article) || !nzchar(q$article)) {
+        return()
+      }
       # Only deep-link to known published article ids
-      if (!(q$article %in% pub$id)) return()
+      if (!(q$article %in% pub$id)) {
+        return()
+      }
       nav_to_article(q$article)
     })
 

@@ -1,8 +1,8 @@
 # Article index — card grid linking to each article tab.
 
 box::use(
-  shiny[NS, moduleServer, tagList, tags, div, p, span, strong, a],
-  bslib[card, card_header, card_body, layout_column_wrap],
+  bslib[card, card_body, card_header, layout_column_wrap],
+  shiny[...],
 )
 
 box::use(
@@ -13,7 +13,8 @@ box::use(
   card(
     class = "h-100",
     card_header(
-      div(class = "d-flex justify-content-between align-items-center gap-2",
+      div(
+        class = "d-flex justify-content-between align-items-center gap-2",
         strong(row$title),
         if (row$featured) span(class = "badge bg-primary", "Featured") else NULL
       )

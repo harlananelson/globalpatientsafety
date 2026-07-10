@@ -1,10 +1,11 @@
 # Signal detection engine using safetysignal package
 
 box::use(
-  safetysignal[compute_observed_expected, fit_prior, compute_posterior,
-               posterior_percentile, detect_signals],
-  dplyr[filter, arrange, desc, select, mutate],
-  tibble[tibble],
+  dplyr[arrange, desc, filter, select],
+  safetysignal[
+    compute_observed_expected, compute_posterior, detect_signals, fit_prior,
+    posterior_percentile,
+  ],
 )
 
 #' Run GPS signal detection on drug-event data
@@ -38,6 +39,8 @@ run_signal_detection <- function(data, threshold = 1) {
 get_signals <- function(results) {
   results |>
     filter(.data$is_signal) |>
-    select("drug", "event", "observed", "expected", "rr",
-           "eb05", "eb50", "eb95", "signal_strength")
+    select(
+      "drug", "event", "observed", "expected", "rr",
+      "eb05", "eb50", "eb95", "signal_strength"
+    )
 }
