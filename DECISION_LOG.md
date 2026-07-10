@@ -1569,3 +1569,14 @@ remains a deliberate multi-week investment, gated on whether the LIVE 6.5x CPU
 parallelization is insufficient. Numerics + kernel + design are ready when wanted.
 
 ## PLAN COMPLETE (items 1-4 done; item 5 PoC done, full build gated)
+
+## 2026-07-10 — Loose ends closed
+
+- Removed dead modules app/logic/signal_engine.R + app/view/signal_table.R
+  (unreferenced by the portal, no tests). Their uninstalled `safetysignal`
+  import was the ONLY box_pkg_fun_exists trigger, so re-enabled that linter in
+  .lintr (one fewer suppression). CI green (dc6cca7).
+- safetysignal flake "bump": N/A. signal-compute's flake provides bare pkgs.R +
+  R_LIBS_USER (user library), not nix-pinned R packages. The parallel
+  safetysignal is already installed in the user lib (R CMD INSTALL 2026-07-09),
+  so the pipeline already uses it. No nix change to make.
