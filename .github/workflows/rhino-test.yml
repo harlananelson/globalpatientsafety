@@ -33,6 +33,16 @@ jobs:
 
       - name: Setup R dependencies
         uses: r-lib/actions/setup-renv@v2
+        env:
+          # renv.lock pins versions (e.g. Rcpp 1.1.1-1) that Posit PPM's rolling
+          # `jammy/latest` no longer serves, so renv::restore() 404'd on the first
+          # drifted package and installed nothing — every rhino::* step then failed
+          # "there is no package called 'rhino'". Pin a DATED PPM snapshot that
+          # still serves the exact locked versions (2026-04-18 verified to match all
+          # 16 packages that had drifted behind latest). Step-level env overrides the
+          # action's default RSPM=latest for the restore.
+          RSPM: https://packagemanager.posit.co/cran/__linux__/jammy/2026-04-18
+          RENV_CONFIG_REPOS_OVERRIDE: https://packagemanager.posit.co/cran/__linux__/jammy/2026-04-18
 
       - name: Setup Node
         uses: actions/setup-node@v3
