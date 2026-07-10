@@ -17,11 +17,6 @@ linters:
     # `server` in app/main) as "not exported" because its static box-path
     # resolution fails; the app runs and the Cypress e2e suite passes.
     box_mod_fun_exists_linter = NULL,
-    # Disabled: false positives / unresolvable. Flags exported package
-    # functions (dplyr arrange/desc/filter/select) as "not exported", and can't
-    # resolve `safetysignal` at all (it's a local package, not in renv.lock) in
-    # the legacy signal_engine.R / signal_table.R modules (unused by the portal).
-    box_pkg_fun_exists_linter = NULL,
     # Disabled: false positives. It flags objects that ARE used — e.g.
     # VACCINE_COLOURS (used in scale_colour_manual), and `thromb`/`cardiac`
     # (passed to ggplot2::ggplot) in article_covid_vaccine.R — as unused,
