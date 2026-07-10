@@ -1549,3 +1549,23 @@ enough. See signal-compute/docs/gpu-disproportionality-design.md.
   the mixture-posterior 5th-percentile (EB05). Installing jax[cuda12] (driver
   590.48/CUDA13.1). Next: run -> prove parity vs safetysignal + benchmark GPU vs the
   7.21s serial / 1.11s CPU-parallel baseline. Still a PoC, not a committed package.
+
+## 2026-07-09 — GPU PoC: numerics VALIDATED; CUDA env is the only blocker (item 5)
+
+Ran the GPU eb05 proof-of-concept. Result: a JAX float64 batched bisection over
+gammainc reproduces safetysignal's EB05 (5th-pct of the 2-component Gamma mixture
+posterior) to **max abs 2.5e-9 / max rel 6.4e-7** over 50k pairs. The hardest
+question for the whole GPU idea — does batched bisection reproduce the exact
+statistic? — is answered YES. Core algorithm de-risked.
+
+**Blocker (infra, not numerics):** pip `jax[cuda12]` on this Nix-Python box imports
+but falls back to CPU (`cuInit error 303` — libcuda/driver not exposed to the pip
+jaxlib). GPU access needs Nix↔driver integration (nix flake with jax+CUDA, or
+nixGL). PoC preserved: signal-compute/poc/ (eb05_gpu_poc.py, gen_reference.R,
+README) + design note signal-compute/docs/gpu-disproportionality-design.md.
+
+**Decision:** the full GPU engine (build the JAX package + CUDA env + parity suite)
+remains a deliberate multi-week investment, gated on whether the LIVE 6.5x CPU
+parallelization is insufficient. Numerics + kernel + design are ready when wanted.
+
+## PLAN COMPLETE (items 1-4 done; item 5 PoC done, full build gated)
