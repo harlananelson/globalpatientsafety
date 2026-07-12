@@ -1665,3 +1665,30 @@ GPU engine (item 5) fully done: built, validated to machine precision, perf-tune
 (GPU prior 48x exact; fp32 detect 2.8x full-run with identical signal set). Repo:
 github.com/harlananelson/gpudisprop (private). Scratch f32 output left at
 ~/data/signal-compute/signals_faers_gpu_f32.parquet (2.3GB, deletable).
+
+## 2026-07-12 — Verified: FAERS/VAERS → AEMS does NOT break the pipeline
+
+Research-routine PR #3 (Research ideas: 2026-07-10), idea #5, claimed FDA "retired
+FAERS/VAERS" via AEMS — flagged as a load-bearing claim needing verification. Checked
+primary/secondary sources:
+- AEMS launched 2026-03-11; consolidates FAERS/VAERS/animal-AERS FRONT-ENDS into one
+  real-time public dashboard. Rationale: cost ($37M/yr → $120M/5yr saved), fragmentation,
+  real-time vs quarterly, AI dashboard.
+- **Pipeline-critical finding: bulk quarterly data-extract files STILL published** under the
+  AEMS-branded page (fis.fda.gov/extensions/FPD-QDE-FAERS/), still `faers`-named ASCII+XML,
+  2004–Q1 2026, **Q1 2026 posted 2026-04-28**, free/no login. openFDA API intact. VAERS
+  website + reporting infrastructure unchanged.
+- Conclusion: AEMS is a rebrand/consolidation of the front-end, NOT a discontinuation of the
+  bulk downloads faers-pipeline consumes. Access stays PUBLIC (arguably more so). No pipeline
+  crisis. Idea #5 downgraded from "emergency" to low-urgency "state of our data source"
+  explainer. Only genuine open question: real-time report credibility/verification (FDA silent).
+- Reviewed ideas #1–4: rank #1 (carbidopa/levodopa B6 seizures — freshest, cleanest) > #3
+  (GLP-1 alopecia — reproduce published claim, watch weight-loss telogen-effluvium + volume
+  confound) > #2 (AAV liver-failure class check — original but hard, Zolgensma steroid
+  confound, tiny N) > #4 (Trop-2 ADC — boxed-warning toxicities are expected, only head-to-head
+  is novel; drop the tangential CD3xCD20 citation). PRs left unmerged (kept as PRs per user).
+
+Sources: fda.gov/news-events/press-announcements/fda-launches-new-adverse-event-look-tool;
+fis.fda.gov/extensions/FPD-QDE-FAERS/FPD-QDE-FAERS.html;
+cidrap.umn.edu/public-health/fda-announces-aems-new-adverse-event-database-replace-vaers;
+insider.thefdagroup.com/p/fda-adverse-event-monitoring-system-aems
