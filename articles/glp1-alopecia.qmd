@@ -1,0 +1,243 @@
+---
+title: "A Moving Target: The GLP-1 Hair-Loss Signal Won't Hold Still"
+subtitle: "Reproducing the claim that 'only semaglutide and tirzepatide flag for alopecia' quarter by quarter — and watching it change"
+author: "Global Patient Safety"
+date: 2026-07-14
+categories: [FAERS, pharmacovigilance, GLP-1, dermatology, methods]
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    theme: flatly
+    embed-resources: true   # self-contained HTML (matches christine-cotton/carbidopa-levodopa); build_static_site.R ships only the single <id>.html
+execute:
+  echo: false
+  warning: false
+  message: false
+params:
+  data_path: "/srv/shiny-server/gps-patient/data/signals_faers.parquet"
+---
+
+```{r setup}
+#| include: false
+library(arrow)
+library(dplyr)
+library(gt)
+# Trajectory uses base R graphics (no ggplot2 dependency) so the article renders
+# in the same environment as the other site articles (christine-cotton uses gt only).
+
+data_candidates <- c(
+  params$data_path,
+  "/home/harlan/projects/gps-patient/data/signals_faers.parquet",
+  "/home/harlan/data/signal-compute/signals_faers_v2026-07-08.parquet"
+)
+data_path <- data_candidates[file.exists(data_candidates)][1]
+if (is.na(data_path)) {
+  stop("signals_faers.parquet not found at any candidate path:\n  ",
+       paste(data_candidates, collapse = "\n  "))
+}
+d <- open_dataset(data_path) |> collect()
+
+LATEST_Q    <- max(d$quarter)
+EB_THRESHOLD <- 2.0   # EB05 >= 2.0 with >=2 of 4 methods flagging — fixed rule, no per-brand tuning.
+
+# FAERS fragments each drug across brand strings, and — crucially — a brand does
+# not equal an indication in spontaneous reports (Ozempic is heavily used
+# off-label for weight loss). So we analyse at the BRAND level and are explicit
+# that brand is an imperfect proxy for indication. Each brand maps to an agent
+# and its *nominal* labelled indication.
+brands <- tibble::tribble(
+  ~drug,        ~agent,        ~indication,
+  "ozempic",    "semaglutide", "diabetes (heavy off-label weight loss)",
+  "wegovy",     "semaglutide", "weight loss",
+  "rybelsus",   "semaglutide", "diabetes (oral)",
+  "mounjaro",   "tirzepatide", "diabetes",
+  "zepbound",   "tirzepatide", "weight loss",
+  "trulicity",  "dulaglutide", "diabetes",
+  "victoza",    "liraglutide", "diabetes",
+  "saxenda",    "liraglutide", "weight loss"
+)
+
+# Latest-quarter Alopecia signal for one brand string.
+brow <- function(b) {
+  d |> filter(drug == b, quarter == LATEST_Q, event == "Alopecia") |> slice(1)
+}
+ebv  <- function(b) { r <- brow(b); if (nrow(r)) formatC(r$eb05, format = "f", digits = 2) else "—" }
+obsv <- function(b) { r <- brow(b); if (nrow(r)) r$observed else 0L }
+flagv<- function(b) { r <- brow(b); if (nrow(r)) r$n_methods_flagged else 0L }
+
+# Peak EB05 (and its quarter) for a brand's Alopecia signal, across all quarters.
+peak <- function(b) {
+  d |> filter(drug == b, event == "Alopecia") |> arrange(desc(eb05)) |> slice(1)
+}
+```
+
+There is a genuinely striking claim in the recent literature: among GLP-1 receptor agonists,
+**only semaglutide and tirzepatide** generate statistically significant disproportionality
+signals for **alopecia** (hair loss) in FAERS — the other agents (dulaglutide, liraglutide,
+exenatide, and the rest) do not. Hair loss is a high-salience, heavily-searched concern for
+the most-prescribed drugs of the moment, so the claim travels well.
+
+This post does something the original single-snapshot analyses could not: it **reproduces the
+claim quarter by quarter** using the site's four-method engine, and asks whether it *holds
+still*. It does not. What looks like a fixed fact about two molecules turns out to be a
+snapshot of a moving target — and watching it move tells you more about the drugs, and about
+disproportionality itself, than the static claim does.
+
+::: {.callout-important}
+## What this can and cannot show
+
+Disproportionality asks whether a drug–event pair is reported more than the rest of the
+database predicts. It **cannot** establish causation, measure incidence, or separate a drug
+effect from the reasons people report. Two confounders dominate this particular question and
+neither can be resolved from spontaneous reports: **rapid weight loss itself causes hair loss**
+(telogen effluvium — a well-known response to any large, fast weight change), and **reporting
+is driven by attention** — a drug in the news accumulates reports for reasons unrelated to
+biology. Nothing here is a claim that any GLP-1 drug *causes* hair loss in a given patient.
+:::
+
+## Reproducing the claim — at a single moment
+
+Applying the fixed rule (EB05 ≥ 2.0 with at least two of four methods flagging) to the most
+recent quarter, `r LATEST_Q`, here is where each brand stands for the Preferred Term
+*Alopecia*:
+
+```{r snapshot}
+brands |>
+  rowwise() |>
+  mutate(r = list(brow(drug))) |>
+  mutate(Observed  = if (nrow(r)) r$observed else NA_integer_,
+         Expected  = if (nrow(r)) round(r$expected, 1) else NA_real_,
+         EB05      = if (nrow(r)) round(r$eb05, 2) else NA_real_,
+         IC025     = if (nrow(r)) round(r$ic025, 2) else NA_real_,
+         `Methods flagged` = if (nrow(r)) r$n_methods_flagged else 0L) |>
+  ungroup() |>
+  select(Brand = drug, Agent = agent, Indication = indication,
+         Observed, Expected, EB05, IC025, `Methods flagged`) |>
+  gt() |>
+  tab_header(title = md("**Alopecia** — GLP-1 brands, latest FAERS quarter"),
+             subtitle = md(paste0("Quarter: ", LATEST_Q,
+                                  ". Signal = EB05 ≥ 2.0 with ≥2 of 4 methods."))) |>
+  tab_source_note(md("*EB05 = lower bound of the GPS/EBGM posterior; IC025 = lower bound of the BCPNN Information Component (>0 is the signal criterion).*"))
+```
+
+Taken at face value the snapshot **partly** reproduces the claim, and partly refutes it. The
+tirzepatide brands flag hard — **Zepbound at EB05 `r ebv("zepbound")`** on `r obsv("zepbound")`
+reports, all `r flagv("zepbound")` methods; Mounjaro just over the line. But **semaglutide no
+longer clears the bar**: Ozempic sits at EB05 `r ebv("ozempic")` (`r flagv("ozempic")` of four
+methods), and Wegovy — the weight-loss brand you'd most expect to flag — is below threshold.
+The other agents show nothing.
+
+If you had run this analysis eighteen months ago you would have written the opposite sentence.
+
+## The same claim, over time
+
+Here is the *Alopecia* signal for the four high-volume brands, quarter by quarter:
+
+```{r trajectory}
+#| fig-width: 8.5
+#| fig-height: 4.5
+#| fig-alt: "EB05 trajectories for Ozempic, Wegovy, Mounjaro, and Zepbound alopecia signals. Ozempic peaks in 2024 then falls below threshold; Zepbound rises steeply through 2025 to the highest value."
+traj <- d |>
+  filter(drug %in% c("ozempic", "wegovy", "mounjaro", "zepbound"), event == "Alopecia") |>
+  mutate(qdate = as.Date(paste0(substr(quarter, 1, 4), "-",
+                                (as.integer(substr(quarter, 6, 6)) - 1) * 3 + 1, "-01"))) |>
+  filter(qdate >= as.Date("2023-01-01")) |>
+  arrange(qdate)
+
+series  <- c(ozempic = "#1b9e77", wegovy = "#66c2a5", mounjaro = "#d95f02", zepbound = "#e6ab02")
+labels  <- c(ozempic = "Ozempic", wegovy = "Wegovy", mounjaro = "Mounjaro", zepbound = "Zepbound")
+xr <- range(traj$qdate); yr <- c(0, max(traj$eb05) * 1.05)
+
+par(mar = c(4, 4, 3, 1))
+plot(NA, xlim = xr, ylim = yr, xaxt = "n", xlab = "", ylab = "EB05",
+     main = "The GLP-1 alopecia signal is non-stationary")
+axis.Date(1, at = seq(xr[1], xr[2], by = "6 months"), format = "%Y-%m")
+abline(h = EB_THRESHOLD, lty = 2, col = "grey50")
+text(xr[1], EB_THRESHOLD, "signal threshold (EB05 = 2)", pos = 3, adj = 0, cex = 0.75, col = "grey40")
+for (b in names(series)) {
+  s <- traj[traj$drug == b, ]
+  lines(s$qdate, s$eb05, col = series[b], lwd = 2)
+  points(s$qdate, s$eb05, col = series[b], pch = 19, cex = 0.8)
+}
+legend("topleft", legend = labels[names(series)], col = series, lwd = 2, pch = 19, bty = "n", cex = 0.9)
+```
+
+Two things are moving in opposite directions:
+
+- **Ozempic (semaglutide) peaked and faded.** Its EB05 climbed above 2 with all four methods
+  through 2024 (peak EB05 `r formatC(peak("ozempic")$eb05, format="f", digits=2)` in
+  `r peak("ozempic")$quarter`), then **slid back below threshold across 2025** even as the raw
+  report count kept rising — because the *denominator* (all Ozempic reports) rose faster. That
+  is the fingerprint of a **notoriety wave**: the "Ozempic hair loss" story broke in 2023–24,
+  reports surged, and the disproportionality regressed as the novelty wore off.
+- **Zepbound (tirzepatide) is climbing steeply.** From below threshold in early 2024 to EB05
+  `r ebv("zepbound")` now, tracking the launch and explosive uptake of tirzepatide for weight
+  loss. Whether this too will peak and fade is exactly the question the next few quarters answer.
+
+A claim built on any single quarter — "only semaglutide and tirzepatide flag" — is true only
+for the quarter it was computed in.
+
+## The confound you cannot remove
+
+The natural next hypothesis is that this is a **weight-loss** effect, not a drug effect: rapid
+weight loss causes telogen effluvium, so the weight-loss brands should flag and the diabetes
+brands should not. The data half-cooperates and half-refuses:
+
+- **Tirzepatide fits it:** Zepbound (weight loss, EB05 `r ebv("zepbound")`) outflags Mounjaro
+  (diabetes, EB05 `r ebv("mounjaro")`).
+- **Semaglutide inverts it:** Ozempic (nominally diabetes, EB05 `r ebv("ozempic")`) outflags
+  Wegovy (weight loss, EB05 `r ebv("wegovy")`).
+
+The inversion is not a paradox — it is a lesson about the data. **Ozempic is used enormously
+off-label for weight loss**, so its report pool is a mixture of both indications under a
+"diabetes" label. In spontaneous reports, brand cannot proxy indication, and so
+disproportionality **cannot separate a weight-loss effect from a molecular one**. Anyone who
+tells you FAERS proves GLP-1 drugs *specifically* cause hair loss is claiming a separation the
+data does not support.
+
+## Reading it honestly
+
+The disciplined conclusion is narrow and, we think, more useful than the headline it replaces:
+
+- **Tirzepatide currently shows a strong, rising alopecia disproportionality signal**, led by
+  its weight-loss brand — worth watching, and worth a proper cohort study.
+- **Semaglutide's signal was real and is now regressing**, consistent with a notoriety wave
+  rather than a stable pharmacologic property.
+- **The "only these two molecules" framing is an artifact of when you look.** These signals
+  track prescribing volume and public attention, and are entangled with weight-loss telogen
+  effluvium in a way spontaneous reports cannot untangle.
+
+Disproportionality is a smoke detector, not a diagnosis. Here it is doing its job — pointing at
+tirzepatide right now — while also demonstrating why a single-quarter signal should never be
+frozen into a fact about a molecule.
+
+::: {.callout-note}
+## Limitations
+
+- **Confounding by indication and by weight loss**, unresolvable from spontaneous reports (see above).
+- **Notoriety / stimulated reporting.** Media attention inflates reports independent of biology;
+  the trajectories above are partly a map of news cycles.
+- **Brand fragmentation.** FAERS splits each agent across brand and generic strings; we analyse
+  the high-volume brands and do not pool EB05 across strings (which is not a valid operation).
+  Minor strings (generic "semaglutide", "tirzepatide", foreign brands) are omitted from the
+  figure for clarity, not because they contradict it.
+- **Passive reports are not incidence**, and disproportionality is not causation.
+:::
+
+## Methods
+
+FAERS through `r LATEST_Q`, four-quarter rolling windows. Each drug–event pair is scored by
+four methods computed independently — GPS/EBGM (reported as the EB05 posterior lower bound),
+PRR, ROR, and the BCPNN Information Component (IC025) — with a fixed signal rule of EB05 ≥ 2.0
+and at least two of four methods flagging, applied uniformly to every brand with no per-brand
+tuning. Analysis is at the brand-string level for the Preferred Term *Alopecia*; the latest
+quarter is the current snapshot and the 2023–`r LATEST_Q` window is shown for the trajectory.
+
+## Sources
+
+- Dermatology Times, "Semaglutide, Tirzepatide Flag Alopecia Signals in 10-Year FAERS Review." <https://www.dermatologytimes.com/view/semaglutide-tirzepatide-flag-alopecia-signals-in-10-year-faers-review>
+- Lee et al., "Not All GLP-1 Receptor Agonists Are Alike: Real-World Evidence of Differential Endocrine and Dermatologic Safety," *Diabetes/Metabolism Research and Reviews* (2026). <https://onlinelibrary.wiley.com/doi/10.1002/dmrr.70163>
+- "Glucagon-like peptide-1 receptor agonist medications and hair loss: A retrospective cohort study," *J Am Acad Dermatol.* <https://www.jaad.org/article/S0190-9622(25)00126-4/abstract>
+- Scoping review, "Alopecia as an Emerging Adverse Effect Associated With GLP-1 Receptor Agonists for Weight Loss" (PMC12431796). <https://pmc.ncbi.nlm.nih.gov/articles/PMC12431796/>
+- Data: FDA Adverse Event Monitoring System (AEMS) quarterly extract files (continuing the FAERS series). <https://fis.fda.gov/extensions/FPD-QDE-FAERS/FPD-QDE-FAERS.html>

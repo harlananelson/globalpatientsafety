@@ -1727,3 +1727,25 @@ Proceeded with best-judgment provisional default, easily changed later:
   the recommended option.
 - Recorded in ARTICLE_QUEUE.md header. Open to: different day, or an auto-draft→PR / auto-reminder
   routine, once the user confirms. Publishing stays manual regardless (PR boundary).
+
+## 2026-07-14 — Drafted GLP-1 alopecia article (week 2); base-R figures for portability
+
+- **Article drafted:** `articles/glp1-alopecia.qmd`. Reproduces the published "only semaglutide
+  & tirzepatide flag for alopecia" claim quarter-by-quarter. Real FAERS (through 2025Q4).
+- **Finding (verified):** the claim is a moving target. Ozempic (semaglutide) alopecia signal
+  was above threshold through 2024 (peak EB05 2.53, 2024Q3, 4 methods) then decayed sub-threshold
+  by 2025 (1.18, 2 methods) — notoriety-wave fade. Zepbound (tirzepatide) quadrupled across 2025
+  (1.09→4.28, 4 methods) as weight-loss use exploded; Mounjaro just crossed (2.18). Others null.
+  Brand/indication split does NOT give a clean weight-loss story (Zepbound>Mounjaro fits, but
+  Ozempic>Wegovy inverts — Ozempic heavily off-label for weight loss, so brand≠indication in
+  FAERS). Thesis: single-snapshot disproportionality claims are non-stationary; confound
+  unresolvable from spontaneous reports.
+- **Portability fix:** neither gt nor ggplot2 is in the portal renv.lock; build_static_site.R does
+  NOT render .qmd (expects pre-rendered app/static/<id>.html + ARTICLES tribble entry). Rendering
+  is a separate manual quarto step in the user's env. Converted BOTH articles' trajectory figures
+  from ggplot2 → base R graphics (zero extra deps; verified via pdf device — png segfaults on this
+  headless box, an env issue not a code bug). Cotton uses gt only; base R matches that portability.
+- **Registered** both articles in app/logic/articles.R as status="draft" (won't publish until
+  rendered + flipped to published). ids: glp1_alopecia, carbidopa_levodopa_b6.
+- Queue updated: next = AAV liver class → AEMS explainer → Trop-2 ADC.
+- **Next from user:** "add an AEMS tab to my page for analysis with that data" — pending scoping.

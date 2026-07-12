@@ -12,6 +12,14 @@ box::use(
 #' @export
 ARTICLES <- tribble(
   ~id, ~title, ~subtitle, ~date, ~status, ~featured,
+  "glp1_alopecia",
+  "A Moving Target: The GLP-1 Hair-Loss Signal Won't Hold Still",
+  "Reproducing the claim that 'only semaglutide and tirzepatide flag for alopecia' quarter by quarter in FAERS — and watching Ozempic's signal fade while Zepbound's climbs, with the weight-loss confound left honestly unresolved.",
+  "2026-07-14", "draft", FALSE,
+  "carbidopa_levodopa_b6",
+  "A Warning Built on 14 Cases: Does FAERS See the Carbidopa/Levodopa B6-Seizure Signal?",
+  "The seizure the FDA warned about is invisible in disproportionality — but Vitamin B6 deficiency, the mechanism behind it, is one of the drug's loudest, most stable FAERS signals, years before the warning.",
+  "2026-07-12", "draft", FALSE,
   "christine_cotton",
   "Tested Against VAERS: Christine Cotton's Safety Claims and the Post-Market Record",
   "The categories of adverse event the French biostatistician flagged in Pfizer's Comirnaty trial — cardiac, reproductive/menstrual, thrombotic, stroke — tested against the VAERS signal database with the project's 4-method consensus filter.",

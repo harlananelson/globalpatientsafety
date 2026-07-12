@@ -27,7 +27,8 @@ params:
 library(arrow)
 library(dplyr)
 library(gt)
-library(ggplot2)
+# Trajectory uses base R graphics (no ggplot2 dependency) so the article renders
+# in the same environment as the other site articles (christine-cotton uses gt only).
 
 # Resolve the FAERS signals parquet: prefer params$data_path (server default),
 # fall back to the local home-dir copy when rendering on the workstation.
@@ -200,20 +201,21 @@ traj <- cl |>
                                 (as.integer(substr(quarter, 6, 6)) - 1) * 3 + 1, "-01"))) |>
   arrange(qdate)
 
-ggplot(traj, aes(qdate, eb05)) +
-  geom_hline(yintercept = EB_THRESHOLD, linetype = "dashed", colour = "grey50") +
-  geom_line(colour = "#2c7fb8", linewidth = 0.8) +
-  geom_point(aes(size = observed), colour = "#2c7fb8", alpha = 0.8) +
-  scale_y_log10() +
-  scale_size_continuous(range = c(1, 5), name = "Reports\n(observed)") +
-  annotate("text", x = min(traj$qdate), y = EB_THRESHOLD * 1.3,
-           label = "signal threshold (EB05 = 2)", hjust = 0, size = 3, colour = "grey40") +
-  labs(x = NULL, y = "EB05 (log scale)",
-       title = "Carbidopa/levodopa — Vitamin B6 deficiency signal by quarter",
-       subtitle = paste0("Reference formulation '", REF,
-                         "'. Point size = observed reports in the 4-quarter window.")) +
-  theme_minimal(base_size = 12) +
-  theme(plot.title = element_text(face = "bold"))
+xr <- range(traj$qdate)
+par(mar = c(4, 4, 3, 1))
+plot(traj$qdate, traj$eb05, type = "n", log = "y", xaxt = "n",
+     xlab = "", ylab = "EB05 (log scale)",
+     main = "Carbidopa/levodopa — Vitamin B6 deficiency signal by quarter")
+axis.Date(1, at = seq(xr[1], xr[2], by = "1 year"), format = "%Y")
+abline(h = EB_THRESHOLD, lty = 2, col = "grey50")
+text(xr[1], EB_THRESHOLD, "signal threshold (EB05 = 2)", pos = 3, adj = 0, cex = 0.75, col = "grey40")
+lines(traj$qdate, traj$eb05, col = "#2c7fb8", lwd = 2)
+# Point size scaled to observed report count in each 4-quarter window.
+points(traj$qdate, traj$eb05, col = "#2c7fb8", pch = 19,
+       cex = 0.6 + 2.4 * (traj$observed - min(traj$observed)) /
+             (max(traj$observed) - min(traj$observed) + 1e-9))
+mtext(paste0("Reference formulation '", REF, "'. Point size = observed reports."),
+      side = 3, line = 0.2, cex = 0.8)
 ```
 
 The signal has been present and above threshold, with all four methods agreeing, across every
