@@ -1598,3 +1598,29 @@ GPU-engine gates now BOTH cleared (numerics + env). Remaining = straight enginee
 (generalize kernel to eb50/eb95 + prior fit + PRR/ROR/IC, parquet I/O, parity/golden
 suite). Env facts: driver 590.48/CUDA13.1, float64 required, card shared w/ Ollama
 (MEM_FRACTION=0.4). See signal-compute/poc/ + docs/gpu-disproportionality-design.md.
+
+## 2026-07-11 — Full GPU disproportionality engine built + validated (item 5)
+
+Built ~/projects/gpudisprop: a GPU reimplementation of the signal-compute +
+safetysignal compute step, same signals_*.parquet schema. Modules: prior (NumPy EM,
+exact R parity), oe (polars marginals/2x2), gpu (JAX float64: posterior weight,
+EB05/50/95 batched-bisection over gammainc, PRR/ROR/IC), detect (multi-method +
+flags), pipeline (windowing, cumulative/per_window prior, incremental EWMA, streaming
+parquet). Git: local repo (NOT pushed — new-repo/publish is user's strategic call
+given the monetization angle).
+
+**Validated vs safetysignal (two suites, both pass):**
+- per-method: prior EM to 1e-15, EB to 2.5e-9, PRR/ROR/IC machine precision, all
+  flags 0 mismatches (3266 pairs).
+- end-to-end vs signal-compute: 7948=7948 rows, worst rel 8e-8, all flags exact.
+
+**Perf (real FAERS, ~800k pairs/qtr):** GPU detect ~22-33s/qtr (optimized:
+compile-once padding + shared EB bracket, 300->189 gammainc evals). ~12x serial /
+~2x the 15-core CPU parallel at full-detect level (gammainc-bound; less than the
+isolated kernel's 39x/6x). Pipeline made memory-bounded (per-qtr temp write +
+incremental EWMA + streaming sink; was OOMing the 25M-row concat). Full 32-qtr
+end-to-end wall-clock NOT completed in-session — long GPU background tasks kept
+getting auto-killed by the dev harness (~15-30min); run in a plain shell.
+
+Headroom: GPU the prior EM; faster quantile than bisection. Correctness is done;
+remaining is perf polish. GPU-engine (item 5) COMPLETE as an MVP.
