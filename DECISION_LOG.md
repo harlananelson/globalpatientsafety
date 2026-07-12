@@ -1648,3 +1648,20 @@ flags exact). Commit 807f1e9.
 GPU-engine perf now: per-quarter = GPU prior ~0.2s + GPU detect ~28s float64 /
 ~6-10s --fp32. The gammainc-bound detect (fp64 on the 3090) is the only remaining
 cost; --fp32 (eb05 ~1e-6, flags exact) is the lever there. Prior is fully solved.
+
+## 2026-07-12 — GPU engine full-run benchmark (float64 vs fp32) — item 5 complete
+
+Ran the full 32-quarter FAERS compute end-to-end (detached nohup, survives the
+harness kill) in both precisions with the GPU prior:
+- **float64: ~18 min (1076s); float32: ~6.4 min (382s) = 2.8x.**
+- Both = 25,361,490 rows, 16,204,198 flagged (63.9%) — EXACTLY the deployed
+  signal-compute output (signals_faers_v2026-07-08). End-to-end real-data validation.
+- float32 vs float64: is_signal_any IDENTICAL (0/25.4M), 3/25.4M GPS-flag diffs; but
+  eb05 drifts up to 7.5e-3 (0.75%) on extreme posteriors (worse than fixture 1e-6),
+  ic huge relative only where ic~=0. Guidance: fp32 for the signal SET; float64 to
+  ship eb05 VALUES. README + gpudisprop repo updated (4c951fb).
+
+GPU engine (item 5) fully done: built, validated to machine precision, perf-tuned
+(GPU prior 48x exact; fp32 detect 2.8x full-run with identical signal set). Repo:
+github.com/harlananelson/gpudisprop (private). Scratch f32 output left at
+~/data/signal-compute/signals_faers_gpu_f32.parquet (2.3GB, deletable).
