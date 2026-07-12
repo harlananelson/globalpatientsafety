@@ -1,0 +1,291 @@
+---
+title: "A Warning Built on 14 Cases: Does FAERS See the Carbidopa/Levodopa B6-Seizure Signal?"
+subtitle: "The seizure the FDA warned about is invisible in disproportionality — but the mechanism behind it is one of the drug's loudest, most stable signals"
+author: "Global Patient Safety"
+date: 2026-07-12
+categories: [FAERS, pharmacovigilance, neurology, drug safety, mechanism]
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    theme: flatly
+    embed-resources: true   # self-contained HTML (matches christine-cotton/shingles); build_static_site.R ships only the single <id>.html
+execute:
+  echo: false
+  warning: false
+  message: false
+params:
+  # Default = server path (where this renders for publication). The setup chunk
+  # falls back to the local workstation copy automatically if the server path is
+  # absent, so the same file previews locally and deploys without editing.
+  # Override with: quarto render … -P data_path:/some/other/signals_faers.parquet
+  data_path: "/srv/shiny-server/gps-patient/data/signals_faers.parquet"
+---
+
+```{r setup}
+#| include: false
+library(arrow)
+library(dplyr)
+library(gt)
+library(ggplot2)
+
+# Resolve the FAERS signals parquet: prefer params$data_path (server default),
+# fall back to the local home-dir copy when rendering on the workstation.
+data_candidates <- c(
+  params$data_path,
+  "/home/harlan/projects/gps-patient/data/signals_faers.parquet",
+  "/home/harlan/data/signal-compute/signals_faers_v2026-07-08.parquet"
+)
+data_path <- data_candidates[file.exists(data_candidates)][1]
+if (is.na(data_path)) {
+  stop("signals_faers.parquet not found at any candidate path:\n  ",
+       paste(data_candidates, collapse = "\n  "))
+}
+
+d <- open_dataset(data_path) |> collect()
+
+# Carbidopa/levodopa product family (the FDA-warned products), including the
+# extended-release, enteral-suspension, and foscarbidopa/foslevodopa prodrug
+# formulations. FAERS free-text drug names fragment badly, so we match a regex
+# family and show the per-formulation breakdown rather than a single string.
+DRUG_RX <- "carbidopa|sinemet|rytary|duopa|stalevo|foscarbidopa|levodopa"
+cl <- d |> filter(grepl(DRUG_RX, drug, ignore.case = TRUE))
+
+# The largest, most interpretable string — the plain generic. Used as the
+# reference formulation for prose figures; other formulations corroborate.
+REF <- "carbidopa levodopa"
+
+# Analysis convention: report the MOST RECENT quarter as the current snapshot,
+# not the maximum EB05 across all quarters. For a rare-event drug, taking the
+# single most extreme quarter across a 32-quarter panel cherry-picks noise; the
+# latest rolling window is the honest "where do we stand now" statistic. Observed
+# counts are shown alongside every EB05 so the reader can weigh the evidence.
+LATEST_Q <- max(cl$quarter)
+EB_THRESHOLD <- 2.0   # EB05 >= 2.0 with >=2 of 4 methods flagging — fixed, no per-event tuning.
+
+# Reference-formulation signal for one PT in the latest quarter.
+ref_row <- function(pt_exact) {
+  cl |>
+    filter(drug == REF, quarter == LATEST_Q,
+           tolower(event) == tolower(pt_exact)) |>
+    slice(1)
+}
+ebv    <- function(pt) formatC(ref_row(pt)$eb05,   format = "f", digits = 1)
+icv    <- function(pt) formatC(ref_row(pt)$ic025,  format = "f", digits = 2)
+obsv   <- function(pt) ref_row(pt)$observed
+expv   <- function(pt) formatC(ref_row(pt)$expected, format = "f", digits = 2)
+flagv  <- function(pt) ref_row(pt)$n_methods_flagged
+
+# Pooled observed across all formulations for a PT in the latest quarter.
+pooled_obs <- function(pt_exact) {
+  cl |> filter(quarter == LATEST_Q, tolower(event) == tolower(pt_exact)) |>
+    summarise(n = sum(observed)) |> pull(n)
+}
+```
+
+On **March 20, 2026**, the FDA announced it is *requiring* a new warning on every
+carbidopa/levodopa product: the drug can cause **vitamin B6 (pyridoxine) deficiency and
+B6-deficiency–associated seizures**. The action rested on **14 seizure cases** identified in
+the agency's own post-market reporting data, with the agency noting that the true number is
+likely higher because of under-reporting.
+
+Fourteen cases is a small number to hang a required label change on. It is also exactly the
+situation where an independent pass over the *entire* reporting database is informative — it
+can either corroborate the regulator's small series or show that the signal is invisible at
+population scale. This post does that pass, using FAERS through `r LATEST_Q` and the site's
+standard four-method disproportionality engine (Gamma-Poisson Shrinker / EBGM, PRR, ROR, and
+BCPNN's Information Component), with a single fixed rule: **EB05 ≥ 2.0 and at least two of the
+four methods flagging**, decided before looking at which events appeared.
+
+The result is more interesting than a simple yes/no.
+
+::: {.callout-important}
+## What this can and cannot show
+
+Disproportionality asks one narrow question: *is a drug–event pair reported more often than
+the rest of the database would predict?* It **cannot** establish causation, it cannot count
+how many people were harmed, and it is shaped by who reports and why. A signal is a reason to
+look harder, not a verdict. Confounding by indication is real and central here: Parkinson's
+disease itself carries elevated seizure and neuropathy risk, so a raw signal for a Parkinson's
+drug cannot be cleanly separated from the disease it treats. Nothing below is a claim that
+carbidopa/levodopa *causes* any specific patient's event. The point is narrower — whether the
+*categories* the FDA warning names show disproportionate reporting, and whether they do so in
+a way that is *mechanistically coherent*.
+:::
+
+## The mechanism the warning invokes
+
+The warning is unusual in naming a concrete biochemical mechanism, which makes it testable.
+Levodopa is metabolized in the periphery in reactions that consume pyridoxal-5′-phosphate, the
+active form of vitamin B6. Carbidopa — the decarboxylase inhibitor added to keep levodopa from
+being broken down before it reaches the brain — is a **hydrazine derivative** that reacts
+directly with pyridoxal-5′-phosphate and inactivates it. The two effects compound into a
+functional B6 deficiency. Because B6 is a cofactor in GABA synthesis, severe deficiency lowers
+the seizure threshold — the pathway the FDA warning describes: **drug → B6 depletion →
+(peripheral neuropathy, and, at the extreme) seizures**.
+
+That gives us a chain of Preferred Terms to test, not just the headline outcome:
+*Vitamin B6 deficiency* and *Blood homocysteine increased* (the metabolic derangement),
+*Peripheral neuropathy* and *Polyneuropathy* (the common downstream injury), and *Seizure* /
+*Generalised tonic-clonic seizure* (the rare, severe endpoint the warning is named for).
+
+## What FAERS shows
+
+### The seizure signal is essentially absent at population scale
+
+Here is the current-quarter (`r LATEST_Q`) picture for **Seizure**, broken out by
+formulation so the free-text fragmentation is visible rather than hidden:
+
+```{r seizure-table}
+cl |>
+  filter(quarter == LATEST_Q, event == "Seizure") |>
+  arrange(desc(observed)) |>
+  transmute(Formulation = drug, Observed = observed,
+            Expected = round(expected, 1), EB05 = round(eb05, 2),
+            PRR = round(prr, 1), ROR = round(ror, 1),
+            `Methods flagged` = n_methods_flagged) |>
+  gt() |>
+  tab_header(title = md("**Seizure** — carbidopa/levodopa formulations, latest FAERS quarter"),
+             subtitle = md(paste0("Quarter: ", LATEST_Q,
+                                  ". Signal rule: EB05 ≥ 2.0 with ≥2 of 4 methods."))) |>
+  tab_source_note(md("*EB05 is the conservative lower bound of the Bayesian (GPS/EBGM) posterior. Expected is the count predicted if the drug and event were independent.*"))
+```
+
+For the two highest-volume formulations, **observed reports of seizure are at or below what
+independence predicts** — for `r REF`, `r obsv("Seizure")` observed against
+`r expv("Seizure")` expected, an EB05 of `r ebv("Seizure")`, with `r flagv("Seizure")` of four
+methods flagging. Only the smaller *Sinemet* and *Stalevo* strings clear the threshold, on a
+handful of reports. Pooled across all formulations, plain *Seizure* has hovered near or below
+the signal line for years. **In other words: the outcome the warning is named for does not
+present as a disproportionality signal.** That is not evidence the warning is wrong — it is
+what you expect when a regulator acts on 14 cases of a *rare* complication. Rare outcomes are
+precisely the ones disproportionality is worst at seeing.
+
+### The mechanism, by contrast, is loud and stable
+
+Now the same drug, same database, same rule — for **Vitamin B6 deficiency**:
+
+```{r b6-table}
+cl |>
+  filter(quarter == LATEST_Q, event == "Vitamin B6 deficiency") |>
+  arrange(desc(observed)) |>
+  transmute(Formulation = drug, Observed = observed,
+            Expected = round(expected, 2), EB05 = round(eb05, 1),
+            IC025 = round(ic025, 2),
+            `Methods flagged` = n_methods_flagged) |>
+  gt() |>
+  tab_header(title = md("**Vitamin B6 deficiency** — carbidopa/levodopa formulations, latest FAERS quarter"),
+             subtitle = md(paste0("Quarter: ", LATEST_Q, "."))) |>
+  tab_source_note(md("*IC025 is the lower bound of the BCPNN Information Component; > 0 is the conventional signal criterion.*"))
+```
+
+For `r REF`, vitamin B6 deficiency shows **`r obsv("Vitamin B6 deficiency")` observed reports
+against `r expv("Vitamin B6 deficiency")` expected — an EB05 of
+`r ebv("Vitamin B6 deficiency")` and an IC025 of `r icv("Vitamin B6 deficiency")`, with all
+`r flagv("Vitamin B6 deficiency")` methods flagging.** Pooled across formulations there are
+`r pooled_obs("Vitamin B6 deficiency")` such reports in this single quarter. An EB05 above 70
+means the *conservative lower bound* of the Bayesian estimate is more than seventy-fold; this
+is not a marginal signal.
+
+And it is not a one-quarter fluke. The trajectory below shows the reference formulation's B6
+deficiency signal quarter by quarter:
+
+```{r b6-trajectory}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-alt: "Line plot of EB05 for carbidopa/levodopa and Vitamin B6 deficiency by quarter, sustained well above the signal threshold from 2022 through the latest quarter."
+traj <- cl |>
+  filter(drug == REF, event == "Vitamin B6 deficiency") |>
+  mutate(qdate = as.Date(paste0(substr(quarter, 1, 4), "-",
+                                (as.integer(substr(quarter, 6, 6)) - 1) * 3 + 1, "-01"))) |>
+  arrange(qdate)
+
+ggplot(traj, aes(qdate, eb05)) +
+  geom_hline(yintercept = EB_THRESHOLD, linetype = "dashed", colour = "grey50") +
+  geom_line(colour = "#2c7fb8", linewidth = 0.8) +
+  geom_point(aes(size = observed), colour = "#2c7fb8", alpha = 0.8) +
+  scale_y_log10() +
+  scale_size_continuous(range = c(1, 5), name = "Reports\n(observed)") +
+  annotate("text", x = min(traj$qdate), y = EB_THRESHOLD * 1.3,
+           label = "signal threshold (EB05 = 2)", hjust = 0, size = 3, colour = "grey40") +
+  labs(x = NULL, y = "EB05 (log scale)",
+       title = "Carbidopa/levodopa — Vitamin B6 deficiency signal by quarter",
+       subtitle = paste0("Reference formulation '", REF,
+                         "'. Point size = observed reports in the 4-quarter window.")) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold"))
+```
+
+The signal has been present and above threshold, with all four methods agreeing, across every
+recent quarter — **years before the FDA's March 2026 warning.** The disproportionality the
+label change implies was already sitting in the public data.
+
+### Neuropathy: a weaker, formulation-dependent echo
+
+The intermediate step in the mechanism — nerve injury from B6 depletion — shows up more
+faintly and unevenly. *Polyneuropathy* clears the threshold on the continuous-infusion
+formulations (a plausible dose/exposure story: steadier, higher levodopa turnover), while
+plain *Peripheral neuropathy* for the oral generic is reported *below* expectation. The
+neuropathy picture is real but modest, and it does not carry the article's weight — the two
+findings that do are the **absence** of a seizure signal and the **stability** of the B6
+deficiency signal.
+
+## Reading it honestly
+
+Put the two results side by side and the shape is coherent, not contradictory:
+
+- The **rare, severe endpoint** (seizure) — the one the warning is named for — is invisible in
+  disproportionality. That is the expected behavior of a method that needs volume, applied to
+  an outcome the FDA itself found only 14 times.
+- The **upstream mechanism** (vitamin B6 deficiency) — which no one would report unless a
+  clinician specifically measured it — is one of the strongest and most durable signals in the
+  drug's entire FAERS profile.
+
+The honest reading is that FAERS *does* corroborate the biology of the warning, but through the
+mechanism rather than the outcome. You cannot see the seizures in the aggregate data; you can
+see, unmistakably and for years, the metabolic derangement that the warning says produces them.
+For a signal-detection method, that is a useful lesson in where to look: when the named outcome
+is rare, the mechanistic precursor can be the visible signal.
+
+::: {.callout-note}
+## Limitations
+
+- **Confounding by indication.** Parkinson's disease independently raises seizure and neuropathy
+  risk; disproportionality cannot separate drug from disease. An active-comparator analysis
+  (against other Parkinson's therapies) would sharpen this and is the natural follow-up.
+- **Small numbers.** Even the strong B6 signal rests on ~10–20 reports per quarter. The EB05
+  lower bound already accounts for this (that is what shrinkage does), but the absolute counts
+  are small and every figure here is shown with its observed count for that reason.
+- **Drug-name fragmentation.** FAERS free-text splits one drug across dozens of strings; we
+  report per-formulation and use the largest generic as reference rather than pooling the
+  contingency tables. A properly pooled re-computation would likely *strengthen* the B6 signal,
+  not weaken it.
+- **Reporting dynamics.** Publicity around the warning will stimulate reporting. Our data ends
+  at `r LATEST_Q`, *before* the March 2026 action, so the signal here is not an artifact of the
+  warning itself. The post-warning quarters — now available under FDA's new AEMS extract, which
+  continues the FAERS quarterly files — are the obvious next check for a stimulated-reporting
+  spike.
+- **Disproportionality is not causation**, and passive reports are not incidence.
+:::
+
+## Methods
+
+FAERS reports through `r LATEST_Q`, four-quarter rolling windows. Each drug–event pair is
+scored by four disproportionality methods computed independently: the Gamma-Poisson Shrinker
+(GPS/EBGM, reported as the EB05 lower bound of the posterior credible interval), the
+Proportional Reporting Ratio (PRR), the Reporting Odds Ratio (ROR), and the Bayesian Confidence
+Propagation Neural Network Information Component (IC, reported as IC025). The pre-specified
+signal rule is EB05 ≥ 2.0 with at least two of the four methods flagging, applied uniformly to
+every Preferred Term with no per-event tuning. Carbidopa/levodopa products were identified by a
+drug-name regex covering the oral generic, Sinemet, Rytary, Duopa, Stalevo, and the
+foscarbidopa/foslevodopa prodrug; results are shown per formulation. Analysis is restricted to
+the most recent quarter as the current snapshot, with the reference-formulation trajectory shown
+across all quarters.
+
+## Sources
+
+- FDA Drug Safety Communication, "FDA Is Requiring a Warning about Vitamin B6 Deficiency and Associated Seizures for Drug Products Containing Carbidopa/Levodopa" (Mar 20, 2026). <https://www.fda.gov/drugs/drug-safety-communications/fda-requiring-warning-about-vitamin-b6-deficiency-and-associated-seizures-drug-products-containing>
+- American Parkinson Disease Association, "FDA's New Warning: Link of Carbidopa/Levodopa to Vitamin B6 Deficiency and Seizures." <https://www.apdaparkinson.org/article/fdas-new-warning-link-of-carbidopa-levodopa-to-vitamin-b6-deficiency-and-seizures/>
+- Evans SJW, Waller PC, Davis S. "Use of proportional reporting ratios (PRRs) for signal generation from spontaneous adverse drug reaction reports." *Pharmacoepidemiol Drug Saf.* 2001.
+- DuMouchel W. "Bayesian data mining in large frequency tables, with an application to the FDA spontaneous reporting system." *The American Statistician.* 1999.
+- Data: FDA Adverse Event Monitoring System (AEMS) quarterly extract files (continuing the FAERS series). <https://fis.fda.gov/extensions/FPD-QDE-FAERS/FPD-QDE-FAERS.html>

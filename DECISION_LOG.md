@@ -1692,3 +1692,27 @@ Sources: fda.gov/news-events/press-announcements/fda-launches-new-adverse-event-
 fis.fda.gov/extensions/FPD-QDE-FAERS/FPD-QDE-FAERS.html;
 cidrap.umn.edu/public-health/fda-announces-aems-new-adverse-event-database-replace-vaers;
 insider.thefdagroup.com/p/fda-adverse-event-monitoring-system-aems
+
+## 2026-07-12 — Drafted carbidopa/levodopa B6-seizure article; started weekly article queue
+
+- **Article drafted:** `articles/carbidopa-levodopa-b6-seizures.qmd`, modeled on the Cotton
+  .qmd (inline R helpers so prose can't drift; EB05≥2.0 + ≥2-of-4 rule; can/cannot-show +
+  limitations callouts). Real FAERS numbers (signals_faers_v2026-07-08, through 2025Q4).
+- **Key finding (verified against data):** the *seizure* outcome FDA warned about is NOT
+  disproportional (carbidopa levodopa 2025Q4: 23 obs vs 32.9 exp, EB05 0.5, 0/4 methods) —
+  expected for a rare outcome FDA found only 14 times. But the *mechanism*, Vitamin B6
+  deficiency, is a strong, stable signal (carbidopa levodopa: 11 obs vs 0.08 exp, EB05 71.3,
+  IC025 6.11, all 4 methods), sustained 12+ consecutive quarters, predating the Mar-2026
+  warning. Thesis: causal coherence via the upstream mechanism, not the downstream rare outcome.
+- **Analytical convention (deliberate, differs from Cotton):** use LATEST-quarter snapshot +
+  trajectory, NOT max-EB05-across-quarters. On the 32-quarter panel, max-across-quarters
+  cherry-picks noise for rare-event drugs (e.g. B6 deficiency hit EB05 3190 on 3 reports in one
+  2019 quarter). Observed counts shown beside every EB05. Drug-string fragmentation handled by
+  per-formulation tables + a reference generic, not invalid EB05 pooling (a proper pooled
+  recompute via gpudisprop is a noted rigor follow-up; would strengthen, not weaken, the signal).
+- **Render status:** R logic verified against the parquet; NOT rendered here (quarto absent on
+  this box; project renv not restored). Render/deploy via build_static_site.R = user's flow.
+- **Queue started:** `articles/proposals/ARTICLE_QUEUE.md`. Order: GLP-1 alopecia → AAV liver
+  class → AEMS explainer → Trop-2 ADC, plus the 2026-07-03 batch as backlog.
+- **Weekly cadence:** user wants one article/week on a fixed day. Day + automate-vs-interactive
+  pending user decision (asked). Publishing stays manual (PR boundary).
