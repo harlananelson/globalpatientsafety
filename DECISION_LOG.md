@@ -1635,3 +1635,16 @@ remaining is perf polish. GPU-engine (item 5) COMPLETE as an MVP.
   float32 keeps eb05 to ~1e-6 vs safetysignal with signal flags EXACTLY unchanged
   (only eb50 point-estimate drifts to ~1e-3). float64 stays the exact default.
   Committed 0f16213. Remaining lever: GPU the prior EM (cumulative grows to 23s).
+
+## 2026-07-12 — GPU prior EM: 48x faster, machine-precision exact (gpudisprop)
+
+Wired gpudisprop/prior_gpu.fit_prior_gpu as the pipeline default: E-step densities +
+log-sum-exp + weighted sufficient stats over millions of rr on GPU, scalar 5-param
+Gamma-shape Newton on host. Reduction-bound (not gammainc-bound) so fp64 is fine:
+8.1s->0.2s (48x) on 3M rr, params matching safetysignal to ~1e-14. Removes the
+cumulative-prior bottleneck (was ~23s/qtr). e2e parity unchanged (worst_rel 8e-8,
+flags exact). Commit 807f1e9.
+
+GPU-engine perf now: per-quarter = GPU prior ~0.2s + GPU detect ~28s float64 /
+~6-10s --fp32. The gammainc-bound detect (fp64 on the 3090) is the only remaining
+cost; --fp32 (eb05 ~1e-6, flags exact) is the lever there. Prior is fully solved.
