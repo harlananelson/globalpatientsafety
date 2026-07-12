@@ -3,7 +3,12 @@
 A running backlog for the **one-article-per-week** cadence. Top of the queue is next.
 When an article is drafted, move it to **Drafted / published** with its date and file.
 
-Weekly cadence: **one article every week on the same day** (see DECISION_LOG for the chosen day).
+Weekly cadence: **one article every week on the same day.**
+Provisional default (pending your confirmation): **Mondays, drafted interactively** with Claude
+(you ping me, or I remind you). Rationale: the Friday `gps-weekly-research` ideas get the weekend
+to inform the pick, and interactive drafting keeps data-verification in the loop (a cloud agent
+can't check numbers against the local FAERS parquet). Change the day or switch to an auto-draft /
+auto-reminder cloud routine any time — say the word and I'll wire it.
 Source of new ideas: the `gps-weekly-research` cloud routine (Fridays) → `articles/proposals/YYYY-MM-DD-ideas.md`.
 
 ---

@@ -1716,3 +1716,14 @@ insider.thefdagroup.com/p/fda-adverse-event-monitoring-system-aems
   class → AEMS explainer → Trop-2 ADC, plus the 2026-07-03 batch as backlog.
 - **Weekly cadence:** user wants one article/week on a fixed day. Day + automate-vs-interactive
   pending user decision (asked). Publishing stays manual (PR boundary).
+
+## 2026-07-12 — Weekly cadence: provisional default set (user stepped away)
+
+Asked user for (a) publish day and (b) automate-vs-interactive; no response in-session.
+Proceeded with best-judgment provisional default, easily changed later:
+- **Mondays, drafted interactively** with Claude. No new cloud routine created — deliberately
+  NOT auto-spawning one (token cost + a cloud agent can't verify numbers against the local
+  FAERS parquet, which is what made the carbidopa/levodopa draft trustworthy). Interactive was
+  the recommended option.
+- Recorded in ARTICLE_QUEUE.md header. Open to: different day, or an auto-draft→PR / auto-reminder
+  routine, once the user confirms. Publishing stays manual regardless (PR boundary).
