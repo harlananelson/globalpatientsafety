@@ -111,6 +111,7 @@ site_nav <- function(active = "") {
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+        <li class="nav-item"><a class="nav-link" href="/aems">AEMS</a></li>
         <li class="nav-item"><a class="nav-link" href="https://faers.mobi" target="_blank" rel="noopener">faers.mobi</a></li>
         <li class="nav-item"><a class="nav-link" href="https://picodag.globalpatientsafety.com" target="_blank" rel="noopener">pico-dag</a></li>
         <li class="nav-item"><a class="nav-link" href="https://vaers.globalpatientsafety.com" target="_blank" rel="noopener">vaers</a></li>
@@ -339,6 +340,33 @@ build_article_pages <- function() {
   }
 }
 
+# ── STANDALONE NAV PAGES (post-process Quarto HTML) -------------------------
+# Top-nav pages that are NOT articles (not in the ARTICLES tribble, not in the
+# articles grid). Each is a Quarto doc rendered to app/static/<id>.html; we wrap
+# it with the same sticky back-nav bar as article pages. Add a row to publish one.
+STANDALONE_PAGES <- tibble::tribble(
+  ~id,     ~title,
+  "aems",  "Inside the AEMS Data"
+)
+
+build_standalone_pages <- function() {
+  for (i in seq_len(nrow(STANDALONE_PAGES))) {
+    row <- STANDALONE_PAGES[i, ]
+    src <- file.path(PROJ_ROOT, "app/static", paste0(row$id, ".html"))
+    if (!file.exists(src)) {
+      warning(sprintf("Skipping standalone %s: %s not found (render the .qmd first)",
+                      row$id, src))
+      next
+    }
+    out  <- file.path(OUT_DIR, paste0(row$id, ".html"))
+    html <- paste(readLines(src, warn = FALSE), collapse = "\n")
+    nav  <- NAV_INJECTION(row$id, row$title)
+    html <- sub("(<body[^>]*>)", paste0("\\1\n", nav), html, perl = TRUE)
+    writeLines(html, out)
+    cat("  wrote", out, sprintf("(%.1f KB)", file.info(out)$size / 1024), "\n")
+  }
+}
+
 # ── FAVICON -----------------------------------------------------------------
 build_favicon <- function() {
   src <- file.path(PROJ_ROOT, "app/static/favicon.ico")
@@ -354,6 +382,7 @@ build_favicon()
 build_index()
 build_articles_index()
 build_article_pages()
+build_standalone_pages()
 
 cat("\nDone. Deploy with:\n",
     "  rsync -av --delete static_site/ root@5.78.69.136:/var/www/globalpatientsafety/\n",

@@ -1,0 +1,188 @@
+---
+title: "Inside the AEMS Data: What 4.8 Million Reports Do and Don't Tell You"
+subtitle: "The FDA's new Adverse Event Monitoring System, the quarterly data behind our signal analyses, and why the strongest 'signal' is usually an artifact"
+author: "Global Patient Safety"
+date: 2026-07-14
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    theme: flatly
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+params:
+  data_path: "/srv/shiny-server/gps-patient/data/signals_faers.parquet"
+---
+
+```{r setup}
+#| include: false
+library(arrow)
+library(dplyr)
+library(gt)
+
+data_candidates <- c(
+  params$data_path,
+  "/home/harlan/projects/gps-patient/data/signals_faers.parquet",
+  "/home/harlan/data/signal-compute/signals_faers_v2026-07-08.parquet"
+)
+data_path <- data_candidates[file.exists(data_candidates)][1]
+if (is.na(data_path)) {
+  stop("signals_faers.parquet not found at any candidate path:\n  ",
+       paste(data_candidates, collapse = "\n  "))
+}
+d <- open_dataset(data_path) |> collect()
+
+LQ <- max(d$quarter)
+q  <- d |> filter(quarter == LQ)
+
+fmt <- function(x) formatC(x, format = "d", big.mark = ",")
+n_pairs     <- nrow(q)
+tot_reports <- sum(q$observed)
+n_consensus <- sum(q$n_methods_flagged >= 2)
+n_all4      <- sum(q$n_methods_flagged == 4)
+
+# Live lookup for the annotated "cautionary" table: named drug+event pairs that
+# top the raw EB05 leaderboard but are artifacts, each with a plain-language
+# reason. Values are pulled live so they can't drift from the data.
+caution <- tibble::tribble(
+  ~drug,          ~event,                            ~artifact,          ~why,
+  "endari",       "Sickle cell anaemia with crisis", "Indication",       "Endari (L-glutamine) is prescribed *for* sickle cell disease — so its reports are full of sickle cell crises. The drug treats the condition it appears to 'signal' for.",
+  "gold bond original strength", "Mesothelioma",     "Litigation cluster","A wave of talc-related legal reporting, not a pharmacovigilance discovery. Mass-tort campaigns generate synchronized report bursts unrelated to new biology.",
+  "nirsevimab",   "Respiratory syncytial virus bronchiolitis", "Indication / route", "Nirsevimab is given to *prevent* RSV disease in infants; RSV terms saturate its reports by construction.",
+  "heparin",      "Heparin-induced thrombocytopenia","Definitional",     "A real, well-known reaction — but an *eponymous* one already in every label for decades. Disproportionality 'rediscovering' it is confirmation, not signal."
+)
+clook <- function(dr, ev) d |> filter(drug == dr, event == ev, quarter == LQ) |>
+  arrange(desc(eb05)) |> slice(1)
+```
+
+## What AEMS is
+
+On **March 11, 2026** the FDA launched the **Adverse Event Monitoring System (AEMS)**, a single
+real-time public platform that consolidates the agency's previously separate adverse-event
+databases — **FAERS** (drugs and biologics), **VAERS** (vaccines), and the animal AERS — with
+devices, food, supplements, and tobacco folding in through 2026. The stated reasons were cost
+(the legacy systems ran ~\$37M/year) and fragmentation; the new system publishes in real time
+rather than quarterly and adds an AI-assisted dashboard.
+
+For an independent analyst, the important fact is quieter and reassuring: **the bulk quarterly
+data-extract files continue.** They are still published, still free, still in the same ASCII/XML
+format that begins in 2004 — now under the AEMS name, with the January–March 2026 quarter posted
+on April 28, 2026. Those extracts are the raw material behind every analysis on this site. This
+page is a look *at the data itself*: how much of it there is, and how to read it without fooling
+yourself.
+
+## The current data at a glance
+
+The most recent quarter in our processed dataset is **`r LQ`**. Within its four-quarter rolling
+window:
+
+```{r snapshot}
+tibble::tibble(
+  Metric = c("Distinct drug–event pairs",
+             "Total reports (sum of observed counts)",
+             "Pairs flagged by ≥ 2 of 4 methods (our signal rule)",
+             "Pairs flagged by all 4 methods"),
+  Value = c(fmt(n_pairs), fmt(tot_reports), fmt(n_consensus), fmt(n_all4))
+) |>
+  gt() |>
+  tab_header(title = md(paste0("**AEMS / FAERS signals dataset — ", LQ, "**"))) |>
+  cols_align("left", columns = Metric) |>
+  cols_align("right", columns = Value)
+```
+
+Every one of those `r fmt(n_pairs)` pairs is scored by four disproportionality methods — the
+Gamma-Poisson Shrinker (GPS/EBGM), the Proportional Reporting Ratio (PRR), the Reporting Odds
+Ratio (ROR), and the BCPNN Information Component (IC). A pair becomes a "signal," in our fixed
+convention, when its EB05 is at least 2.0 **and** at least two of the four methods agree.
+
+Here is how the whole quarter distributes across method agreement:
+
+```{r agreement}
+q |>
+  count(`Methods flagged` = n_methods_flagged) |>
+  arrange(`Methods flagged`) |>
+  mutate(Pairs = fmt(n),
+         Share = paste0(formatC(100 * n / sum(n), format = "f", digits = 1), "%")) |>
+  select(`Methods flagged`, Pairs, Share) |>
+  gt() |>
+  tab_header(title = md("**How many methods agree, across every pair this quarter**")) |>
+  tab_source_note(md("*Most pairs are flagged by no method at all. Agreement by all four is the minority — and, as the next section shows, even that is not enough on its own.*"))
+```
+
+## Why we don't publish a "top signals" leaderboard
+
+It is tempting to sort those `r fmt(n_all4)` four-method pairs by EB05 and call the top of the
+list "the biggest safety signals." **Do not trust that list.** The strongest disproportionality
+scores are dominated not by discoveries but by *artifacts* — and looking at the actual top of
+the current quarter makes the point better than any warning:
+
+```{r caution}
+caution |>
+  rowwise() |>
+  mutate(r = list(clook(drug, event))) |>
+  mutate(Observed = if (nrow(r)) r$observed else NA_integer_,
+         EB05     = if (nrow(r)) round(r$eb05, 0) else NA_real_) |>
+  ungroup() |>
+  transmute(Drug = drug, Event = event, Observed, EB05,
+            `Why it's not a discovery` = paste0("**", artifact, ".** ", why)) |>
+  gt() |>
+  fmt_markdown(columns = `Why it's not a discovery`) |>
+  tab_header(title = md("**Four of the strongest 'signals' this quarter — and why each is an artifact**")) |>
+  tab_source_note(md("*EB05 and observed counts are pulled live from the current data; the annotations are fixed.*"))
+```
+
+Each of these clears every statistical bar — high EB05, all four methods, hundreds of reports —
+and each is meaningless as a *discovery*. They illustrate the four ways a raw leaderboard lies:
+
+- **Confounding by indication** — a drug's reports are full of the disease it treats.
+- **Litigation and media clusters** — synchronized reporting campaigns, not biology.
+- **Route and administration effects** — the reports describe how the drug is given.
+- **Definitional / known reactions** — real, but already on the label for years.
+
+A disproportionality score is a *question generator*, never an answer. The number tells you where
+to look; it cannot tell you what you will find.
+
+## Analysis done right
+
+Useful signal detection starts from a **specific, pre-registered question** and spends most of
+its effort on confounding, not on the score. Two recent analyses on this site show the pattern
+against this same AEMS/FAERS data:
+
+- [**A Warning Built on 14 Cases**](/carbidopa_levodopa_b6) — the carbidopa/levodopa B6-seizure
+  warning: the warned outcome is invisible in disproportionality, but the *mechanism* (vitamin B6
+  deficiency) is a strong, stable signal. A lesson in looking upstream of a rare outcome.
+- [**A Moving Target**](/glp1_alopecia) — the GLP-1 / hair-loss claim, reproduced quarter by
+  quarter: the "signal" moves with prescribing volume and media attention, and the weight-loss
+  confound cannot be removed from spontaneous reports.
+
+## Explore it yourself
+
+To search the full dataset interactively — any drug, any event, signal trajectories over
+quarters — use **[faers.mobi](https://faers.mobi)**, which runs the same four-method engine on
+the same AEMS/FAERS extract with server-side search across every drug–event pair.
+
+::: {.callout-note}
+## How to read anything on this page
+
+These are counts of *reports*, not counts of *patients harmed*. Adverse-event reporting is
+voluntary, unverified, and shaped by attention and litigation. Disproportionality compares a
+pair's reporting rate to the rest of the database; it **cannot** establish causation, and a
+high score is a reason to investigate, not a conclusion. Aggregate counts like those above carry
+no patient-identifying information.
+:::
+
+## Methods & data
+
+Data: FDA Adverse Event Monitoring System (AEMS) quarterly extract files, continuing the FAERS
+series (<https://fis.fda.gov/extensions/FPD-QDE-FAERS/FPD-QDE-FAERS.html>), processed into
+four-quarter rolling windows and scored by GPS/EBGM (EB05 posterior lower bound), PRR, ROR, and
+BCPNN/IC. Signal rule: EB05 ≥ 2.0 with ≥ 2 of 4 methods, applied uniformly. Figures on this page
+are computed live from the current processed dataset (latest quarter: `r LQ`).
+
+Sources: FDA, "FDA Launches New Adverse Event Look-Up Tool"
+(<https://www.fda.gov/news-events/press-announcements/fda-launches-new-adverse-event-look-tool>);
+CIDRAP, "FDA announces AEMS, new adverse-event database to replace VAERS"
+(<https://www.cidrap.umn.edu/public-health/fda-announces-aems-new-adverse-event-database-replace-vaers>).

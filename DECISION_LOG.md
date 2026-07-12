@@ -1749,3 +1749,28 @@ Proceeded with best-judgment provisional default, easily changed later:
   rendered + flipped to published). ids: glp1_alopecia, carbidopa_levodopa_b6.
 - Queue updated: next = AAV liver class → AEMS explainer → Trop-2 ADC.
 - **Next from user:** "add an AEMS tab to my page for analysis with that data" — pending scoping.
+
+## 2026-07-14 — Added AEMS analysis tab to the portal (static page)
+
+User: "add an AEMS tab to my page for analysis with that data." Chose (via AskUserQuestion):
+static analysis page + AEMS quarterly extract (the FAERS-continuation bulk files we already use).
+
+- **New page:** `articles/aems-analysis.qmd` → renders to `app/static/aems.html` (id `aems`).
+  Live inline R from the signals parquet. Content: what AEMS is (sourced) + live dataset snapshot
+  (2025Q4: 881,751 pairs, 4.8M reports, 265,108 consensus signals) + method-agreement table +
+  an annotated "why the raw top-signals leaderboard misleads" table (endari→SCD crisis =
+  indication, gold bond→mesothelioma = litigation, nirsevimab→RSV = indication/route,
+  heparin→HIT = definitional) + links to the two new articles as analysis-done-right + route to
+  faers.mobi + caveats. Verified all computations/lookups against the parquet.
+- **Deliberately NOT a raw signal leaderboard:** the top-EB05 pairs are dominated by
+  confounding-by-indication, litigation clusters, route effects, and eponymous known reactions —
+  showing them as "biggest signals" would imply false causation. Turned that into the page's lesson.
+- **Wiring** (`scripts/build_static_site.R`): added "AEMS" to the top nav; added a generic
+  STANDALONE_PAGES tribble + build_standalone_pages() (nav pages that aren't articles / not in the
+  articles grid). Validated: build runs, produces index/articles with the new tab; warns aems.html
+  missing until rendered (expected).
+- **Render targets** for the three new pages (user renders .qmd → app/static/<id>.html):
+  glp1-alopecia.qmd→glp1_alopecia.html, carbidopa-levodopa-b6-seizures.qmd→carbidopa_levodopa_b6.html,
+  aems-analysis.qmd→aems.html. static_site/ is gitignored (regenerated at deploy).
+- **Noted pre-existing bug:** NAV_INJECTION() sprintf passes args to a template with no %s →
+  harmless "one argument not used" warning on every page. Left as-is (out of scope).
