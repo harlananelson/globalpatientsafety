@@ -1624,3 +1624,14 @@ getting auto-killed by the dev harness (~15-30min); run in a plain shell.
 
 Headroom: GPU the prior EM; faster quantile than bisection. Correctness is done;
 remaining is perf polish. GPU-engine (item 5) COMPLETE as an MVP.
+
+## 2026-07-12 — gpudisprop pushed (private) + GPU perf: --fp32 knob (4.3x)
+
+- Private GitHub repo created + pushed: github.com/harlananelson/gpudisprop.
+- GPU perf ("the GPU issue"): diagnosed the ~28s/qtr detect as float64 gammainc on
+  the RTX 3090 (fp64 ~1/64 of fp32 throughput). Tried safeguarded-Newton quantile —
+  reverted (didn't converge eb05 in the far-left tail; bottleneck is precision not
+  iters). Delivered a **--fp32 knob**: EB kernel 5.8s->1.4s (4.3x) at 1M pairs;
+  float32 keeps eb05 to ~1e-6 vs safetysignal with signal flags EXACTLY unchanged
+  (only eb50 point-estimate drifts to ~1e-3). float64 stays the exact default.
+  Committed 0f16213. Remaining lever: GPU the prior EM (cumulative grows to 23s).
