@@ -1810,3 +1810,10 @@ Queue now: AEMS reproducibility explainer (next) → Trop-2 ADC.
   only after approval. Workflow steps + ARTICLE_QUEUE.md + memory updated accordingly.
 - The 4 PDFs already on the device (carbidopa, GLP-1, AAV, AEMS) are the current approval copies
   awaiting Harlan's read. No auto cloud routine created (interactive by design).
+
+## 2026-07-13 — Hold today; first publish Monday 2026-07-20 (~1 week review/article)
+
+Harlan confirmed all 4 PDFs are on the reMarkable (incl. "Inside the AEMS Data"). He wants ~one
+week to review each, so we do NOT publish today. First publish = Monday 2026-07-20, then ~one
+approved article per Monday. The 4 delivered drafts are the review backlog; **no new drafting
+until it clears.** Publishing gated on his per-article approval (read on device first).

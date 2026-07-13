@@ -4,9 +4,15 @@ A running backlog for the **one-article-per-week** cadence. Top of the queue is 
 When an article is drafted, move it to **Drafted / published** with its date and file.
 
 Weekly cadence: **one article every week, published on MONDAY** (locked 2026-07-13).
-Drafted **interactively** with Claude (you ping me, or I remind you) — interactive keeps
-data-verification in the loop (a cloud agent can't check numbers against the local FAERS parquet).
-The Friday `gps-weekly-research` ideas routine feeds the pick over the weekend.
+**First publish: Monday 2026-07-20.** Each article gets ~one week of review on the reMarkable
+before it goes live; today (2026-07-13) we hold. Drafted **interactively** with Claude —
+interactive keeps data-verification in the loop (a cloud agent can't check numbers against the
+local FAERS parquet). The Friday `gps-weekly-research` ideas routine feeds future picks.
+
+**Current review backlog (4 drafts already delivered to the reMarkable `/globalpatientsafety`
+folder, awaiting Harlan's approval — do NOT draft new articles until this clears):**
+Carbidopa-Levodopa B6 Seizures · GLP-1 Alopecia Signal · AAV Gene Therapy Liver · Inside the AEMS
+Data. Publish ~one per Monday as approved, starting 2026-07-20.
 **Approval gate: every article is sent as a reMarkable Paper Pro PDF *before* publishing**
 so Harlan reads and approves it on the device ahead of time; deploy happens only after approval
 (`scripts/render_remarkable.sh`, see step 4 below).
