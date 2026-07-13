@@ -37,13 +37,24 @@ Source of new ideas: the `gps-weekly-research` cloud routine (Fridays) → `arti
 Ranked from the 2026-07-10 research batch (see `2026-07-10-ideas.md`), adjusted after the
 carbidopa/levodopa piece and the AEMS verification (DECISION_LOG 2026-07-12).
 
-1. **From FAERS to AEMS — a reproducibility check on our data foundation.**
+1. **Shingles vaccine → shingles: live (Zostavax) vs recombinant (Shingrix).** ★ verified, from
+   the Attkisson monitor. VAERS. The live vaccine flags far harder for the very disease it
+   prevents: **Zostavax (live) → Herpes zoster EB05 11.4 (4/4)** vs Shingrix (recombinant) EB05
+   3.8 on 371 reports (4/4), latest quarter. Mechanistically clean (live-attenuated virus can
+   reactivate) and a strong contrast piece. *Before drafting:* confirm no overlap with
+   `articles/shingles.md` (that one did cardiac/neuro/thrombotic signals across shingles products,
+   NOT zoster-as-the-outcome, so this is almost certainly new ground). *Watch:* Zostavax is largely
+   phased out (older/sparser reports — pool quarters or note the era); confounding by indication
+   (both given to older adults already at shingles risk). Source: Attkisson 2026-07-06 Substack →
+   `attkisson-monitor.md`.
+
+2. **From FAERS to AEMS — a reproducibility check on our data foundation.**
    Explainer + reproducibility harness. Low urgency (verified 2026-07-12: AEMS is a front-end
    consolidation; the bulk quarterly FAERS extract files continue, still public, Q1 2026 posted
    2026-04-28 — no pipeline crisis). Recompute a known EB05 (e.g. the Cotton myocarditis result)
    from AEMS-era files. Source: `2026-07-10-ideas.md` #5.
 
-2. **Trop-2 ADC neutropenia/diarrhea class check as Trodelvy goes first-line.**
+3. **Trop-2 ADC neutropenia/diarrhea class check as Trodelvy goes first-line.**
    FAERS. Head-to-head sacituzumab govitecan vs. datopotamab deruxtecan. *Watch:* boxed-warning
    toxicities are expected cytotoxic-ADC effects, so vs.-background disproportionality is trivial;
    only the head-to-head + pre-first-line baseline is novel. Drop the tangential CD3×CD20
