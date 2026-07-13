@@ -45,6 +45,24 @@ Verify the drug/event actually exist in the parquet before drafting (per the que
 **Realistic expectation:** her feed yields roughly one strong analyzable topic per stretch of
 several episodes; the monitor's value is catching those without reading every episode.
 
+### Verified against VAERS — her 2026-07-06 Substack ("CDC's Now-Removed Vaccine Schedule")
+
+Tested her specific vaccine→event claims against `signals_vaers_v2026-05-03` (latest quarter
+2026Q2, obs ≥ 5). What actually holds up:
+
+| Her claim | VAERS verdict | Numbers |
+|---|---|---|
+| **Shingles vaccine → shingles (live vs recombinant)** ★ best idea | **Signal — strong contrast** | Zostavax (LIVE) → Herpes zoster **EB05 11.4** (4/4); Shingrix (recombinant) → Herpes zoster EB05 3.8 on 371 reports (4/4). The live vaccine flags ~3× harder for the disease it prevents — a clean, mechanistically-coherent story that extends the existing shingles article. |
+| **DTaP → febrile convulsion** | **Signal — solid** | DTaP-combo vaccines flag: VAXELIS **EB05 3.7** (4/4), INFANRIX HEXA 2.9 (4/4). Matches the classic whole-cell→acellular safety history she recounts. |
+| **Flu vaccine → death in seniors** | **No signal (publishable negative)** | Influenza → Death: EB05 0.6–0.9, **0/4 methods** — death is *under*-reported vs expected. A good "we tested this claim; disproportionality doesn't support it" piece. |
+| Childhood varicella (VARIVAX) → shingles | **Not a VAERS question** | No pairs obs ≥ 5. This is a population-*incidence* question (does childhood vax shift lifetime shingles risk), which passive disproportionality can't answer — say so plainly. |
+| Vaccines → autism | Weak / heavily caveated | As before — rare/confounded PT; only a "what the method can/can't say" piece. |
+
+**Runnable now:** the shingles-vaccine (live vs recombinant) → herpes zoster piece is the
+strongest — verify it isn't already covered by `articles/shingles.md` (that one did cardiac/
+neuro/thrombotic signals, not zoster-causes-zoster, so likely novel). DTaP→febrile convulsion and
+the flu→death negative are both solid follow-ups.
+
 ## Seen log (dedupe)
 
 - **Substack — latest scanned post:** `shhh-heres-cdcs-now-removed-revised` (2026-07-06).
