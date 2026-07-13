@@ -1865,3 +1865,21 @@ attkisson-monitor.md (source + dedupe watermarks: Substack slug + podcast ep #).
   drug example but not clinical causation claims. Added an "Editorial direction" section to
   ARTICLE_QUEUE.md with a running gotcha catalogue (candidate "Reading FDA Adverse-Event Data"
   series) + memory `methodology-first-editorial`. NAION/GLP-1 is the flagship methodology piece.
+
+## 2026-07-13 — Signal & Noise: named series + /methods page + UI-triage design
+
+- **Series named "Signal & Noise"** (Reading FDA Adverse-Event Data). Built `/methods` static
+  landing page (`articles/methods.qmd` → `app/static/methods.html`), wired into top nav +
+  STANDALONE_PAGES. Also rendered the AEMS page to `app/static/aems.html` (user asked to ensure it
+  exists) — both build into static_site. Deploy still gated on user.
+- **UI-triage design proposal** (`articles/proposals/signal-triage-ui.md`): precompute the Signal &
+  Noise gotcha-checks for every flagged pair and surface as faers.mobi badges/filters/report-card.
+  Indicators: sudden-onset/notoriety, class survivability+synchrony, non-clinical-PT (SOC), on-label
+  vs novel (fda_labels.parquet), small-N/unstable, protopathic risk → per-pair triage score + badges
+  + a filter panel ("hide non-clinical / novel only / exclude sudden-onset / class-consistent / min
+  N"). GPU justification (user's point): the trajectory + class-survivability passes over ~265k pairs
+  are the heavy part gpudisprop makes a batch precompute (new signals.parquet columns). Spans
+  gpudisprop (kernels) + signal-compute (orchestrate/join labels+class+SOC) + faers-mobi (render).
+  Caveats: MedDRA-licensed PT→SOC map stays internal (ship derived flag only); notoriety detection is
+  a "check timing" heuristic not a verdict; multi-repo feature — first slice = onset + non-clinical
+  badges + min-N/novel filters.
