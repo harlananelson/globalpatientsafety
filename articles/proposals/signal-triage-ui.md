@@ -84,6 +84,14 @@ Two lessons from the proto: (1) naive "first flag" mis-dates onset (NAION → 20
 flicker); require obs≥10 & eb05≥3 for a *meaningful* onset. (2) notoriety comes as both STEPS
 (cyclic vomiting) and RAMPS (NAION) — need both `step_score` and `onset_recent`.
 
+**Cleanup impact — run across ALL 265,108 flagged pairs (2025Q4):** small-N 87.8%, non-clinical
+8.2%, recent-onset 4.5%, sudden-step 1.3%; **any caution flag 90.3%**; **SOLID only 3.9% (10,461
+pairs).** The triage turns a 265k-row firehose into a ~10k high-value shortlist. Starkest on the
+naive leaderboard: of the **top 200 by EB05, only 3 (2%) are SOLID** — 170 are small-N (rare-event
+inflation), 35 recent-onset (notoriety), 10 non-clinical, 7 sudden. The default "sort by strongest
+signal" is ~98% noise; the badges are what surface the 2% worth reading. This *measures* the
+AEMS-page "the raw leaderboard lies" lesson.
+
 **MedDRA-licensing dependency (live blocker for the public non-clinical badge):** the proto tags
 non-clinical PTs via the VAERS-derived `in_noise` flag + a keyword fallback, because the VAERS map
 misses FAERS product/device PTs and the proper SOC-based classification needs the MedDRA hierarchy.

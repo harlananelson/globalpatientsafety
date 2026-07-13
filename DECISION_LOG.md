@@ -1897,3 +1897,13 @@ attkisson-monitor.md (source + dedupe watermarks: Substack slug + podcast ep #).
   term filter") IS the non-clinical badge — so publishing that badge is gated on the MedDRA
   subscription. Proto uses VAERS `in_noise` + keyword fallback as interim internal approximation.
   Recorded the dependency in signal-triage-ui.md.
+
+## 2026-07-13 — Triage run across all pairs: quantified leaderboard cleanup
+
+Ran the triage prototype over ALL 265,108 flagged pairs (FAERS 2025Q4). Badge distribution:
+small-N 87.8% (232,752), non-clinical 8.2% (21,761), recent-onset 4.5% (11,974), sudden-step 1.3%
+(3,421), SOLID only 3.9% (10,461); any-caution 90.3%. Headline: of the top-200 by EB05 (naive
+leaderboard) only 3 (2%) are SOLID — 170 small-N, 35 recent-onset, 10 non-clinical, 7 sudden → the
+default "sort by strongest" is ~98% noise. Triage turns 265k pairs into a ~10k high-value shortlist
+and MEASURES the AEMS "raw leaderboard lies" lesson. Recorded in signal-triage-ui.md. Small-N badge
+= "interpret with trajectory," not "wrong" (rare pairs dominate, as expected).
