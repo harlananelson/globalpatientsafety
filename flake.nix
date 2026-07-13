@@ -31,8 +31,12 @@
             tibble
             dplyr
 
-            # Article rendering (articles/*.qmd setup chunks use gt tables)
+            # Article rendering (articles/*.qmd setup chunks use gt tables).
+            # knitr + rmarkdown are required for Quarto to execute R code chunks;
+            # without them `quarto render <article>.qmd` fails ("rmarkdown not available").
             gt
+            knitr
+            rmarkdown
 
             # faers-mobi / aers-mobi runtime deps
             # (these apps live in sibling repos but are run from this dev shell)

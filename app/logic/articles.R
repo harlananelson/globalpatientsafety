@@ -12,6 +12,10 @@ box::use(
 #' @export
 ARTICLES <- tribble(
   ~id, ~title, ~subtitle, ~date, ~status, ~featured,
+  "aav_gene_therapy_liver",
+  "The Liver Is the Limit: Elevidys's Boxed Warning Is an AAV Class Effect",
+  "Reading the fatal-hepatotoxicity boxed warning against the whole gene-therapy class in FAERS — the hepatic signal appears in every intravenously infused AAV (Elevidys, Zolgensma, Hemgenix, Roctavian) and vanishes in the two liver-sparing products (Luxturna, Casgevy). It tracks the delivery route, not the product.",
+  "2026-07-21", "draft", FALSE,
   "glp1_alopecia",
   "A Moving Target: The GLP-1 Hair-Loss Signal Won't Hold Still",
   "Reproducing the claim that 'only semaglutide and tirzepatide flag for alopecia' quarter by quarter in FAERS — and watching Ozempic's signal fade while Zepbound's climbs, with the weight-loss confound left honestly unresolved.",

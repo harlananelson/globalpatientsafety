@@ -17,6 +17,7 @@ Source of new ideas: the `gps-weekly-research` cloud routine (Fridays) → `arti
 
 | Date | Title | File | Status |
 |------|-------|------|--------|
+| 2026-07-21 | The Liver Is the Limit: Elevidys boxed warning is an AAV class effect | `articles/aav-gene-therapy-liver.qmd` | Drafted — pending review + render/deploy |
 | 2026-07-14 | A Moving Target: the GLP-1 alopecia signal won't hold still | `articles/glp1-alopecia.qmd` | Drafted — pending review + render/deploy |
 | 2026-07-12 | A Warning Built on 14 Cases: carbidopa/levodopa B6-seizure signal in FAERS | `articles/carbidopa-levodopa-b6-seizures.qmd` | Drafted — pending review + render/deploy |
 | 2026-06-13 | Tested Against VAERS: Christine Cotton's Safety Claims | `articles/christine-cotton-vaers.qmd` | Published |
@@ -29,19 +30,13 @@ Source of new ideas: the `gps-weekly-research` cloud routine (Fridays) → `arti
 Ranked from the 2026-07-10 research batch (see `2026-07-10-ideas.md`), adjusted after the
 carbidopa/levodopa piece and the AEMS verification (DECISION_LOG 2026-07-12).
 
-1. **AAV gene therapy and the liver — product problem or class problem?**
-   FAERS. Elevidys acute-liver-failure boxed warning (Nov 2025, two pediatric deaths) vs. the
-   whole approved AAV gene-therapy class. Most original; most work. *Watch:* comparators treat
-   different diseases with different comedication (Zolgensma mandates prophylactic steroids for
-   hepatotoxicity); tiny N → several EB05s below threshold. Source: `2026-07-10-ideas.md` #2.
-
-2. **From FAERS to AEMS — a reproducibility check on our data foundation.**
+1. **From FAERS to AEMS — a reproducibility check on our data foundation.**
    Explainer + reproducibility harness. Low urgency (verified 2026-07-12: AEMS is a front-end
    consolidation; the bulk quarterly FAERS extract files continue, still public, Q1 2026 posted
    2026-04-28 — no pipeline crisis). Recompute a known EB05 (e.g. the Cotton myocarditis result)
    from AEMS-era files. Source: `2026-07-10-ideas.md` #5.
 
-3. **Trop-2 ADC neutropenia/diarrhea class check as Trodelvy goes first-line.**
+2. **Trop-2 ADC neutropenia/diarrhea class check as Trodelvy goes first-line.**
    FAERS. Head-to-head sacituzumab govitecan vs. datopotamab deruxtecan. *Watch:* boxed-warning
    toxicities are expected cytotoxic-ADC effects, so vs.-background disproportionality is trivial;
    only the head-to-head + pre-first-line baseline is novel. Drop the tangential CD3×CD20

@@ -1,0 +1,202 @@
+---
+title: "The Liver Is the Limit: Elevidys's Boxed Warning Is an AAV Class Effect"
+subtitle: "Reading the fatal-hepatotoxicity warning against the whole gene-therapy class — and finding the signal tracks the delivery route, not the product"
+author: "Global Patient Safety"
+date: 2026-07-21
+categories: [FAERS, pharmacovigilance, gene therapy, hepatotoxicity, class effect]
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    theme: flatly
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+params:
+  data_path: "/srv/shiny-server/gps-patient/data/signals_faers.parquet"
+---
+
+```{r setup}
+#| include: false
+library(arrow)
+library(dplyr)
+library(gt)
+
+data_candidates <- c(
+  params$data_path,
+  "/home/harlan/projects/gps-patient/data/signals_faers.parquet",
+  "/home/harlan/data/signal-compute/signals_faers_v2026-07-08.parquet"
+)
+data_path <- data_candidates[file.exists(data_candidates)][1]
+if (is.na(data_path)) stop("signals_faers.parquet not found")
+d <- open_dataset(data_path) |> collect()
+LQ <- max(d$quarter)
+
+# Approved AAV / gene-therapy products, each with its delivery route — the axis
+# the analysis turns on. "systemic" = IV infusion (the vector reaches the liver);
+# "local" / "ex-vivo" = the liver is never systemically exposed.
+prods <- tibble::tribble(
+  ~name,        ~regex,                           ~indication,        ~route,
+  "Elevidys",   "elevidys|delandistrogene",       "DMD",              "IV — systemic",
+  "Zolgensma",  "zolgensma|onasemnogene",          "SMA (infants)",   "IV — systemic",
+  "Hemgenix",   "hemgenix|etranacogene",           "Haemophilia B",   "IV — liver-directed",
+  "Roctavian",  "roctavian|valoctocogene",         "Haemophilia A",   "IV — liver-directed",
+  "Luxturna",   "luxturna|voretigene",             "Retinal dystrophy","Subretinal — local",
+  "Casgevy",    "casgevy|exagamglogene",           "SCD / β-thal",    "Ex-vivo edited cells"
+)
+HEP_RX <- paste0("hepatic failure|liver injury|hepatocellular|drug-induced liver|hepatotox",
+                 "|transaminases|aminotransferase|hyperbilirubin|liver disorder|hepatitis acute",
+                 "|jaundice|hepatic enzyme")
+
+prod_stats <- function(rx) {
+  tot <- d |> filter(grepl(rx, drug))
+  hep <- tot |> filter(grepl(HEP_RX, event, ignore.case = TRUE))
+  # Headline pair = strongest hepatic signal with a non-trivial count (observed >= 5),
+  # so a single n=1 extreme EB05 can't stand in for a product's hepatic profile.
+  best <- hep |> filter(observed >= 5) |> arrange(desc(eb05)) |> slice(1)
+  tibble::tibble(
+    total_reports = sum(tot$observed),
+    hep_reports   = sum(hep$observed),
+    max_eb05      = if (nrow(best)) round(best$eb05, 0) else NA_real_,
+    max_flags     = if (nrow(best)) best$n_methods_flagged else 0L
+  )
+}
+class_tbl <- prods |> rowwise() |> mutate(s = list(prod_stats(regex))) |>
+  mutate(total_reports = s$total_reports, hep_reports = s$hep_reports,
+         max_eb05 = s$max_eb05, max_flags = s$max_flags) |> ungroup() |> select(-s, -regex)
+
+# Elevidys inline values.
+el <- function(pt, q = LQ) d |> filter(grepl("elevidys|delandistrogene", drug),
+  tolower(event) == tolower(pt), quarter == q) |> arrange(desc(eb05)) |> slice(1)
+alt <- el("Alanine aminotransferase increased")
+alf <- el("Acute hepatic failure")
+```
+
+On **November 14, 2025**, the FDA added a **boxed warning** for acute serious liver injury and
+acute liver failure to **Elevidys** (delandistrogene moxeparvovec), the AAV gene therapy for
+Duchenne muscular dystrophy, and removed its non-ambulatory indication — after **two pediatric
+deaths** from acute liver failure. Hepatotoxicity is a recognized hazard of AAV gene therapy, so
+the natural regulatory framing is product-specific: a warning on *this* drug.
+
+This post asks a different question, and it is one no single-product warning can answer: **is
+the liver signal specific to Elevidys, or is it a property of the whole class?** The answer in
+FAERS is unusually clean — and it points not at a molecule but at a **delivery route**.
+
+::: {.callout-important}
+## What this can and cannot show
+
+Disproportionality compares how often a drug–event pair is reported to what the rest of the
+database predicts. It cannot establish causation or count harmed patients, and gene-therapy
+products are low-volume, so several estimates below rest on small numbers (the EB05 lower bound
+accounts for that, and every count is shown). These products also treat different diseases in
+different populations with different co-medication — confounding that the discussion addresses
+head-on rather than assuming away.
+:::
+
+## The mechanism, and why route is the right axis
+
+Most systemically infused (intravenous) AAV vectors are cleared predominantly by the **liver** —
+hepatocytes are the principal sink for circulating AAV, regardless of the therapeutic target.
+The dose-limiting toxicity of systemic AAV is therefore hepatocellular: transaminase
+elevations, immune-mediated hepatocellular injury, and, at the extreme, acute liver failure.
+This predicts a specific pattern. Gene therapies delivered **into the bloodstream** should share
+a hepatic signal — even when their indications and targets differ completely — while therapies
+that **never expose the liver systemically** (a local injection, or cells edited outside the
+body and re-infused) should not.
+
+The approved products split cleanly along that axis, which is why the table below is organised
+by route, not by manufacturer.
+
+## The class league table
+
+```{r class-table}
+class_tbl |>
+  mutate(`Hepatic signal` = ifelse(is.na(max_eb05), "none",
+           paste0("EB05 ", formatC(max_eb05, format = "d"), " (", max_flags, "/4)")),
+         `Total reports` = formatC(total_reports, format = "d", big.mark = ","),
+         `Hepatic reports` = formatC(hep_reports, format = "d", big.mark = ",")) |>
+  select(Product = name, Indication = indication, Route = route,
+         `Total reports`, `Hepatic reports`, `Hepatic signal`) |>
+  gt() |>
+  tab_header(title = md("**Hepatic disproportionality across the approved gene-therapy class**"),
+             subtitle = md("Hepatic PT cluster: liver injury / failure, transaminase & bilirubin elevations, DILI, hepatotoxicity. Strongest single hepatic pair per product.")) |>
+  tab_source_note(md("*Hepatic signal = the highest EB05 hepatic pair for that product and the number of the four methods flagging it. 'none' = zero hepatic reports in the dataset.*"))
+```
+
+The split is complete:
+
+- **Every intravenously infused product carries a hepatic signal.** Elevidys, Zolgensma,
+  Hemgenix, and Roctavian — four products, four different diseases (DMD, spinal muscular
+  atrophy, haemophilia B, haemophilia A), four different target tissues — all flag for
+  hepatocellular injury, most with all four methods. Zolgensma's hepatic footprint is the
+  largest by far (thousands of reports); it has carried a hepatotoxicity boxed warning and
+  mandatory prophylactic corticosteroids since approval. The Elevidys warning is new; the class
+  hazard is not.
+- **The two products that never systemically expose the liver carry no hepatic signal at all.**
+  **Luxturna** is injected *locally beneath the retina*; **Casgevy** is not an in-vivo AAV at all
+  but autologous stem cells edited *outside the body* and re-infused. Both have substantial
+  report counts — and **zero** hepatic reports. They are the built-in negative controls, and
+  they behave exactly as the route hypothesis predicts.
+
+That a hepatic signal appears across four unrelated indications but vanishes in precisely the two
+products that bypass systemic liver exposure is hard to explain as confounding by indication. It
+is much more simply explained by where the vector goes.
+
+## Elevidys up close: the injury spectrum is loud, the fatal endpoint is faint
+
+Within Elevidys, the hepatic signal is dominated by the **injury spectrum** — the enzyme
+elevations and hepatocellular-injury terms that precede failure. In `r LQ`, alanine
+aminotransferase increased shows **`r alt$observed` reports against `r formatC(alt$expected, format="f", digits=2)` expected (EB05 `r formatC(alt$eb05, format="f", digits=1)`, all `r alt$n_methods_flagged` methods)**, and this spectrum — ALT/AST increased, transaminases increased, liver injury, drug-induced liver injury, hepatotoxicity — flags with all four methods across every recent quarter.
+
+The endpoint the boxed warning is *named* for behaves differently. **Acute hepatic failure**
+appears at just **`r alf$observed` reports** in `r LQ` (EB05 `r formatC(alf$eb05, format="f", digits=1)`) — barely at threshold. This is the same lesson the carbidopa/levodopa
+analysis reached from the other direction: **the rare, severe outcome is nearly invisible in
+disproportionality, while the mechanistic precursor is unmistakable.** A warning built on two
+deaths will not light up a database the way the thousands of upstream enzyme elevations do — and
+the enzyme elevations are exactly what a monitoring programme should watch.
+
+## Reading it honestly
+
+The disciplined conclusion:
+
+- **Elevidys's hepatotoxicity is real and consistent** in FAERS — but it is **not distinctive**.
+  It is one instance of a hazard shared by every systemically infused AAV gene therapy.
+- **The signal tracks the delivery route**, not the product: it is present wherever the vector
+  reaches the liver and absent where it does not. The regulatory action on one product is best
+  read as a class-wide, biodistribution-driven risk that monitoring and prophylaxis (as already
+  standard for Zolgensma) are designed to manage.
+- **The fatal endpoint is not the detectable signal.** Transaminase elevation is — which is
+  reassuring, because it is measurable and actionable before failure.
+
+::: {.callout-note}
+## Limitations
+
+- **Small numbers.** Hemgenix, Roctavian, and Elevidys's fatal-endpoint counts are small; the
+  EB05 lower bound already shrinks toward the null to reflect this, and all counts are shown.
+- **Confounding by indication and co-medication.** Populations and regimens differ enormously
+  (infants on prophylactic steroids for Zolgensma; ambulatory boys for Elevidys). But the hepatic
+  signal's *consistency across* these very different settings, and its *absence* in the two
+  liver-sparing products, is what makes the route interpretation more plausible than a per-drug
+  artifact — not less.
+- **Known-effect / notoriety reporting.** Zolgensma's warning is years old and Elevidys's is
+  recent; some reporting is stimulated by the warnings themselves.
+- **Passive reports are not incidence**, and disproportionality is not causation.
+:::
+
+## Methods & data
+
+FAERS through `r LQ`, four-quarter rolling windows, four methods (GPS/EBGM EB05, PRR, ROR,
+BCPNN/IC), signal rule EB05 ≥ 2.0 with ≥ 2 of 4. Products identified by brand + INN regex;
+the hepatic Preferred-Term cluster is listed above. The strongest hepatic pair per product is
+tabulated; Elevidys is examined term by term. Data: FDA Adverse Event Monitoring System (AEMS)
+quarterly extract, continuing the FAERS series.
+
+## Sources
+
+- FDA, "FDA Takes Action on New Boxed Warning for Acute Serious Liver Injury and Acute Liver Failure Following Treatment with Elevidys and Revised Indication" (Nov 14, 2025). <https://www.fda.gov/vaccines-blood-biologics/safety-availability-biologics/fda-takes-action-new-boxed-warning-acute-serious-liver-injury-and-acute-liver-failure-following>
+- AAP News, "After 2 child deaths, FDA approves updated safety label for Duchenne muscular dystrophy treatment." <https://publications.aap.org/aapnews/news/33714/>
+- LiverTox (NCBI Bookshelf), "Delandistrogene Moxeparvovec." <https://www.ncbi.nlm.nih.gov/books/NBK618387/>
+- Zolgensma US Prescribing Information (boxed warning: acute serious liver injury; prophylactic corticosteroids). <https://www.fda.gov/vaccines-blood-biologics/zolgensma>
+- Data: FDA AEMS quarterly extract files (continuing FAERS). <https://fis.fda.gov/extensions/FPD-QDE-FAERS/FPD-QDE-FAERS.html>

@@ -1774,3 +1774,29 @@ static analysis page + AEMS quarterly extract (the FAERS-continuation bulk files
   aems-analysis.qmd→aems.html. static_site/ is gitignored (regenerated at deploy).
 - **Noted pre-existing bug:** NAV_INJECTION() sprintf passes args to a template with no %s →
   harmless "one argument not used" warning on every page. Left as-is (out of scope).
+
+## 2026-07-21 — AAV liver article (week 4) + reMarkable Paper Pro PDF pipeline
+
+**Article:** `articles/aav-gene-therapy-liver.qmd`. Elevidys boxed-warning (Nov 2025) read
+against the whole gene-therapy class. Verified finding: the hepatic signal is a **delivery-route
+class effect**, not product-specific. Every IV-infused AAV flags (Elevidys 369 hep reports/AST
+EB05 46 4m; Zolgensma 4124/AST EB05 65 4m; Hemgenix 74/ALT EB05 58 4m; Roctavian 28/ALT EB05
+148 4m); the two liver-sparing products show ZERO hepatic reports (Luxturna, subretinal local,
+1434 total; Casgevy, ex-vivo cells, 77 total) — built-in negative controls. Like carbidopa, the
+fatal endpoint (acute hepatic failure, 2 obs) is faint while the injury spectrum (transaminases)
+is loud. Headline pair per product uses observed>=5 to avoid n=1 EB05 extremes. Registered
+draft `aav_gene_therapy_liver`.
+
+**reMarkable Paper Pro PDF pipeline (NEW):** rendered all 4 FAERS articles to 179.6 x 239.6 mm
+PDFs (the Paper Pro 4:3 canvas; no standard paper size matches) and uploaded to a new
+`/globalpatientsafety` folder on the reMarkable cloud. Pipeline = `scripts/render_remarkable.sh`
+(run inside `nix develop`). Three real gotchas solved + documented in the script:
+  1. Quarto defaults to SYSTEM R (/usr/lib/R, no rmarkdown) → force `QUARTO_R="$(which R)"` (nix R).
+  2. Project renv `.Rprofile` hides the nix packages → render a COPY from /tmp (data paths absolute).
+  3. No paper preset is 4:3 → render `--to typst -M keep-typ:true`, sed-patch the .typ page
+     directive (`paper:"us-letter"` → `width/height`), recompile with `quarto typst compile`.
+Also fixed **flake.nix**: added `knitr` + `rmarkdown` to rWithPkgs — the flake claimed to support
+article rendering but lacked the packages Quarto's R engine needs (render failed without them).
+gt tables AND base-R plots both render correctly in typst. rmapi authenticated via existing
+~/.config/rmapi/rmapi.conf; run via `nix run nixpkgs#rmapi`. Folder + 4 PDFs confirmed on device.
+Queue now: AEMS reproducibility explainer (next) → Trop-2 ADC.
