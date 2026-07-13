@@ -1837,3 +1837,15 @@ User wants to monitor when Attkisson covers health issues this site can reanalyz
   YYYY-MM-DD" with candidate analyses; dedupes via last-scanned episode #. Propose-only (PR
   boundary). Chose recommended defaults (feed-based topic detection + article-queue PR); user was
   away for the depth/output question, easily changed.
+
+## 2026-07-13 — Attkisson monitor upgraded to Substack full-text feed (primary)
+
+Her Substack `sharylattkisson.substack.com` exposes an open **full-text RSS** (`/feed`,
+content:encoded = whole article body, all posts free) + an undocumented JSON API
+(`/api/v1/archive`, `/api/v1/posts/<slug>`). Neither is Cloudflare-blocked. This SOLVES the
+"no transcripts" gap — full article text means the monitor scans the whole body for a
+drug/vaccine+event, not just titles. Confirmed richer signal: "Follow the Money" names statins,
+hydroxychloroquine, remdesivir (FAERS); the CDC-schedule post names DTaP/MMR/HPV/RSV/COVID + febrile
+seizures/pertussis/encephalopathy (VAERS). Switched routine `gps-attkisson-monitor` to Substack
+RSS primary + podcast RSS secondary (dedupe same story across both), scanning full body. Updated
+attkisson-monitor.md (source + dedupe watermarks: Substack slug + podcast ep #).

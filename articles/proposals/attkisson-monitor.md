@@ -6,15 +6,19 @@ analyzable ones into the article queue.
 
 ## Source (what works, what doesn't)
 
-- **Monitor feed (open, machine-readable):** `https://anchor.fm/s/dab6618/podcast/rss`
-  — *The Sharyl Attkisson Podcast* (Anchor/Spotify host; 327+ episodes, ~weekly). This feed
-  is fetchable; her website and `sharylattkisson.com/feed/` are **Cloudflare-blocked (403)** to
-  automated fetchers, so do NOT rely on the site directly.
-- **Second show:** *Full Measure After Hours* (separate feed; add later if wanted).
-- **Transcripts:** the podcast feed carries **titles + descriptions only, no transcripts.** Her
-  TV "(WATCH)" segments have transcripts on the site but those are behind Cloudflare. Full audio
-  transcripts would require Whisper (heavier; not currently set up). Topic detection from
-  title+description is the current method.
+- **PRIMARY — Substack full-text RSS:** `https://sharylattkisson.substack.com/feed`
+  (*Sharyl's Substack*, free/"Everyone", 22k+ subs). **Carries the FULL article text**
+  (`content:encoded`), so topic detection scans the whole body, not just the title — the printed
+  version of her reporting. Open, not Cloudflare-blocked. Also an undocumented JSON API:
+  `/api/v1/archive?sort=new&limit=N` (post metadata) and `/api/v1/posts/<slug>` (full `body_html`).
+  Prefer the RSS feed; the API is a fallback for pulling a single post's body.
+- **SECONDARY — podcast RSS:** `https://anchor.fm/s/dab6618/podcast/rss` (*The Sharyl Attkisson
+  Podcast*, 327+ eps). Titles + descriptions only, NO transcripts. Use to catch audio-only
+  episodes not mirrored on Substack.
+- **Do NOT rely on** `sharylattkisson.com` / its `/feed/` — **Cloudflare-blocked (403)** to
+  automated fetchers. Her TV "(WATCH)" segment transcripts live there, behind that wall; the
+  Substack full text is the accessible substitute (no Whisper needed).
+- Second show *Full Measure After Hours* (separate podcast feed; add later if wanted).
 
 ## The analyzability filter
 
@@ -41,14 +45,19 @@ Verify the drug/event actually exist in the parquet before drafting (per the que
 **Realistic expectation:** her feed yields roughly one strong analyzable topic per stretch of
 several episodes; the monitor's value is catching those without reading every episode.
 
-## Seen-episodes log (dedupe)
+## Seen log (dedupe)
 
-Latest scanned episode: **#337** (2026-07-10). The weekly routine appends newly-seen episode
-numbers here so it doesn't re-flag the same ones.
+- **Substack — latest scanned post:** `shhh-heres-cdcs-now-removed-revised` (2026-07-06).
+- **Podcast — latest scanned episode:** **#337** (2026-07-10).
+
+The weekly routine advances both watermarks and appends newly-seen slugs/episode numbers so it
+doesn't re-flag the same items. (Substack posts and podcast episodes often mirror each other —
+dedupe on topic, not just source, to avoid double-flagging the same story.)
 
 ## Monitor routine
 
-A weekly cloud routine (`gps-attkisson-monitor`) reads the feed, flags health episodes against the
-filter above, and opens a PR ("Attkisson monitor: YYYY-MM-DD") with analyzable episodes + candidate
-analyses — same PR-boundary pattern as `gps-weekly-research`. Analyzable items graduate into the
-main `ARTICLE_QUEUE.md` when you pick them up interactively (where the parquet check happens).
+A weekly cloud routine (`gps-attkisson-monitor`, Sat 14:00 UTC) reads the Substack full-text feed
+(primary) + podcast feed (secondary), scans the full post body for a drug/vaccine + event, flags
+analyzable items against the filter above, and opens a PR ("Attkisson monitor: YYYY-MM-DD") with
+candidate analyses — same PR-boundary pattern as `gps-weekly-research`. Analyzable items graduate
+into the main `ARTICLE_QUEUE.md` when picked up interactively (where the parquet check happens).
