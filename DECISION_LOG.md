@@ -1800,3 +1800,13 @@ article rendering but lacked the packages Quarto's R engine needs (render failed
 gt tables AND base-R plots both render correctly in typst. rmapi authenticated via existing
 ~/.config/rmapi/rmapi.conf; run via `nix run nixpkgs#rmapi`. Folder + 4 PDFs confirmed on device.
 Queue now: AEMS reproducibility explainer (next) → Trop-2 ADC.
+
+## 2026-07-13 — Cadence locked: Monday; reMarkable PDF is the pre-publish approval gate
+
+- **Publish day locked: MONDAY**, weekly, drafted interactively (data-verification stays in loop).
+- **reMarkable send reframed as the APPROVAL GATE, not a post-publish extra:** each article is
+  rendered to a Paper Pro PDF and sent to the device `/globalpatientsafety` folder *before*
+  deploy, so Harlan reads + approves on the reMarkable ahead of time. Site render/deploy happens
+  only after approval. Workflow steps + ARTICLE_QUEUE.md + memory updated accordingly.
+- The 4 PDFs already on the device (carbidopa, GLP-1, AAV, AEMS) are the current approval copies
+  awaiting Harlan's read. No auto cloud routine created (interactive by design).

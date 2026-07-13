@@ -3,12 +3,13 @@
 A running backlog for the **one-article-per-week** cadence. Top of the queue is next.
 When an article is drafted, move it to **Drafted / published** with its date and file.
 
-Weekly cadence: **one article every week on the same day.**
-Provisional default (pending your confirmation): **Mondays, drafted interactively** with Claude
-(you ping me, or I remind you). Rationale: the Friday `gps-weekly-research` ideas get the weekend
-to inform the pick, and interactive drafting keeps data-verification in the loop (a cloud agent
-can't check numbers against the local FAERS parquet). Change the day or switch to an auto-draft /
-auto-reminder cloud routine any time — say the word and I'll wire it.
+Weekly cadence: **one article every week, published on MONDAY** (locked 2026-07-13).
+Drafted **interactively** with Claude (you ping me, or I remind you) — interactive keeps
+data-verification in the loop (a cloud agent can't check numbers against the local FAERS parquet).
+The Friday `gps-weekly-research` ideas routine feeds the pick over the weekend.
+**Approval gate: every article is sent as a reMarkable Paper Pro PDF *before* publishing**
+so Harlan reads and approves it on the device ahead of time; deploy happens only after approval
+(`scripts/render_remarkable.sh`, see step 4 below).
 Source of new ideas: the `gps-weekly-research` cloud routine (Fridays) → `articles/proposals/YYYY-MM-DD-ideas.md`.
 
 ---
@@ -62,6 +63,12 @@ carbidopa/levodopa piece and the AEMS verification (DECISION_LOG 2026-07-12).
 3. Draft as a `.qmd` modeled on `christine-cotton-vaers.qmd`: inline R helpers so prose numbers
    can't drift from the tables; fixed rule EB05 ≥ 2.0 with ≥2 of 4 methods; explicit
    what-this-can/cannot-show + limitations callouts; confounding-by-indication stated plainly.
-4. Move the item to **Drafted / published** here.
-5. Review → render (`build_static_site.R`) → deploy. **Publishing stays a manual step** (autonomy
-   stops at the PR boundary — nothing self-deploys to the live public-health site).
+4. **Send the reMarkable PDF for review — BEFORE publishing** (this is the approval gate).
+   Add the article's id + title to the `ARTICLE_IDS`/`TITLES` arrays in
+   `scripts/render_remarkable.sh`, then
+   `nix develop --command bash scripts/render_remarkable.sh --upload` renders it to a
+   179.6×239.6 mm Paper Pro PDF and uploads it to the device `/globalpatientsafety` folder.
+   Harlan reads + approves on the reMarkable ahead of time.
+5. **On Harlan's approval:** move the item to **Drafted / published** here, then render
+   (`build_static_site.R`) → deploy. **Publishing stays a manual step gated on approval**
+   (autonomy stops at the PR boundary — nothing self-deploys to the live public-health site).
