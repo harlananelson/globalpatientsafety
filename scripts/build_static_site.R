@@ -111,6 +111,7 @@ site_nav <- function(active = "") {
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+        <li class="nav-item"><a class="nav-link" href="/methods">Signal &amp; Noise</a></li>
         <li class="nav-item"><a class="nav-link" href="/aems">AEMS</a></li>
         <li class="nav-item"><a class="nav-link" href="https://faers.mobi" target="_blank" rel="noopener">faers.mobi</a></li>
         <li class="nav-item"><a class="nav-link" href="https://picodag.globalpatientsafety.com" target="_blank" rel="noopener">pico-dag</a></li>
@@ -345,8 +346,9 @@ build_article_pages <- function() {
 # articles grid). Each is a Quarto doc rendered to app/static/<id>.html; we wrap
 # it with the same sticky back-nav bar as article pages. Add a row to publish one.
 STANDALONE_PAGES <- tibble::tribble(
-  ~id,     ~title,
-  "aems",  "Inside the AEMS Data"
+  ~id,        ~title,
+  "aems",     "Inside the AEMS Data",
+  "methods",  "Signal & Noise"
 )
 
 build_standalone_pages <- function() {

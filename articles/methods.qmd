@@ -1,0 +1,74 @@
+---
+title: "Signal & Noise — Reading FDA Adverse-Event Data"
+subtitle: "A working statistician's field guide to reading FAERS and VAERS without getting fooled — one real signal, one trap, one fix at a time"
+author: "Global Patient Safety"
+date: 2026-07-13
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    theme: flatly
+    embed-resources: true
+execute:
+  echo: false
+---
+
+FAERS and VAERS are public, enormous, and free — and that is exactly why they are so easy to
+misuse. Anyone can compute a disproportionality score; almost no one stops to ask whether the
+number means what it seems to.
+
+**Signal & Noise** is written from the methods seat, not the clinic. It is by a statistician, not a
+physician, and it makes no claims about whether a drug *causes* anything. What it does is smaller
+and more durable: take one real, often newsworthy safety signal, show the naive reading, and then
+show the one check — a trajectory, a comparison, a date — that changes the answer. Every
+installment ends with a rule you can carry to the next signal.
+
+The house method never changes, so the only variable is the trap being illustrated: four
+disproportionality measures — GPS/EBGM, PRR, ROR, and BCPNN/IC — computed independently, with a
+fixed rule of **EB05 ≥ 2 and at least two of the four agreeing**. Observed counts sit beside every
+estimate; "what this can and cannot show" is stated every time.
+
+::: {.callout-important}
+## The one thing to take away
+
+A disproportionality score is a **question generator, never an answer**. It tells you where to
+look; it cannot tell you what you will find. Passive reports are not incidence, and a high score is
+a reason to investigate — not a conclusion.
+:::
+
+## How each installment works
+
+1. **The hook** — a real signal or public claim, usually something in the news.
+2. **The naive read** — what the number says at face value, and why it's tempting.
+3. **The check that breaks it** — a trajectory, a class comparison, a known date, the observed count.
+4. **The rule** — the lesson, stated so it applies to the *next* signal you meet.
+
+## The installments
+
+Each piece is a clinical example carrying a transferable method lesson. The drug is the example;
+the method is the point.
+
+| The trap it teaches | Worked example | Status |
+|---|---|---|
+| **Survivability ≠ causation.** A signal can "survive" across a whole drug class purely on notoriety — once an event is publicized for one member, reporters attribute it to all of them. The *emergence timing* refutes it: a genuine class effect has independent histories; a notoriety artifact has every member igniting after the same date. | GLP-1 receptor agonists → optic neuropathy (NAION) | Flagship — in preparation |
+| **The raw leaderboard lies.** The strongest disproportionality scores are dominated by confounding-by-indication, route of administration, litigation clusters, and definitional/known effects — not discoveries. | The top of the AEMS data | [Inside the AEMS Data →](/aems) |
+| **Signals are non-stationary.** A single-quarter claim is a snapshot of a moving target; it drifts with prescribing volume and media attention. Plot the trajectory before you believe it. | GLP-1 drugs → hair loss (alopecia) | In review |
+| **The rare outcome is invisible; the mechanism is loud.** A warning built on a handful of severe cases won't light up a database — but the upstream mechanism often does. Look upstream of the fatal endpoint. | Carbidopa/levodopa → B6-deficiency seizures; AAV gene therapy → liver injury | In review |
+| **Don't cherry-pick the max quarter.** Taking the single most extreme quarter across a panel manufactures signals for rare-event drugs. Use the latest-quarter snapshot plus the trajectory. | (method note) | Planned |
+| **Which way does the arrow point?** Protopathic / reverse causation: sometimes the disease causes the prescription, then "signals" as if it were an effect. | Pancreatic cancer on a weight-loss drug | Planned |
+| **The overnight epidemic.** A count that jumps from 1 to 175 in a single quarter is a coding or reporting event, not biology. | Ozempic → "cyclic vomiting syndrome" | Planned |
+
+## Why this series
+
+Most pharmacovigilance commentary argues about what a drug does. This series argues about what the
+*data* can support — the part a statistician is actually positioned to adjudicate. The traps above
+are not exotic; they are the ordinary ways a public database misleads a careful reader. Naming them,
+one clean example at a time, is the contribution.
+
+::: {.callout-note}
+## Scope
+
+Signals are statistical patterns in voluntary reports, not evidence of causation, and nothing here
+is medical advice. Aggregate counts carry no patient-identifying information. Methods and data:
+FDA Adverse Event Monitoring System (AEMS) quarterly extracts, continuing the FAERS/VAERS series.
+:::
