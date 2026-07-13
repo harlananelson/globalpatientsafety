@@ -1817,3 +1817,23 @@ Harlan confirmed all 4 PDFs are on the reMarkable (incl. "Inside the AEMS Data")
 week to review each, so we do NOT publish today. First publish = Monday 2026-07-20, then ~one
 approved article per Monday. The 4 delivered drafts are the review backlog; **no new drafting
 until it clears.** Publishing gated on his per-article approval (read on device first).
+
+## 2026-07-13 — Sharyl Attkisson health-topic monitor (new cloud routine)
+
+User wants to monitor when Attkisson covers health issues this site can reanalyze.
+- **Source found:** her site + /feed/ are Cloudflare-blocked (403), but the podcast RSS
+  `https://anchor.fm/s/dab6618/podcast/rss` (The Sharyl Attkisson Podcast, 327 eps) is open and
+  fetchable. Feed carries titles+descriptions only — NO transcripts (full transcripts would need
+  Whisper on the audio; not set up). Second show: Full Measure After Hours (not yet wired).
+- **Reality check:** most of her health content is health *politics* (CDC schedule, AAP lawsuit,
+  Morens indictment, monkeypox, EMF) — not analyzable. Analyzable = names a specific drug/vaccine
+  + adverse event present in FAERS/VAERS. First-pass scan: ivermectin is the strongest live match
+  (12,466 FAERS reports; neurotoxicity EB05 20/4m; a "product use in unapproved indication"
+  cluster capturing the off-label COVID era — a genuine candidate article). COVID-vax/myocarditis
+  = done (Cotton), extendable. MMR/autism = weak/heavily-caveated only.
+- **Built:** `articles/proposals/attkisson-monitor.md` (source, filter, first-pass scan, dedupe
+  log) + cloud routine `gps-attkisson-monitor` (trig_01ByknQFAxBMkAxMy63dPw7U, Sat 14:00 UTC,
+  sonnet-5). Weekly: reads the feed, flags analyzable NEW episodes, opens PR "Attkisson monitor:
+  YYYY-MM-DD" with candidate analyses; dedupes via last-scanned episode #. Propose-only (PR
+  boundary). Chose recommended defaults (feed-based topic detection + article-queue PR); user was
+  away for the depth/output question, easily changed.
