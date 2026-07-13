@@ -1883,3 +1883,17 @@ attkisson-monitor.md (source + dedupe watermarks: Substack slug + podcast ep #).
   Caveats: MedDRA-licensed PT→SOC map stays internal (ship derived flag only); notoriety detection is
   a "check timing" heuristic not a verdict; multi-repo feature — first slice = onset + non-clinical
   badges + min-N/novel filters.
+
+## 2026-07-13 — Triage prototype validated; MedDRA letter located (gates the non-clinical badge)
+
+- **Prototype built + run:** `signal-compute/proto_signal_noise_triage.R` (committed a031d20).
+  Computes onset_q / step_score / onset_recent / nonclinical / small_n → triage badge per pair.
+  On Ozempic it AUTO-REPRODUCES the manual clustering: cyclic vomiting → SUDDEN-STEP (coding
+  artifact), NAION → RECENT-ONSET (notoriety ramp), product/device terms → NON-CLINICAL, real GI/
+  metabolic → solid. Fixes learned: require obs>=10 & eb05>=3 for meaningful onset (naive first-flag
+  mis-dated NAION to 2020); notoriety is both STEPS and RAMPS (need step_score AND onset_recent).
+- **MedDRA letter:** `articles/reviews/meddra-email-2026-07-05-draft.txt` (to mssohelp@meddra.org,
+  2026-07-05) + earlier `meddra-subscription-email.txt`. Its feature #3 (SOC-based "low-information-
+  term filter") IS the non-clinical badge — so publishing that badge is gated on the MedDRA
+  subscription. Proto uses VAERS `in_noise` + keyword fallback as interim internal approximation.
+  Recorded the dependency in signal-triage-ui.md.

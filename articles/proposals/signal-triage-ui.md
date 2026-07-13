@@ -68,6 +68,30 @@ trajectory/class passes).
   non-clinical-PT badges + the min-N/novel filters (highest value, lowest dependency), then class
   survivability, then the report card.
 
+## Prototype (validated 2026-07-13)
+
+First slice built and run on real FAERS: `signal-compute/proto_signal_noise_triage.R`. Computes
+`onset_q`, `step_score`, `onset_recent`, `nonclinical`, `small_n` → a triage badge per pair. On
+Ozempic it **reproduces the manual clustering** automatically:
+- **Cyclic vomiting syndrome** (1→175 in one quarter) → `SUDDEN-STEP` ✓ (the coding artifact)
+- **Optic ischaemic neuropathy / NAION** (onset 2024Q3) → `RECENT-ONSET` ✓ (the notoriety timing —
+  a *ramp*, caught by onset-recency after `step_score` alone missed it)
+- Product/device/dose confusion, titration, label, cataract operation, colonoscopy, corrective
+  lens → `NON-CLINICAL` ✓
+- Gastroparesis, ileus, appetite terms, pancreatitis → `solid` ✓
+
+Two lessons from the proto: (1) naive "first flag" mis-dates onset (NAION → 2020 on a tiny-N
+flicker); require obs≥10 & eb05≥3 for a *meaningful* onset. (2) notoriety comes as both STEPS
+(cyclic vomiting) and RAMPS (NAION) — need both `step_score` and `onset_recent`.
+
+**MedDRA-licensing dependency (live blocker for the public non-clinical badge):** the proto tags
+non-clinical PTs via the VAERS-derived `in_noise` flag + a keyword fallback, because the VAERS map
+misses FAERS product/device PTs and the proper SOC-based classification needs the MedDRA hierarchy.
+That classification is **feature #3 in the pending MSSO subscription letter**
+(`articles/reviews/meddra-email-2026-07-05-draft.txt`, the "low-information-term filter"). Publishing
+the SOC-derived non-clinical badge is gated on that subscription; the keyword fallback is an interim
+internal approximation.
+
 ## Relation to the rest of the work
 
 This is the productized form of the `cluster.md` "GPU pharmacovigilance lab" idea and the Signal &
