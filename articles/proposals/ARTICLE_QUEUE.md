@@ -20,6 +20,35 @@ Source of new ideas: the `gps-weekly-research` cloud routine (Fridays) → `arti
 
 ---
 
+## Editorial direction — methodology first (the site's distinctive lane)
+
+Harlan is a statistician / clinical data scientist, **not an MD**, so the durable value he adds is
+**pharmacovigilance methodology — how to use FDA adverse-event data correctly, and the gotchas that
+trip people up** — anchored by a concrete drug/vaccine example but *not* making clinical causation
+claims. Frame pieces as transferable "reading FDA data" lessons, not "drug X causes event Y."
+
+The gotchas already surfaced (a running catalogue for a possible **"Reading FDA Adverse-Event Data"
+series**):
+- **Survivability ≠ causation / notoriety bias** — a signal can "survive" a whole drug class purely
+  because publicity for one member spreads reporting to all; the emergence-*timing* check refutes it
+  (NAION/GLP-1, queue #2). A known publication/label date is a natural experiment.
+- **The raw leaderboard lies** — top-EB05 pairs are dominated by confounding-by-indication, route,
+  litigation clusters, and definitional/known effects (AEMS page).
+- **Signals are non-stationary** — single-quarter claims move with prescribing volume + attention;
+  plot the trajectory (GLP-1 alopecia).
+- **The rare severe outcome is invisible; the mechanism is loud** — look upstream of the fatal
+  endpoint (carbidopa/levodopa B6; AAV liver).
+- **Cherry-picking the max quarter** across a panel manufactures signals for rare-event drugs (use
+  latest-quarter snapshot + trajectory, show observed counts).
+- **Protopathic / reverse-causation bias** — e.g. pancreatic carcinoma on a weight-loss drug.
+- **Coding/step-change artifacts** — a 1→175 single-quarter jump (Ozempic "cyclic vomiting
+  syndrome") is a coding/reporting artifact, not biology.
+- **Passive reports ≠ incidence; small-N EB05 needs the trajectory** before it means anything.
+
+Most pieces already carry a methodology thread; lean into it explicitly as the through-line.
+
+---
+
 ## Drafted / published
 
 | Date | Title | File | Status |
@@ -48,13 +77,22 @@ carbidopa/levodopa piece and the AEMS verification (DECISION_LOG 2026-07-12).
    (both given to older adults already at shingles risk). Source: Attkisson 2026-07-06 Substack →
    `attkisson-monitor.md`.
 
-2. **From FAERS to AEMS — a reproducibility check on our data foundation.**
+2. **When a signal "survives" the class but the calendar says notoriety — GLP-1s → NAION.**
+   ★ methodology piece, analysis run + verified 2026-07-13 (full write-up:
+   `naion-glp1-survivability.md`). The survivability/class check *looks* like it confirms a class
+   effect (every GLP-1 but exenatide flags NAION 4/4), but the per-agent emergence timing shows
+   every non-semaglutide agent ignites only *after* the July-2024 semaglutide NAION study — a
+   notoriety-bias signature, not four discoveries. Transferable gotcha: survivability ≠ causation;
+   always check the trajectory + a known publication/label date as a natural experiment. Absorbs the
+   earlier single-drug Ozempic-NAION idea. FAERS.
+
+3. **From FAERS to AEMS — a reproducibility check on our data foundation.**
    Explainer + reproducibility harness. Low urgency (verified 2026-07-12: AEMS is a front-end
    consolidation; the bulk quarterly FAERS extract files continue, still public, Q1 2026 posted
    2026-04-28 — no pipeline crisis). Recompute a known EB05 (e.g. the Cotton myocarditis result)
    from AEMS-era files. Source: `2026-07-10-ideas.md` #5.
 
-3. **Trop-2 ADC neutropenia/diarrhea class check as Trodelvy goes first-line.**
+4. **Trop-2 ADC neutropenia/diarrhea class check as Trodelvy goes first-line.**
    FAERS. Head-to-head sacituzumab govitecan vs. datopotamab deruxtecan. *Watch:* boxed-warning
    toxicities are expected cytotoxic-ADC effects, so vs.-background disproportionality is trivial;
    only the head-to-head + pre-first-line baseline is novel. Drop the tangential CD3×CD20

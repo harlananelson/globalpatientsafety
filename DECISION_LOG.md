@@ -1849,3 +1849,19 @@ hydroxychloroquine, remdesivir (FAERS); the CDC-schedule post names DTaP/MMR/HPV
 seizures/pertussis/encephalopathy (VAERS). Switched routine `gps-attkisson-monitor` to Substack
 RSS primary + podcast RSS secondary (dedupe same story across both), scanning full body. Updated
 attkisson-monitor.md (source + dedupe watermarks: Substack slug + podcast ep #).
+
+## 2026-07-13 — Cross-GLP-1 NAION survivability; methodology-first editorial direction
+
+- **Analysis run + verified:** NAION (optic ischaemic neuropathy) across the GLP-1 class, FAERS
+  2025Q4. Cross-section: signal "survives" (semaglutide EB05 39/289 reports; liraglutide 20,
+  tirzepatide 8, dulaglutide 5 — all 4/4; exenatide none). BUT emergence timing refutes a class
+  effect: every non-semaglutide agent ignites only AFTER the July-2024 JAMA Ophth semaglutide-NAION
+  study (all ~zero pre-2024Q3), on tiny N — a notoriety-bias signature. Verdict: real
+  semaglutide-anchored signal; class "survival" is largely reporting-attention contamination.
+- **Saved** as `articles/proposals/naion-glp1-survivability.md`; **queued at #2** (absorbs the
+  earlier single-drug Ozempic-NAION idea).
+- **Editorial direction locked (user's framing):** he is a statistician, NOT an MD, so the site's
+  distinctive lane is **pharmacovigilance METHODOLOGY / how-to-use-FDA-data gotchas**, anchored by a
+  drug example but not clinical causation claims. Added an "Editorial direction" section to
+  ARTICLE_QUEUE.md with a running gotcha catalogue (candidate "Reading FDA Adverse-Event Data"
+  series) + memory `methodology-first-editorial`. NAION/GLP-1 is the flagship methodology piece.
