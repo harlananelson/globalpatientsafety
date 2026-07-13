@@ -1907,3 +1907,15 @@ leaderboard) only 3 (2%) are SOLID — 170 small-N, 35 recent-onset, 10 non-clin
 default "sort by strongest" is ~98% noise. Triage turns 265k pairs into a ~10k high-value shortlist
 and MEASURES the AEMS "raw leaderboard lies" lesson. Recorded in signal-triage-ui.md. Small-N badge
 = "interpret with trajectory," not "wrong" (rare pairs dominate, as expected).
+
+## 2026-07-13 — Class-survivability column built + validated
+
+`signal-compute/proto_class_survivability.R` (committed 112ae66). Per (drug,event): class_n_flag +
+class_verdict (ISOLATED / WEAK / INDEPENDENT / SYNCHRONOUS). Agent-level, curated class map (ATC =
+production). Validation bug caught + fixed: discriminator is EARLIEST-ONSET RECENCY, not onset
+spread (NAION onsets 2024Q3–2025Q4 all recent → SYNCHRONOUS; pancreatitis from 2018 → INDEPENDENT).
+GLP-1 result: ISOLATED 828 / WEAK 235 / INDEPENDENT 101 / SYNCHRONOUS 12 — NAION in the 12
+(earliest 2024Q3) with skin laxity, GI hypomotility, malnutrition. Automates the manual NAION
+verdict; reduces 1,176 flagged events to 12 needing a timing check. Badge = "check timing" (not a
+verdict). Perf fix: distinct-drug regex join, not per-agent 25M-row scans (first version timed out
+at 2min with statin/DOAC classes added). Recorded in signal-triage-ui.md.

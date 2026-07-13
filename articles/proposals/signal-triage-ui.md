@@ -100,6 +100,25 @@ That classification is **feature #3 in the pending MSSO subscription letter**
 the SOC-derived non-clinical badge is gated on that subscription; the keyword fallback is an interim
 internal approximation.
 
+## Class-survivability column (built + validated 2026-07-13)
+
+`signal-compute/proto_class_survivability.R`. Per (drug, event): do other agents in the drug's
+class flag the event (`class_n_flag`), and did the class ignite together *recently* vs have a deep
+independent history (`class_verdict`)? Agent-level (semaglutide, not ozempic+wegovy separately);
+curated class map (ATC is the production path). **The discriminator the validation forced:** NOT
+onset spread — NAION's onsets span 2024Q3–2025Q4 (staggered but all recent) while pancreatitis
+starts 2018. Use **earliest-onset recency**: whole class's earliest meaningful onset within ~6
+quarters → SYNCHRONOUS.
+
+Validated on GLP-1 (1,176 flagged events): **ISOLATED 828** (drug-specific) · **WEAK 235**
+(small-N) · **INDEPENDENT 101** (real class effects, histories from 2018) · **SYNCHRONOUS 12**
+(notoriety-suspect). NAION lands in the 12 (earliest 2024Q3) alongside skin laxity, GI hypomotility,
+malnutrition (the weight-loss-boom emergents). The column reduces "which of 1,176 need a timing
+check" to 12. Badge says **"check the timing"** (could be notoriety OR a genuinely new class
+effect), it does not rule. Perf: match class regexes against distinct drug strings once, then join
+(not per-agent full-table scans). Production scale-out (all classes × all pairs) is the gpudisprop
+batch.
+
 ## Relation to the rest of the work
 
 This is the productized form of the `cluster.md` "GPU pharmacovigilance lab" idea and the Signal &
