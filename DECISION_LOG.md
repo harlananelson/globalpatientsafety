@@ -1919,3 +1919,16 @@ GLP-1 result: ISOLATED 828 / WEAK 235 / INDEPENDENT 101 / SYNCHRONOUS 12 — NAI
 verdict; reduces 1,176 flagged events to 12 needing a timing check. Badge = "check timing" (not a
 verdict). Perf fix: distinct-drug regex join, not per-agent 25M-row scans (first version timed out
 at 2min with statin/DOAC classes added). Recorded in signal-triage-ui.md.
+
+## 2026-07-14 — On-label vs novel column built; all 3 triage columns done
+
+`signal-compute/proto_onlabel_novel.R` (committed 7910fee). Matches flagged (drug,event) against
+FDA label safety text (fda_labels.parquet, 2000 drugs). Agent-level join; NA when no label (no
+false-novel from missing labels). Wording gotcha caught: full-PT substring under-matched
+(gastroparesis, medullary thyroid CANCER, gallbladder injury read novel) → fixed with head-noun +
+cancer<->carcinoma + synonym normalization; NAION stays NOVEL. Residual lab-term false-novels
+(HbA1c vs "hypoglycemia") = the documented "string is first pass, concept matching is production"
+caveat. Semaglutide: 46 on-label / 121 novel; NAION=novel. ALL THREE triage columns now prototyped
++ validated (non-clinical/onset, class-survivability, on-label/novel) — they compose: highest-value
+= novel ∧ ¬non-clinical ∧ recent-onset ∧ ¬small-N (NAION clears every gate). Remaining: ATC map +
+GPU batch scale-out, then faers.mobi render. Non-clinical public badge still gated on MSSO reply.

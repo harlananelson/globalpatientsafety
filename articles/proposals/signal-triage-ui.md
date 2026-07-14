@@ -119,6 +119,28 @@ effect), it does not rule. Perf: match class regexes against distinct drug strin
 (not per-agent full-table scans). Production scale-out (all classes × all pairs) is the gpudisprop
 batch.
 
+## On-label vs novel column (built + validated 2026-07-14)
+
+`signal-compute/proto_onlabel_novel.R`. Cross-references each flagged (drug, event) against the
+FDA label safety sections (`fda_labels.parquet`: boxed_warning + warnings_and_cautions +
+adverse_reactions + warnings). Agent-level join (Wegovy/Rybelsus inherit the OZEMPIC/semaglutide
+label); **NA when no label exists** — never call a pair novel merely for a missing label.
+
+The wording gotcha (documented in code): raw full-PT substring under-matches — it read gastroparesis,
+"medullary thyroid CANCER", and "gallbladder injury" as novel because the label says gastroparesis's
+synonym, "carcinoma", and "gallbladder" (bare). Fixed with general normalizations (head-noun drop,
+cancer↔carcinoma, a small synonym map) → those flip to on-label; NAION stays NOVEL. Residual
+false-novels remain (lab terms like "blood glucose decreased" vs label "hypoglycemia") — the design's
+"string is a first pass; production = UMLS/MedDRA concept matching" caveat, now demonstrated.
+Semaglutide result: 46 on-label / 121 novel / 0 unknown (of 167 flagged, obs≥15); **NAION = novel**.
+
+**All three triage columns now prototyped and validated** (non-clinical + onset/notoriety;
+class-survivability; on-label/novel). They **compose**: the highest-value set is
+`novel ∧ ¬non-clinical ∧ recent-onset ∧ ¬small-N` — genuinely new clinical signals, not the tool
+re-reading the label or resurfacing device/error terms. NAION is the exemplar that clears every gate.
+Remaining: ATC class map + the GPU batch scale-out (all classes × all pairs), then the faers.mobi
+render (badges/filters/report-card). Public non-clinical badge still gated on the MSSO reply.
+
 ## Relation to the rest of the work
 
 This is the productized form of the `cluster.md` "GPU pharmacovigilance lab" idea and the Signal &
