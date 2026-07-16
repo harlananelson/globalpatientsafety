@@ -1932,3 +1932,16 @@ caveat. Semaglutide: 46 on-label / 121 novel; NAION=novel. ALL THREE triage colu
 + validated (non-clinical/onset, class-survivability, on-label/novel) — they compose: highest-value
 = novel ∧ ¬non-clinical ∧ recent-onset ∧ ¬small-N (NAION clears every gate). Remaining: ATC map +
 GPU batch scale-out, then faers.mobi render. Non-clinical public badge still gated on MSSO reply.
+
+## 2026-07-16 — Triage scale-out specced as tickets
+
+Wrote `articles/proposals/triage-scaleout-tickets.md`: the production scale-out of the 3 validated
+triage prototypes, as concrete tickets across signal-compute (hub: cheap columns + joins + parquet
+write), gpudisprop (GPU class-survivability kernel — the one expensive pass), faers-mobi (badges/
+filters/report-card), + an ATC drug→class map (breadth) and the column contract (interface). Phased:
+Phase 1 (T1–T6+T12: trajectory/nonclinical/on-label columns + badges + filters + validation harness)
+delivers ~90% of value with NO ATC/GPU dependency — turns the 98%-noise leaderboard into a
+filterable ~10k-solid-pair view. Phase 2 (T7 ATC map → T8 GPU class-survivability → T9/T10) is the
+notoriety chip. Phase 3: report-card + concept-level on-label. Cross-cutting: MedDRA gates the public
+non-clinical badge (ship derived boolean only); badges advisory ("check", not "artifact"). Recommend
+Phase 1 first, then let real usage decide if the ATC+GPU lift is worth it.
