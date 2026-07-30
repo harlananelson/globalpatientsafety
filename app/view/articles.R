@@ -40,13 +40,16 @@ box::use(
 #' @export
 ui <- function(id) {
   ns <- NS(id)
+  # Match menu/featured/server paths: only published articles (drafts have no
+  # view modules and would render as dead-click "Read →" buttons).
+  shown <- ARTICLES[ARTICLES$status == "published", , drop = FALSE]
   div(
     class = "container-fluid py-4",
     tags$h4("Articles", class = "fw-light mb-4"),
     layout_column_wrap(
       width = "380px",
       gap   = "1.25rem",
-      !!!lapply(seq_len(nrow(ARTICLES)), function(i) .article_card(ARTICLES[i, ], ns))
+      !!!lapply(seq_len(nrow(shown)), function(i) .article_card(shown[i, ], ns))
     )
   )
 }

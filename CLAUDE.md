@@ -1,44 +1,69 @@
-# globalpatientsafety.com — Global Safety Metrics Dashboard
+# globalpatientsafety.com — Global Safety Metrics Clearing House
 
 ## Overview
 
-Rhino/Shiny portal app at globalpatientsafety.com. Renders a landing page with cards linking
-to each tool in the pharmacovigilance suite. This project is the **clearing house only** — it
-does not run signal detection itself.
+Landing site at globalpatientsafety.com for the pharmacovigilance tool suite.
+This project is the **clearing house only** — it does not run signal detection itself.
+
+**Production front end is the static site** built by `scripts/build_static_site.R`
+and deployed to `/var/www/globalpatientsafety/` on the VPS (nginx, zero R workers).
+The interactive Rhino/Shiny app under `app/` is **retired** for this domain; tool
+subdomains (faers.mobi, aers.mobi, vaers, pico-dag) remain separate Shiny apps.
 
 ## Architecture
 
-- **Framework:** Rhino (production Shiny with `box` modules)
-- **Sass:** Compiled via Node (`rhino.yml: sass: node`)
-- **Deployment:** rsconnect (see `dependencies.R` for packrat discovery)
+| Layer | Role |
+|-------|------|
+| **Static site (production)** | `scripts/build_static_site.R` → `static_site/` → rsync to VPS |
+| **Registries (source of truth)** | `app/logic/articles.R` (`ARTICLES`), `app/logic/tools.R` (`TOOLS`) |
+| **Article HTML** | Quarto sources in `articles/*.qmd` → render into `app/static/<id>.html` |
+| **Standalone pages** | `articles/methods.qmd`, `articles/aems-analysis.qmd` → `app/static/{methods,aems}.html` |
+| **Retired Shiny portal** | `app/main.R` + `app/view/*` — kept for local preview / CI, not the live domain |
 
 ### Key Files
 
 | File | Role |
 |------|------|
-| `app/main.R` | App entry point — hero banner + portal cards + about section |
-| `app/logic/tools.R` | `TOOLS` tribble — one row per tool card. Add tools here. |
-| `app/view/portal.R` | Renders tool cards from `TOOLS` tribble |
-| `app/logic/signal_engine.R` | Wraps `safetysignal` package (not used by portal itself) |
-| `app/view/signal_table.R` | Signal results table module (not used by portal itself) |
-| `rhino.yml` | Rhino config (`sass: node`) |
+| `scripts/build_static_site.R` | **Production builder** — index, articles grid, article pages, standalone nav pages |
+| `app/logic/articles.R` | `ARTICLES` tribble — published/draft rows; static site ships only `published` |
+| `app/logic/tools.R` | `TOOLS` tribble — one row per tool card on the homepage |
+| `app/static/<id>.html` | Pre-rendered Quarto HTML consumed by the builder |
+| `app/main.R` | Retired Shiny portal entry (hero + cards + article tabs) |
+| `app/view/portal.R` | Shiny tool cards from `TOOLS` |
+| `app/view/articles.R` | Shiny article index (published only) |
+| `app/view/article_*.R` | Shiny iframe modules for articles still reachable in the app |
+| `rhino.yml` | Rhino config (`sass: node`) — CI / local Shiny only |
 | `dependencies.R` | Packrat/rsconnect dependency discovery |
 
-## Tool Suite
+### Build & deploy
 
-The portal links to these apps:
+```bash
+# After rendering new/changed Quarto articles into app/static/
+Rscript scripts/build_static_site.R
+
+# Deploy static_site/ to the VPS (path is also printed by the builder)
+rsync -av --delete static_site/ root@5.78.69.136:/var/www/globalpatientsafety/
+```
+
+The builder:
+- Emits nav links for standalone pages (`/methods`, `/aems`) **only when** `app/static/<id>.html` exists
+- Warns on dead same-site internal links in the built HTML
+- Opens same-site tool URLs (e.g. `/methods`) in the current tab; external tools in a new tab
+
+## Tool Suite
 
 | Tool | URL | Project | Status |
 |------|-----|---------|--------|
 | **faers.mobi** | https://faers.mobi | `/projects/faers-mobi/` | Live |
 | **aers.mobi** | https://aers.mobi | `/projects/aers-mobi/` | Beta |
 | **pico-dag** | https://picodag.globalpatientsafety.com | `/projects/pico-dag/` | Live |
-| Signal methods | — | — | Coming soon |
+| **VAERS vaccine safety** | https://vaers.globalpatientsafety.com | (vaers app) | Live |
+| **Signal methods** | `/methods` (Signal & Noise) | this repo | Live |
 | MAUDE device safety | — | — | Coming soon |
 
 ## Signal Detection Data Flow
 
-Understanding how data reaches the apps:
+Understanding how data reaches the apps (sibling projects; not run here):
 
 ```
 faers-pipeline (Python)          signal-compute (R)           faers-mobi (R/Shiny)
@@ -64,12 +89,12 @@ FDA FAERS XML                    Reads contingency parquet    Reads signals.parq
 
 ### signals.parquet Schema
 
-Each row is a (drug, event, quarter) tuple:
+Each row is a (drug, event, quarter) tuple. Column names after the 2026-04 migration
+(see DECISION_LOG): **`drug`** / **`event`** (not `drug_name` / `*_concept_id` / `rxnorm_name`).
 
 | Column | Description |
 |--------|-------------|
-| `drug_concept_id`, `drug_name` | Drug identifier and name |
-| `outcome_concept_id`, `outcome_name` | MedDRA PT event identifier and name |
+| `drug`, `event` | Drug name and MedDRA PT event name |
 | `quarter` | Time period (YYYY-QN) |
 | `observed` | Count in 4-quarter rolling window |
 | `eb05`, `eb50`, `eb95` | GPS/EBGM credible interval |
@@ -111,18 +136,18 @@ When a user reports that searching for an event returns nothing:
    library(arrow)
    library(dplyr)
    ds <- open_dataset("data/signals.parquet")
-   ds |> filter(grepl("ischemic stroke", outcome_name, ignore.case = TRUE)) |> collect()
+   ds |> filter(grepl("ischemic stroke", event, ignore.case = TRUE)) |> collect()
    ```
 
-3. **Check the full signal-compute output** (before top-2000 filtering):
+3. **Check the full signal-compute output**:
    ```r
    ds <- open_dataset("~/data/signal-compute/signals_faers_v2024-12-31.parquet")
-   ds |> filter(grepl("ischemic stroke", outcome_name, ignore.case = TRUE)) |>
+   ds |> filter(grepl("ischemic stroke", event, ignore.case = TRUE)) |>
      arrange(desc(eb05)) |> head(20) |> collect()
    ```
 
-4. **If the event exists in full output but not in app data:** The top-2000 filter excluded it.
-   Options: increase the cutoff in signal-compute, or add a manual inclusion list.
+4. **If the event exists in full output but not in app data:** rare; confirm the
+   app is on the full parquet (not an old top-N slice).
 
 5. **If the event doesn't exist anywhere:** Check MedDRA PT spelling. FAERS uses MedDRA
    Preferred Terms. "Ischemic stroke" might be listed as "Ischaemic stroke" (British spelling)
@@ -145,14 +170,30 @@ When a user reports that searching for an event returns nothing:
 # Enter dev shell
 nix develop
 
-# Run the portal app
-Rscript -e 'shiny::runApp()'
+# Build the production static site (primary path)
+Rscript scripts/build_static_site.R
 
+# Optional: run the retired Shiny portal locally
+Rscript -e 'shiny::runApp()'
 # Or with rhino
 Rscript -e 'rhino::app()'
 ```
 
+### Adding a published article
+
+1. Write/render Quarto → `app/static/<id>.html`
+2. Add a `published` row to `app/logic/articles.R` (`id` must match the HTML stem)
+3. Rebuild: `Rscript scripts/build_static_site.R`
+4. (Optional, retired Shiny only) add `app/view/article_<id>.R` + entry in `.ARTICLE_MODULES` in `app/main.R`
+
+### Adding a tool card
+
+Append a row to `TOOLS` in `app/logic/tools.R`. Use `status = "live"` and a real URL
+(same-site paths like `/methods` are fine). Rebuild the static site.
+
 ## Deployment
 
-The portal is deployed to a Hetzner VPS at globalpatientsafety.com.
-faers.mobi and aers.mobi are separate deployments on the same VPS.
+- **This domain (globalpatientsafety.com):** static files from `static_site/` via nginx.
+- **faers.mobi / aers.mobi / vaers / pico-dag:** separate Shiny deployments on the same VPS.
+- Do not assume rsconnect/Shiny is serving the homepage; the builder header and
+  `articles/DEPLOY-christine-cotton.md` record the retirement.

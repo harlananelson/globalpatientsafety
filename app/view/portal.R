@@ -28,13 +28,22 @@ box::use(
 
 .tool_card <- function(row) {
   disabled <- row$status == "coming_soon" || is.na(row$url)
+  # Same-site paths (e.g. /methods) open in this tab; external tools open blank.
+  internal <- !disabled && grepl("^/", row$url)
   link <- if (disabled) {
     span(class = "btn btn-outline-secondary disabled", "Coming soon")
+  } else if (internal) {
+    a(
+      paste0("Open ", row$name, " \u2192"),
+      href = row$url,
+      class = "btn btn-primary"
+    )
   } else {
     a(
       paste0("Open ", row$name, " \u2192"),
       href = row$url,
       target = "_blank",
+      rel = "noopener",
       class = "btn btn-primary"
     )
   }

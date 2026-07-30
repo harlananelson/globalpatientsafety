@@ -11,6 +11,24 @@ on:
 permissions:
   contents: read
 jobs:
+  # Production surface is the static site (build_static_site.R). This job needs
+  # only base R — no renv/rhino — and guards registry ↔ static HTML drift.
+  static-site-consistency:
+    name: Static site consistency
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.4"
+
+      - name: Check articles/tools registries vs app/static
+        # --vanilla: skip project .Rprofile/renv; script is base-R only
+        run: Rscript --vanilla scripts/check_site_consistency.R
+
   main:
     name: Run linters and tests
     runs-on: ubuntu-22.04
