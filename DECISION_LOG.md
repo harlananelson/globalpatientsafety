@@ -2097,3 +2097,30 @@ read the repo and inferred the deployed state instead of checking it.
 
 **Not done.** No deploy. `rsync -av --delete static_site/ root@5.78.69.136:/var/www/globalpatientsafety/`
 is outward-facing and publishes three pages that have never been public; it needs explicit approval.
+
+## 2026-07-30 — Deployed: production caught up after ~2.5 months
+
+`rsync -av --delete static_site/ root@5.78.69.136:/var/www/globalpatientsafety/`, run with
+explicit user approval. Checked the webroot first: it held exactly five builder-produced files
+last modified **2026-05-14**, nothing hand-placed, so `--delete` had nothing foreign to remove
+(dry run confirmed: 8 writes, 0 deletions). Re-`chown`ed to `www-data:www-data` afterwards to
+match the prior convention, since rsync-as-root would otherwise have left root-owned files.
+
+Verified live over HTTPS:
+
+| Route | Before | After |
+|-------|--------|-------|
+| `/methods` | 404 | **200** |
+| `/aems` | 404 | **200** |
+| `/christine_cotton` | 404 | **200** |
+| `/`, `/articles`, `/shingles`, `/covid_vaccine`, `/favicon.ico` | 200 | 200 |
+| `/carbidopa_levodopa_b6`, `/glp1_alopecia` | 404 | 404 (correct — still drafts, and now unlinked) |
+
+The homepage featured card now resolves to `/christine_cotton` instead of `/shingles`; tool badges
+went 3 Live / 2 Coming soon → 4 Live / 1. Live `index.html` and `aems.html` are md5-identical to
+the local build, and no live page links a draft article.
+
+So PR #9's fixes and the christine_cotton publication are finally public. Note the ordering this
+exposed: the fixes were merged 2026-07-30 but only became real on deploy — the repo was never the
+thing users saw. **Whoever writes the next agent review should check the deployed site, not just
+the source**, or it will keep describing bugs no visitor can hit while missing ones they can.
