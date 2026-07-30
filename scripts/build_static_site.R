@@ -55,8 +55,28 @@ TOOLS    <- load_tribble(file.path(PROJ_ROOT, "app/logic/tools.R"),    "TOOLS")
 published <- ARTICLES |> filter(status == "published")
 featured  <- published |> filter(featured == TRUE) |> slice(1)
 
+# Top-nav pages that are NOT articles (not in ARTICLES, not in the articles grid).
+# Each is a Quarto doc rendered to app/static/<id>.html; build_standalone_pages()
+# wraps it with the sticky back-nav. Nav links are emitted only when the HTML exists.
+STANDALONE_PAGES <- tibble::tribble(
+  ~id,        ~title,              ~nav_label,
+  "methods",  "Signal & Noise",    "Signal &amp; Noise",
+  "aems",     "Inside the AEMS Data", "AEMS"
+)
+
+standalone_html_exists <- function(id) {
+  file.exists(file.path(PROJ_ROOT, "app/static", paste0(id, ".html")))
+}
+
+available_standalone <- STANDALONE_PAGES[
+  vapply(STANDALONE_PAGES$id, standalone_html_exists, logical(1)),
+  ,
+  drop = FALSE
+]
+
 cat("Loaded ", nrow(published), "published articles and",
-    nrow(TOOLS), "tools.\n")
+    nrow(TOOLS), "tools;",
+    nrow(available_standalone), "standalone nav pages available.\n")
 
 # ── HTML helpers ------------------------------------------------------------
 esc <- function(s) {
@@ -100,8 +120,22 @@ site_head <- function(title, description = "") {
 }
 
 site_nav <- function(active = "") {
-  is <- function(name) if (identical(name, active)) " active" else ""
-  '<nav class="navbar navbar-expand-md navbar-dark">
+  # Standalone nav items only when the page's source HTML exists — avoids
+  # shipping a dead /methods or /aems link after a skipped Quarto render.
+  standalone_items <- if (nrow(available_standalone) == 0) {
+    ""
+  } else {
+    paste0(vapply(seq_len(nrow(available_standalone)), function(i) {
+      row <- available_standalone[i, ]
+      sprintf(
+        '        <li class="nav-item"><a class="nav-link" href="/%s">%s</a></li>\n',
+        esc(row$id), row$nav_label
+      )
+    }, character(1)), collapse = "")
+  }
+
+  paste0(
+    '<nav class="navbar navbar-expand-md navbar-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/"><span class="brand-accent">Global</span> Patient Safety</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
@@ -111,9 +145,9 @@ site_nav <- function(active = "") {
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
-        <li class="nav-item"><a class="nav-link" href="/methods">Signal &amp; Noise</a></li>
-        <li class="nav-item"><a class="nav-link" href="/aems">AEMS</a></li>
-        <li class="nav-item"><a class="nav-link" href="https://faers.mobi" target="_blank" rel="noopener">faers.mobi</a></li>
+',
+    standalone_items,
+    '        <li class="nav-item"><a class="nav-link" href="https://faers.mobi" target="_blank" rel="noopener">faers.mobi</a></li>
         <li class="nav-item"><a class="nav-link" href="https://picodag.globalpatientsafety.com" target="_blank" rel="noopener">pico-dag</a></li>
         <li class="nav-item"><a class="nav-link" href="https://vaers.globalpatientsafety.com" target="_blank" rel="noopener">vaers</a></li>
         <li class="nav-item"><a class="nav-link" href="/#about">About</a></li>
@@ -122,6 +156,7 @@ site_nav <- function(active = "") {
   </div>
 </nav>
 '
+  )
 }
 
 site_foot <- '
@@ -169,10 +204,14 @@ tool_card_html <- function(row) {
     coming_soon = '<span class="badge bg-secondary">Coming soon</span>',
     "")
   href <- if (!is.na(row$url) && nzchar(row$url)) row$url else "#"
-  attrs <- if (row$status == "coming_soon")
+  # Same-site paths (e.g. /methods) stay in this tab; external tools open blank.
+  attrs <- if (row$status == "coming_soon") {
     'style="opacity:0.55; cursor: not-allowed;" onclick="return false;"'
-  else
+  } else if (grepl("^/", href)) {
+    ""
+  } else {
     'target="_blank" rel="noopener"'
+  }
   sprintf('
 <div class="col">
   <a href="%s" %s style="text-decoration:none; color:inherit;">
@@ -342,15 +381,8 @@ build_article_pages <- function() {
 }
 
 # ── STANDALONE NAV PAGES (post-process Quarto HTML) -------------------------
-# Top-nav pages that are NOT articles (not in the ARTICLES tribble, not in the
-# articles grid). Each is a Quarto doc rendered to app/static/<id>.html; we wrap
-# it with the same sticky back-nav bar as article pages. Add a row to publish one.
-STANDALONE_PAGES <- tibble::tribble(
-  ~id,        ~title,
-  "aems",     "Inside the AEMS Data",
-  "methods",  "Signal & Noise"
-)
-
+# STANDALONE_PAGES is defined near the top (with nav coupling). Here we wrap
+# each available page with the sticky back-nav bar used for articles.
 build_standalone_pages <- function() {
   for (i in seq_len(nrow(STANDALONE_PAGES))) {
     row <- STANDALONE_PAGES[i, ]
@@ -378,6 +410,55 @@ build_favicon <- function() {
   }
 }
 
+# ── Dead internal-link check ------------------------------------------------
+# Scan built HTML for same-site hrefs (./id or /id, no scheme) and warn when
+# the target file is missing from static_site/. Fails hard on zero targets
+# that look like article/standalone slugs (not anchors or assets).
+check_internal_links <- function() {
+  html_files <- list.files(OUT_DIR, pattern = "\\.html$", full.names = TRUE)
+  if (length(html_files) == 0) {
+    return(invisible(NULL))
+  }
+  # Known-good built pages (index/articles plus published + standalone)
+  known <- c(
+    "index", "articles",
+    published$id,
+    available_standalone$id
+  )
+  # Also accept file paths that exist under OUT_DIR
+  broken <- character()
+  for (f in html_files) {
+    lines <- paste(readLines(f, warn = FALSE), collapse = "\n")
+    # href="./slug" or href="/slug" (no further path, no query/hash-only)
+    matches <- unlist(regmatches(
+      lines,
+      gregexpr('href=["\'](\\.?/)?([a-zA-Z0-9_\\-]+)["\']', lines, perl = TRUE)
+    ))
+    if (length(matches) == 0) next
+    slugs <- sub('href=["\'](\\.?/)?([a-zA-Z0-9_\\-]+)["\']', "\\2", matches, perl = TRUE)
+    # Drop anchors/home-ish
+    slugs <- setdiff(unique(slugs), c("", "index", "#about"))
+    for (slug in slugs) {
+      # Skip if it looks like an external fragment we didn't capture
+      if (slug %in% known) next
+      target <- file.path(OUT_DIR, paste0(slug, ".html"))
+      if (!file.exists(target)) {
+        broken <- c(broken, sprintf("%s -> /%s", basename(f), slug))
+      }
+    }
+  }
+  if (length(broken) > 0) {
+    warning(
+      "Dead internal links in built site:\n  - ",
+      paste(unique(broken), collapse = "\n  - "),
+      "\nFix the source .qmd (or publish the target article) before deploy."
+    )
+    cat("WARNING: ", length(unique(broken)), " dead internal link(s) detected.\n", sep = "")
+  } else {
+    cat("  internal-link check: OK\n")
+  }
+}
+
 # ── Run all -----------------------------------------------------------------
 cat("\nBuilding static site to", OUT_DIR, "\n")
 build_favicon()
@@ -385,6 +466,7 @@ build_index()
 build_articles_index()
 build_article_pages()
 build_standalone_pages()
+check_internal_links()
 
 cat("\nDone. Deploy with:\n",
     "  rsync -av --delete static_site/ root@5.78.69.136:/var/www/globalpatientsafety/\n",

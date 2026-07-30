@@ -13,6 +13,7 @@ box::use(
 
 box::use(
   app/logic/articles[ARTICLES],
+  app/view/article_christine_cotton,
   app/view/article_covid_vaccine,
   app/view/article_shingles,
   app/view/articles,
@@ -23,8 +24,9 @@ box::use(
 # requires (1) a row in ARTICLES, (2) a file app/view/article_<id>.R, and
 # (3) one entry in this list. The UI builder and server then handle the rest.
 .ARTICLE_MODULES <- list(
-  shingles      = article_shingles,
-  covid_vaccine = article_covid_vaccine
+  christine_cotton = article_christine_cotton,
+  shingles         = article_shingles,
+  covid_vaccine    = article_covid_vaccine
 )
 
 # ── Articles dropdown builder ────────────────────────────────────────────────

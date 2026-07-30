@@ -21,8 +21,8 @@ TOOLS <- tribble(
   "PICO question -> UMLS concept graph -> code lists + data-pull specification. Compresses the front end of clinical research from weeks to an afternoon.",
   "VAERS vaccine safety", "live", "https://vaers.globalpatientsafety.com",
   "CDC VAERS (1990-present): same Bayesian + frequentist signal detection applied to vaccines. COVID-19, influenza, and all other vaccine types across 35 years of reports.",
-  "Signal methods", "coming_soon", NA_character_,
-  "Reference documentation for the four disproportionality methods implemented across the apps: GPS/EBGM, PRR, ROR, BCPNN/IC.",
+  "Signal methods", "live", "/methods",
+  "Reference documentation for the four disproportionality methods implemented across the apps: GPS/EBGM, PRR, ROR, BCPNN/IC. Live as Signal & Noise.",
   "MAUDE device safety", "coming_soon", NA_character_,
   "FDA MAUDE (medical device adverse events) with the same time-stratified analysis used for drugs."
 )

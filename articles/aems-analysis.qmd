@@ -151,10 +151,10 @@ Useful signal detection starts from a **specific, pre-registered question** and 
 its effort on confounding, not on the score. Two recent analyses on this site show the pattern
 against this same AEMS/FAERS data:
 
-- [**A Warning Built on 14 Cases**](/carbidopa_levodopa_b6) — the carbidopa/levodopa B6-seizure
+- **A Warning Built on 14 Cases** *(forthcoming)* — the carbidopa/levodopa B6-seizure
   warning: the warned outcome is invisible in disproportionality, but the *mechanism* (vitamin B6
   deficiency) is a strong, stable signal. A lesson in looking upstream of a rare outcome.
-- [**A Moving Target**](/glp1_alopecia) — the GLP-1 / hair-loss claim, reproduced quarter by
+- **A Moving Target** *(forthcoming)* — the GLP-1 / hair-loss claim, reproduced quarter by
   quarter: the "signal" moves with prescribing volume and media attention, and the weight-loss
   confound cannot be removed from spontaneous reports.
 
