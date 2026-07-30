@@ -2039,3 +2039,61 @@ failure at `4b51991`, the pre-archive commit — not caused by the archive. Run
 name, duplicating `STANDALONE_PAGES` in the builder. `.lintr` and `.rscignore` still carry
 rhino/rsconnect settings; harmless, left alone. The seven closed-PR branches
 (`agent-review-*`, `research-ideas-*`) still exist on the remote.
+
+## 2026-07-30 — renv restored, builder verified; production is ~2 months stale
+
+**Restore.** Targeted rather than full: `renv::restore(packages = c("tibble","dplyr","stringr"))`
+then `"box"` — 18 packages, dominated by a 7.9-minute `stringi` source build (no binaries for
+this box's R 4.6.1 under nix). Deliberately did NOT restore the whole 83-package lock, since
+most of it (rhino, treesitter, treesitter.r and their trees) exists only for the now-archived
+Shiny app. Consequence: every renv-aware command prints "One or more packages recorded in the
+lockfile are not installed." That message is expected, not a fault.
+
+`renv/activate.R` self-updated 1.2.2 → 1.2.3 during bootstrap, which brings it into agreement
+with the `renv` version already pinned in `renv.lock`. Committed as a fix, not drift.
+
+**Builder verified.** `Rscript scripts/build_static_site.R` exits 0, writes all 8 outputs, and
+its own `internal-link check: OK` passes. `check_site_consistency.R` also passes. The build is
+confirmed working post-archive.
+
+**Defect found — the `box` stub in `load_tribble()` does not work.** `build_static_site.R:47`
+sets `e$box <- list(use = function(...) invisible(NULL))` intending to neutralize the registries'
+`box::use()` call, but `::` resolves the real namespace regardless of what is bound in the eval
+env, so the builder hard-requires the `box` package. It only ever worked because restoring the
+full lock installed `box` transitively via rhino. `check_site_consistency.R` does this correctly —
+it strips `box::use(...)` textually and needs base R only.
+
+**Trap this creates.** `.renvignore` now infers dependencies from `build_static_site.R` +
+`check_site_consistency.R`. `box` appears in neither as a parseable call (only in a comment and
+that env assignment), so a future `renv::snapshot()` would **drop `box` from the lock and break
+the next restore**. Two ways out, needs a decision: (a) keep `box` in the lock explicitly, or
+(b) make the builder box-free by stripping `box::use` the way the consistency script already does.
+Option (b) is the coherent end-state — it removes the builder's last tie to the archived stack.
+
+**Cosmetic bug.** `NAV_INJECTION()` (`build_static_site.R:348-362`) passes `esc(article_id)` to a
+`sprintf` format string containing no placeholders, and ignores its `title` argument entirely →
+5 "one argument not used by format" warnings per build. Output is correct. Not fixed.
+
+**The real finding — the deployed site is far behind the repo.** Audited live over HTTPS:
+
+| Route | Live | Fresh build |
+|-------|------|-------------|
+| `/methods` | **404** | built |
+| `/aems` | **404** | built |
+| `/christine_cotton` | **404** | built |
+| `/`, `/articles`, `/shingles`, `/covid_vaccine` | 200 | built |
+
+The live articles index lists only `covid_vaccine` and `shingles`; `christine_cotton` — published
+and `featured = TRUE` since 2026-06-13 — appears nowhere on the live site, and the live homepage's
+featured card points at `/shingles`. The live homepage shows 3 Live / 2 Coming soon badges; the
+fresh build shows 4 Live / 1. So production predates PR #9 *and* predates the christine_cotton
+publication.
+
+This reframes the four agent reviews. Their findings were real, but the user-visible impact was
+not what they described: the dead `/carbidopa_levodopa_b6` and `/glp1_alopecia` links they flagged
+on "the live AEMS page" cannot 404 for any visitor, because `/aems` itself was never deployed.
+The actual live defect is a **missing featured article**, which no review caught — every review
+read the repo and inferred the deployed state instead of checking it.
+
+**Not done.** No deploy. `rsync -av --delete static_site/ root@5.78.69.136:/var/www/globalpatientsafety/`
+is outward-facing and publishes three pages that have never been public; it needs explicit approval.
