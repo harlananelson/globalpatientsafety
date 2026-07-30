@@ -7,8 +7,12 @@ This project is the **clearing house only** — it does not run signal detection
 
 **Production front end is the static site** built by `scripts/build_static_site.R`
 and deployed to `/var/www/globalpatientsafety/` on the VPS (nginx, zero R workers).
-The interactive Rhino/Shiny app under `app/` is **retired** for this domain; tool
-subdomains (faers.mobi, aers.mobi, vaers, pico-dag) remain separate Shiny apps.
+The interactive Rhino/Shiny app is **retired** for this domain and was archived to
+`archive/rhino-app/` on 2026-07-30 (see the README there). Tool subdomains
+(faers.mobi, aers.mobi, vaers, pico-dag) remain separate Shiny apps.
+
+What is left under `app/` is **static-site input, not a Shiny app**: the `app/logic/`
+registries and the pre-rendered `app/static/` HTML. The builder reads both by path.
 
 ## Architecture
 
@@ -18,7 +22,7 @@ subdomains (faers.mobi, aers.mobi, vaers, pico-dag) remain separate Shiny apps.
 | **Registries (source of truth)** | `app/logic/articles.R` (`ARTICLES`), `app/logic/tools.R` (`TOOLS`) |
 | **Article HTML** | Quarto sources in `articles/*.qmd` → render into `app/static/<id>.html` |
 | **Standalone pages** | `articles/methods.qmd`, `articles/aems-analysis.qmd` → `app/static/{methods,aems}.html` |
-| **Retired Shiny portal** | `app/main.R` + `app/view/*` — kept for local preview / CI, not the live domain |
+| **Retired Shiny portal** | `archive/rhino-app/` — archived, not built, not deployed, not tested |
 
 ### Key Files
 
@@ -28,12 +32,9 @@ subdomains (faers.mobi, aers.mobi, vaers, pico-dag) remain separate Shiny apps.
 | `app/logic/articles.R` | `ARTICLES` tribble — published/draft rows; static site ships only `published` |
 | `app/logic/tools.R` | `TOOLS` tribble — one row per tool card on the homepage |
 | `app/static/<id>.html` | Pre-rendered Quarto HTML consumed by the builder |
-| `app/main.R` | Retired Shiny portal entry (hero + cards + article tabs) |
-| `app/view/portal.R` | Shiny tool cards from `TOOLS` |
-| `app/view/articles.R` | Shiny article index (published only) |
-| `app/view/article_*.R` | Shiny iframe modules for articles still reachable in the app |
-| `rhino.yml` | Rhino config (`sass: node`) — CI / local Shiny only |
-| `dependencies.R` | Packrat/rsconnect dependency discovery |
+| `scripts/check_site_consistency.R` | CI guard — registries vs shipped HTML; base R only |
+| `.github/workflows/site-checks.yml` | Runs the consistency check on push and PR |
+| `archive/rhino-app/` | Retired Shiny portal — see its README before touching it |
 
 ### Build & deploy
 
@@ -170,21 +171,24 @@ When a user reports that searching for an event returns nothing:
 # Enter dev shell
 nix develop
 
-# Build the production static site (primary path)
+# Build the production static site (the only build path)
 Rscript scripts/build_static_site.R
 
-# Optional: run the retired Shiny portal locally
-Rscript -e 'shiny::runApp()'
-# Or with rhino
-Rscript -e 'rhino::app()'
+# Same consistency check CI runs — registries vs shipped HTML
+Rscript --vanilla scripts/check_site_consistency.R
 ```
+
+There is no `shiny::runApp()` / `rhino::app()` path any more; that portal is archived.
 
 ### Adding a published article
 
 1. Write/render Quarto → `app/static/<id>.html`
 2. Add a `published` row to `app/logic/articles.R` (`id` must match the HTML stem)
 3. Rebuild: `Rscript scripts/build_static_site.R`
-4. (Optional, retired Shiny only) add `app/view/article_<id>.R` + entry in `.ARTICLE_MODULES` in `app/main.R`
+
+A `published` row with no matching `app/static/<id>.html` fails CI. Keep an article
+`draft` until its HTML is rendered — the builder skips drafts and the consistency
+check rejects any link to one from `methods.html` / `aems.html`.
 
 ### Adding a tool card
 

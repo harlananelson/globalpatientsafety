@@ -1,9 +1,13 @@
 # Article registry for globalpatientsafety.com
 #
-# Each row is one published article. The `id` field must match the
-# view module name: app/view/article_{id}.R
+# Read by scripts/build_static_site.R as the article source of truth. The `id`
+# field must match the rendered HTML stem: app/static/{id}.html
 #
-# status: one of published or draft
+# status: one of published or draft. Only `published` rows are built, and a
+# published row with no matching HTML fails scripts/check_site_consistency.R.
+#
+# (The `id` used to also name a Shiny view module; that app is archived —
+# see archive/rhino-app/README.md.)
 
 box::use(
   tibble[tribble],

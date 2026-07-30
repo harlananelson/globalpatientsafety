@@ -2004,3 +2004,38 @@ the implementation is Grok's.
 Reservations from the evaluation entry above stand as follow-up work: the retired Rhino
 `app/` is now repaired rather than archived, and `scripts/check_site_consistency.R`
 hardcodes `standalone`/`"Signal methods"` in duplicate of `STANDALONE_PAGES`.
+
+## 2026-07-30 — Retired Rhino app archived to `archive/rhino-app/`
+
+Acting on the open question in the evaluation entry above: the Shiny portal is retired
+for good, so it is archived rather than repaired. Four consecutive agent reviews
+(#2, #4, #6, #8) spent their findings on a surface that serves no traffic; PR #9 fixed
+those symptoms in place, which left the cause — a dead app that still looked live.
+
+**Moved to `archive/rhino-app/`:** `app/main.R`, `app/view/*`, `app/js/`, `app/styles/`,
+`app.R`, `rhino.yml`, `config.yml`, `dependencies.R`, `tests/` (testthat + Cypress).
+A README there records why, what stayed behind, and how to restore it.
+
+**Deliberately left in the live tree:** `app/logic/{articles,tools}.R` and
+`app/static/*.html`. These live under `app/` but are static-site *input* —
+`build_static_site.R` reads them by path and stubs `box::use()`, so they were never
+Shiny-dependent. Moving them would break the production build.
+
+**Other changes.** `.github/workflows/rhino-test.yml` → `site-checks.yml` with the
+`main` (rhino lint/test/Cypress) job dropped; only the base-R consistency check remains.
+`.renvignore` now infers dependencies from `scripts/build_static_site.R` +
+`check_site_consistency.R` instead of the archived `dependencies.R` shim — judgment call,
+flagged here because it changes what a future `renv::snapshot()` would capture.
+CLAUDE.md and the `articles.R` header comment no longer point contributors at view modules.
+
+**Verified.** `check_site_consistency.R` passes (12 OK, exit 0). The static builder could
+**not** be run end-to-end here: this checkout has no renv library installed
+(`there is no package called 'tibble'`). Confirmed pre-existing by reproducing the identical
+failure at `4b51991`, the pre-archive commit — not caused by the archive. Run
+`renv::restore()` before the next deploy to exercise the builder for real.
+
+**Not done (open).** `scripts/check_site_consistency.R` still hardcodes
+`standalone <- c("aems.html", "methods.html")` and the literal `"Signal methods"` tool
+name, duplicating `STANDALONE_PAGES` in the builder. `.lintr` and `.rscignore` still carry
+rhino/rsconnect settings; harmless, left alone. The seven closed-PR branches
+(`agent-review-*`, `research-ideas-*`) still exist on the remote.

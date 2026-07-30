@@ -1,3 +1,8 @@
-# Only use `dependencies.R` to infer project dependencies.
+# renv infers this project's dependencies from the production builder only.
+#
+# Was `!dependencies.R` — a packrat/rsconnect shim listing rhino + treesitter for
+# the Shiny deploy. That app is retired and now lives in archive/rhino-app/, so
+# the real dependency surface is the static-site builder and its CI check.
 *
-!dependencies.R
+!scripts/build_static_site.R
+!scripts/check_site_consistency.R
