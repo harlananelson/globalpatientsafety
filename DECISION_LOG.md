@@ -1945,3 +1945,62 @@ filterable ~10k-solid-pair view. Phase 2 (T7 ATC map → T8 GPU class-survivabil
 notoriety chip. Phase 3: report-card + concept-level on-label. Cross-cutting: MedDRA gates the public
 non-clinical badge (ship derived boolean only); badges advisory ("check", not "artifact"). Recommend
 Phase 1 first, then let real usage decide if the ATC+GPU lift is worth it.
+
+## 2026-07-30 — PR backlog evaluation: 8 open, 1 merged; #9 subsumes #2–#8
+
+Reviewed all nine PRs on `harlananelson/globalpatientsafety`.
+
+**State.** Only PR #1 (research ideas, 2026-07-03) was ever merged. PRs #2–#8 are the
+weekly autonomous routines' report-only output (4 agent reviews, 3 research-idea sets),
+each adding exactly one markdown file. PR #9 (2026-07-30) is the only PR that touches
+production code: it archives #2–#8's seven files **byte-identically** (verified by diffing
+each PR head against `pr/9`) and implements the fixes the reviews repeatedly flagged.
+All PRs are mergeable and green except #2, whose FAILURE is the stale renv/rhino CI
+problem already fixed on `main` (CI green since 2026-07-13).
+
+**The loop is not closing.** The same three findings — `christine_cotton` featured but
+unreachable, "Signal methods" card stuck on `coming_soon` while `/methods` ships, CLAUDE.md
+documenting the retired Rhino app as production — recur across all four agent reviews
+(#2, #4, #6, #8) because nothing was merged between them. `main` itself has been idle
+since 2026-07-16 while eight PRs accumulated.
+
+**Findings verified against the repo, not just the PR text.** `app/logic/articles.R` has
+three `draft` articles (`aav_gene_therapy_liver`, `glp1_alopecia`, `carbidopa_levodopa_b6`)
+with no HTML in `app/static/`, and `app/static/aems.html:3578-3579` linked two of them —
+real 404s on a live page. `christine_cotton` is `published, featured=TRUE` with
+`app/static/christine_cotton.html` present but no `app/view/article_christine_cotton.R`.
+`app/static/methods.html` exists while `tools.R` called it `coming_soon`. All confirmed.
+
+**Reservation on PR #9.** Roughly half its code changes (`article_christine_cotton.R`,
+`main.R`, `articles.R`, `portal.R`) repair the Shiny app that the same PR's CLAUDE.md
+rewrite declares retired and non-production — fixing dead code rather than archiving it.
+Also `scripts/check_site_consistency.R` hardcodes `standalone <- c("aems.html",
+"methods.html")` and the literal tool name `"Signal methods"`, duplicating the
+`STANDALONE_PAGES` tribble the same PR adds to `build_static_site.R` — a second source of
+truth that will drift. The de-linking of the two draft articles in `articles/aems-analysis.qmd`
+is hand-mirrored into the generated `app/static/aems.html`; correct now, but the fix lives
+in a build artifact.
+
+**Open question.** Is the Rhino `app/` retired for good? If yes, the durable fix is to
+archive `app/view/`, `app/main.R`, and the `rhino-test.yml` `main` job rather than keep
+repairing them — which would also stop the agent reviews from re-reporting dead-app bugs
+every fortnight.
+
+**Recommended action.** Merge #9, then close #2–#8 as superseded (their content is already
+in #9; leaving them open re-conflicts and keeps re-seeding the same findings).
+
+## 2026-07-30 — Resolved: #9 merged, #2–#8 closed as superseded
+
+PR #9 merged as `4df81d13` (merge commit, matching the #1 precedent). PRs #2–#8 closed
+with a superseded comment pointing at #9. No open PRs remain. The `fix/claude-pr-implementations`
+branch was **not** deleted — a Grok worktree at `/home/harlan/projects/grok/projects/globalpatientsafety`
+still has it checked out.
+
+**Provenance (user).** PR #9 was authored by Grok; #2–#8 were the Claude weekly routines.
+So the working division was Claude routines finding the drift and Grok closing it. Worth
+noting because #9's title says "Claude weekly PR findings" — the findings are Claude's,
+the implementation is Grok's.
+
+Reservations from the evaluation entry above stand as follow-up work: the retired Rhino
+`app/` is now repaired rather than archived, and `scripts/check_site_consistency.R`
+hardcodes `standalone`/`"Signal methods"` in duplicate of `STANDALONE_PAGES`.
