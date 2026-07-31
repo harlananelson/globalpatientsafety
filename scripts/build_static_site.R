@@ -38,15 +38,31 @@ OUT_DIR <- file.path(PROJ_ROOT, "static_site")
 dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
 # ── Source the tribbles -----------------------------------------------------
-# app/logic/*.R uses box::use() which won't resolve outside a Rhino app.
-# Mock it so source() works, and pre-load tribble into the eval env.
+# app/logic/*.R still carries the `box::use(tibble[tribble])` header it needed
+# as a Rhino module. Binding a fake `box` in the eval env does NOT neutralise
+# that call — `::` resolves the real namespace regardless of what is bound
+# locally — so the previous stub silently made this script depend on the `box`
+# package, which only happened to be installed via the (now archived) rhino
+# tree. Strip the call textually instead, the way scripts/check_site_consistency.R
+# does, and supply tribble ourselves. The registries then load with no tie to
+# the retired Shiny stack. See archive/rhino-app/README.md.
 load_tribble <- function(path, symbol) {
-  e <- new.env()
+  text <- paste(readLines(path, warn = FALSE), collapse = "\n")
+  text <- gsub("box::use\\s*\\([^)]*\\)", "", text, perl = TRUE)
+  if (grepl("box::", text, fixed = TRUE)) {
+    stop(sprintf(
+      "%s has a box:: call this loader cannot strip; it would drag in the archived Rhino stack.",
+      path
+    ))
+  }
+  e <- new.env(parent = globalenv())
   e$tribble <- tibble::tribble
   e$tibble  <- tibble::tibble
-  e$box     <- list(use = function(...) invisible(NULL))
-  source(path, local = e)
-  get(symbol, envir = e)
+  eval(parse(text = text), envir = e)
+  if (!exists(symbol, envir = e, inherits = FALSE)) {
+    stop(sprintf("%s does not define %s", path, symbol))
+  }
+  get(symbol, envir = e, inherits = FALSE)
 }
 
 ARTICLES <- load_tribble(file.path(PROJ_ROOT, "app/logic/articles.R"), "ARTICLES")

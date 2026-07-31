@@ -2124,3 +2124,32 @@ So PR #9's fixes and the christine_cotton publication are finally public. Note t
 exposed: the fixes were merged 2026-07-30 but only became real on deploy — the repo was never the
 thing users saw. **Whoever writes the next agent review should check the deployed site, not just
 the source**, or it will keep describing bugs no visitor can hit while missing ones they can.
+
+## 2026-07-31 — Fixed: builder no longer depends on `box`
+
+`load_tribble()` in `scripts/build_static_site.R` now strips the registries'
+`box::use(tibble[tribble])` header textually before eval, matching what
+`check_site_consistency.R` already did, instead of binding a fake `box` in the eval
+environment. The old stub could never work: `::` resolves the real namespace regardless
+of local bindings, so the production builder silently depended on the `box` package,
+which was only present because the archived rhino tree pulled it in.
+
+Added a guard: if any `box::` call survives stripping (a form the regex can't handle,
+e.g. one containing nested parens), the loader now **fails loudly** naming the file,
+rather than falling back to loading the archived stack. Verified it fires by
+temporarily injecting `box::name(f(1))` into `tools.R`.
+
+**Verification.** Renamed `box` out of the renv library and rebuilt: exit 0, all 8 pages
+written, `internal-link check: OK`. Then confirmed `"box" %in% loadedNamespaces()` is
+**FALSE** after a full build — necessary because `box` also exists in the nix store, so
+hiding the renv copy alone would not have proved anything. Output is md5-identical to
+what is currently live for `index.html`, `aems.html` and `articles.html`, so this is a
+pure dependency fix with zero content change; no redeploy needed.
+
+This closes the `renv::snapshot()` trap logged 2026-07-30: `box` is no longer needed, so
+a snapshot dropping it from the lock is now harmless rather than build-breaking.
+
+**Still open.** `NAV_INJECTION()` (`build_static_site.R:363`) passes an argument to a
+`sprintf` format string with no placeholders and ignores its `title` parameter → 5
+warnings per build. `check_site_consistency.R` still hardcodes `standalone` and
+`"Signal methods"` in duplicate of `STANDALONE_PAGES`.
