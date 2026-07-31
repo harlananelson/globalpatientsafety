@@ -361,8 +361,14 @@ build_articles_index <- function() {
 # it within the site (back link, nav), we prepend a thin header bar that
 # links to / and /articles, and a share button. The Quarto <body> contents
 # remain intact below.
-NAV_INJECTION <- function(article_id, title) {
-  sprintf('
+#
+# The bar is the same on every page — it carries no per-article content — so it
+# is a constant, not a function. It was a function taking (article_id, title)
+# whose body was a sprintf() with no format placeholders: `title` was ignored
+# outright and `esc(article_id)` was passed to a format string that had nowhere
+# to put it, so every page emitted "one argument not used by format". Rendered
+# output is unchanged.
+NAV_INJECTION <- '
 <div class="d-flex align-items-center justify-content-between px-3 py-2"
      style="background:#1a2332; color:#fff; font-family:Inter,sans-serif; font-size:14px; position:sticky; top:0; z-index:1000;">
   <div>
@@ -374,8 +380,7 @@ NAV_INJECTION <- function(article_id, title) {
     Copy link
   </button>
 </div>
-', esc(article_id))
-}
+'
 
 build_article_pages <- function() {
   for (i in seq_len(nrow(published))) {
@@ -387,7 +392,7 @@ build_article_pages <- function() {
     }
     out <- file.path(OUT_DIR, paste0(row$id, ".html"))
     html <- paste(readLines(src, warn = FALSE), collapse = "\n")
-    nav <- NAV_INJECTION(row$id, row$title)
+    nav <- NAV_INJECTION
     # Inject right after <body...> tag
     html <- sub("(<body[^>]*>)", paste0("\\1\n", nav), html, perl = TRUE)
     writeLines(html, out)
@@ -410,7 +415,7 @@ build_standalone_pages <- function() {
     }
     out  <- file.path(OUT_DIR, paste0(row$id, ".html"))
     html <- paste(readLines(src, warn = FALSE), collapse = "\n")
-    nav  <- NAV_INJECTION(row$id, row$title)
+    nav  <- NAV_INJECTION
     html <- sub("(<body[^>]*>)", paste0("\\1\n", nav), html, perl = TRUE)
     writeLines(html, out)
     cat("  wrote", out, sprintf("(%.1f KB)", file.info(out)$size / 1024), "\n")

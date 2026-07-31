@@ -2153,3 +2153,25 @@ a snapshot dropping it from the lock is now harmless rather than build-breaking.
 `sprintf` format string with no placeholders and ignores its `title` parameter → 5
 warnings per build. `check_site_consistency.R` still hardcodes `standalone` and
 `"Signal methods"` in duplicate of `STANDALONE_PAGES`.
+
+## 2026-07-31 — Fixed: NAV_INJECTION sprintf warnings
+
+`NAV_INJECTION` was a function of `(article_id, title)` whose entire body was a `sprintf()`
+over a format string containing **no placeholders**: `title` was ignored outright, and
+`esc(article_id)` was handed to a format with nowhere to put it, so every article page
+emitted "one argument not used by format" — 5 warnings per build.
+
+The bar is identical on every page (back link, "All articles", copy-link button); it carries
+no per-article content. So it is now a plain character constant rather than a function, and
+both call sites (`build_article_pages`, `build_standalone_pages`) use it directly. Neither
+argument was ever reachable in the output, so nothing was lost.
+
+**Verified.** Build exits 0 with **zero** warnings of any kind (was 5). All 8 output files are
+**byte-identical** to the pre-fix build, and the sticky bar still appears exactly once per
+article page (checked on the distinctive `position:sticky; z-index:1000` style — a naive grep
+for the link text shows 2 hits on `covid_vaccine.html`, but the second is a citation inside the
+article body, not a double injection). `check_site_consistency.R` passes. No redeploy needed:
+live content is unchanged.
+
+**Still open.** `check_site_consistency.R` hardcodes `standalone <- c("aems.html","methods.html")`
+and the literal `"Signal methods"` tool name, duplicating `STANDALONE_PAGES` in the builder.
