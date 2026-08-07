@@ -2214,3 +2214,40 @@ counting the `position:sticky` marker).
 untracked but NOT ignored — the existing rule only covered `meddra-email-*.txt`. Widened to
 `meddra-email-*` so the drafts and the working notes are all excluded. Nothing was deleted;
 the files remain on disk.
+
+## 2026-08-07 — MedDRA/MSSO subscription letter SENT
+
+Sent to `mssohelp@meddra.org`. Subject: "Non-commercial MedDRA subscription — individual,
+free public research site". Text: `articles/reviews/meddra-email-2026-08-07-draft.txt`
+(gitignored — personal correspondence, not in this public repo).
+
+**Provenance.** The file was created in a Claude session as a short rewrite of the 664-word
+2026-07-05 draft; the restructure into numbered eligibility sections then arrived as an
+external edit, which the user attributes to Grok. So the version actually sent is the Grok
+restructure, and it is the strongest of the three drafts for a help-desk reader: it answers
+the standard eligibility questions up front (who, purpose, commercial activity, current use,
+requested use, verification) before asking anything.
+
+**What it asks.** (1) Is Non-Profit / Non-Commercial the right category, and may an individual
+hold it? (2) What is accepted in place of 501(c)(3) verification? (3) May hierarchy groupings
+and SMQ membership be displayed publicly, on top of the existing PT-level presentation?
+
+It also commits, unprompted, to re-applying under a commercial category rather than stretching
+a non-commercial licence if the site ever earns revenue.
+
+**Timing note.** The splash was refocused on the AEMS primer the same day, and the public
+no-redistribution statement went live before the letter went out — so the site now matches
+what the letter says about it. That ordering was deliberate.
+
+**What is gated on the reply.**
+
+| Work | Status |
+|------|--------|
+| D2 — PT → HLT/HLGT/SOC hierarchy walk | UMLS `MRHIER` route needs no MSSO (2026-06-14); publishing the result may |
+| Non-clinical / low-information PT badge in triage | blocked on the answer to question 3 |
+| SOC-level and SMQ-level public views | blocked on the answer to question 3 |
+| PT-level analyses as published today | unaffected — the letter asks MSSO to confirm, not to permit |
+
+Next: watch for the MSSO reply. If it does not land in ~2 weeks, follow up rather than assume
+silence is assent — nothing currently published depends on the answer, so there is no pressure
+to act before it arrives.
