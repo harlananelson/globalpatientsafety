@@ -2175,3 +2175,42 @@ live content is unchanged.
 
 **Still open.** `check_site_consistency.R` hardcodes `standalone <- c("aems.html","methods.html")`
 and the literal `"Signal methods"` tool name, duplicating `STANDALONE_PAGES` in the builder.
+
+## 2026-08-07 — Splash refocused on the AEMS primer (MSSO-visitor framing)
+
+Reason for the change (user): **a good first impression if MedDRA/MSSO views the site**
+while the subscription request is pending.
+
+- `app/logic/articles.R`: the AEMS data primer is now a `published`, `featured` article;
+  `christine_cotton` drops to `featured = FALSE`. The homepage hero is therefore a
+  methodology piece rather than a vaccine-safety reanalysis.
+- `scripts/build_static_site.R`: `build_index()` swaps the card header to
+  "★ Start here — how we read the data" when the featured article is `aems` or `methods`,
+  and shortens the CTA to "Read →".
+- `articles/aems-analysis.qmd` (+ rendered `app/static/aems.html`): the two *(forthcoming)*
+  placeholders — left over from de-linking the draft articles on 2026-07-30 — are replaced
+  with live links to `/methods` and `/christine_cotton`, so the section no longer dead-ends.
+  Added: analyses present event names as they appear in the public FAERS/VAERS releases, and
+  the site does not redistribute MedDRA terminology files or hierarchy products.
+
+**Verified before deploying.** Build exits 0 with zero warnings; the checked-in build was
+already current (rebuild produced byte-identical output). The new featured-label `sprintf`
+has 5 placeholders and 5 correctly-ordered arguments. Deployed and confirmed live: all 7
+routes 200, `index.html`/`aems.html` md5-identical to the local build.
+
+**The no-redistribution claim is true, and I checked rather than assumed.**
+`meddra_hierarchy.parquet` does sit on the VPS at `/srv/shiny-server/aers-mobi/data/`, but
+it 404s over HTTP on both `aers.mobi` and `faers.mobi` — read server-side by Shiny, never
+served. It is also UMLS-derived (`pt, cui, synonyms, definition`) with **no SOC column**, so
+nothing hierarchy-derived is published today in any case. That sentence is now the **only**
+MedDRA mention anywhere on the public site.
+
+**Known, accepted.** `aems` is in both `ARTICLES` and `STANDALONE_PAGES`, so it is written
+twice per build and appears in both the top nav and the articles grid. Harmless — both passes
+read from `app/static/aems.html`, so the sticky nav bar is injected exactly once (verified by
+counting the `position:sticky` marker).
+
+**Repo hygiene.** This repo is **public**, and `articles/reviews/meddra-email-notes.md` was
+untracked but NOT ignored — the existing rule only covered `meddra-email-*.txt`. Widened to
+`meddra-email-*` so the drafts and the working notes are all excluded. Nothing was deleted;
+the files remain on disk.

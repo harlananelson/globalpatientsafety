@@ -16,6 +16,12 @@ box::use(
 #' @export
 ARTICLES <- tribble(
   ~id, ~title, ~subtitle, ~date, ~status, ~featured,
+  # Featured: AEMS data primer — methodology-first face of the site (good
+  # landing if MedDRA/MSSO or other licensors visit after a subscription ask).
+  "aems",
+  "Inside the AEMS Data: What 4.8 Million Reports Do and Don't Tell You",
+  "The FDA's Adverse Event Monitoring System, the quarterly public data behind our analyses, and why the strongest raw 'signal' is usually an artifact — not a discovery.",
+  "2026-07-14", "published", TRUE,
   "aav_gene_therapy_liver",
   "The Liver Is the Limit: Elevidys's Boxed Warning Is an AAV Class Effect",
   "Reading the fatal-hepatotoxicity boxed warning against the whole gene-therapy class in FAERS — the hepatic signal appears in every intravenously infused AAV (Elevidys, Zolgensma, Hemgenix, Roctavian) and vanishes in the two liver-sparing products (Luxturna, Casgevy). It tracks the delivery route, not the product.",
@@ -31,7 +37,7 @@ ARTICLES <- tribble(
   "christine_cotton",
   "Tested Against VAERS: Christine Cotton's Safety Claims and the Post-Market Record",
   "The categories of adverse event the French biostatistician flagged in Pfizer's Comirnaty trial — cardiac, reproductive/menstrual, thrombotic, stroke — tested against the VAERS signal database with the project's 4-method consensus filter.",
-  "2026-06-13", "published", TRUE,
+  "2026-06-13", "published", FALSE,
   "shingles",
   "Independent Reanalysis: COVID/Shingles Vaccine Signals Amid FDA Publication Blocks",
   "Cardiac, neurological, and thrombotic signals in VAERS for nine COVID-19 vaccines and three shingles products — applied with the project's standard 4-method consensus filter.",

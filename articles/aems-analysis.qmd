@@ -148,15 +148,17 @@ to look; it cannot tell you what you will find.
 ## Analysis done right
 
 Useful signal detection starts from a **specific, pre-registered question** and spends most of
-its effort on confounding, not on the score. Two recent analyses on this site show the pattern
-against this same AEMS/FAERS data:
+its effort on confounding, not on the score. Two pieces on this site show that pattern on
+published work (not a raw leaderboard):
 
-- **A Warning Built on 14 Cases** *(forthcoming)* — the carbidopa/levodopa B6-seizure
-  warning: the warned outcome is invisible in disproportionality, but the *mechanism* (vitamin B6
-  deficiency) is a strong, stable signal. A lesson in looking upstream of a rare outcome.
-- **A Moving Target** *(forthcoming)* — the GLP-1 / hair-loss claim, reproduced quarter by
-  quarter: the "signal" moves with prescribing volume and media attention, and the weight-loss
-  confound cannot be removed from spontaneous reports.
+- [**Signal & Noise**](/methods) — the house methods field guide: one real signal, one trap, one
+  fix at a time; fixed rule of EB05 ≥ 2 with ≥ 2 of 4 methods agreeing.
+- [**Tested Against VAERS**](/christine_cotton) — Christine Cotton's trial-era safety categories
+  checked against the post-market VAERS record with the same four-method consensus filter.
+
+Analyses on this site present event names as they appear in the public FAERS/VAERS releases
+(Preferred Term labels in those extracts). We do not redistribute MedDRA terminology files or
+hierarchy products.
 
 ## Explore it yourself
 

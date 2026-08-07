@@ -247,18 +247,26 @@ tool_card_html <- function(row) {
 
 # ── INDEX -------------------------------------------------------------------
 build_index <- function() {
+  # Primer pages (e.g. aems) use a "Start here" label so the splash reads as
+  # orientation/education — useful when licensors or new visitors land first.
+  featured_label <- if (nrow(featured) && featured$id[1] %in% c("aems", "methods")) {
+    "★ Start here — how we read the data"
+  } else {
+    "★ Featured Article"
+  }
   featured_html <- if (nrow(featured) == 0) "" else sprintf('
 <section class="container my-5">
   <div class="card featured-card mb-3">
-    <div class="card-header">★ Featured Article</div>
+    <div class="card-header">%s</div>
     <div class="card-body">
       <h4 class="card-title mb-2">%s</h4>
       <p class="text-muted small mb-2">%s</p>
       <p class="card-text">%s</p>
-      <a href="/%s" class="btn btn-primary btn-sm mt-2">Read article →</a>
+      <a href="/%s" class="btn btn-primary btn-sm mt-2">Read →</a>
     </div>
   </div>
 </section>',
+    featured_label,
     esc(featured$title), esc(featured$date), esc(featured$subtitle), esc(featured$id))
 
   tool_cards <- paste(

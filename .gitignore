@@ -21,5 +21,6 @@ articles/reviews/llm_qwen_preds.csv
 articles/reviews/vaers_pt_soc_map.parquet
 articles/reviews/meddra-subscription-email.txt
 
-# MedDRA/MSSO email drafts — personal correspondence, keep out of the public repo
-articles/reviews/meddra-email-*.txt
+# MedDRA/MSSO email drafts + working notes — personal correspondence, keep out
+# of the public repo. Any extension: the notes are .md, the drafts are .txt.
+articles/reviews/meddra-email-*
