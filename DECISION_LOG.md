@@ -2251,3 +2251,26 @@ what the letter says about it. That ordering was deliberate.
 Next: watch for the MSSO reply. If it does not land in ~2 weeks, follow up rather than assume
 silence is assent — nothing currently published depends on the answer, so there is no pressure
 to act before it arrives.
+
+## 2026-08-17 — MedDRA correspondence moved to a private repo
+
+The sent MSSO letter and its drafts were untracked and gitignored in this repo's
+`articles/reviews/` — safe from publication, but with **no backup and no history**, and
+no copy anywhere else on the machine. "Not in the public repo" and "backed up" are
+different problems; only the first was solved.
+
+New home: **`harlananelson/globalpatientsafety-private`** (confirmed PRIVATE), local
+checkout `~/projects/globalpatientsafety-private`, files under `correspondence/meddra/`.
+Moved, not copied — one canonical location. Checksums verified identical before and
+after the move; the public repo's history was checked and never contained any of it.
+
+**Canonical copy of the sent letter remains the Gmail Sent message.** The private repo is
+the backup and the version history; the sent mail wins if they ever disagree.
+
+The public `.gitignore` rules (`articles/reviews/meddra-email-*`) are deliberately **kept**
+even though the files are gone — they still catch a new draft written in the old location.
+Note the limit: they match those paths only, so a differently-named file in the public tree
+is not protected by them.
+
+This log continues to reference the correspondence without quoting it, so entries about the
+MedDRA licensing question stay public and useful while the letters themselves do not.
