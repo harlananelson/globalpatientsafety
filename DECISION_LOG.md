@@ -2274,3 +2274,43 @@ is not protected by them.
 
 This log continues to reference the correspondence without quoting it, so entries about the
 MedDRA licensing question stay public and useful while the letters themselves do not.
+
+## 2026-08-17 — MSSO replied: individual = COMMERCIAL subscription, $139/yr
+
+MSSO (Kendra Skelton) replied 2026-08-12, answering inline under each question. Reply
+filed at `globalpatientsafety-private:correspondence/meddra/meddra-email-2026-08-12.txt`.
+
+**The premise of the request was wrong, and this is the useful part of the answer.** The
+letter assumed Non-Profit/Non-Commercial was the applicable category and asked how an
+individual qualifies for it. MSSO's answer: an individual is **required to purchase a
+Commercial subscription** regardless of revenue. Non-commercial status is an *organisational*
+category; "I make no money from this" does not reach it. Lowest tier is **Level 0 (annual
+revenue < $1M USD) at $139 USD/year**.
+
+So the eligibility question is settled and cheap — $139/yr, no 501(c)(3) needed and no
+non-profit verification to chase.
+
+**What they need to invoice:** a signed statement in **PDF**, stating income or confirming
+it is below $1M USD. They invoice on receipt.
+
+**Question 3 — the one that actually gates the work — has no visible answer.** Questions 1
+and 2 have inline responses; question 3 does not, and the saved copy ends with Gmail's
+"[Message clipped] View entire message". So it is unresolved whether the answer is absent
+or merely outside the captured text. **Do not treat silence as permission** — Q3 asks
+whether hierarchy groupings and SMQ membership may be *publicly displayed*, which is the
+entire reason for subscribing.
+
+**Next, in order.**
+1. Open the full un-clipped message and check for a Q3 answer.
+2. If absent, reply asking Q3 alone — it is short, specific, and now the only open item.
+3. Send the signed income statement (PDF) and pay the $139 invoice. Worth doing regardless:
+   the subscription is a precondition for the hierarchy data either way, and $139 is below
+   the cost of continuing to wait.
+
+**Unchanged.** Nothing currently published depends on this. PT-level analyses stay live;
+SOC/SMQ public views and the non-clinical PT badge remain gated on the Q3 answer, not on
+the subscription itself.
+
+**Also.** The `.claude/` memory note stating "UMLS Category 3 covers internal MedDRA use but
+MSSO subscription is the gate for shipping MedDRA-derived features" is still directionally
+right, but should record that the individual path is Commercial Level 0, not non-commercial.
