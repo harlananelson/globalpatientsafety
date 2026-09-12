@@ -76,8 +76,9 @@ Not every commit. No “waiting on Harlan to deploy.”
 2. Named-drug profile — **Live 2026-09-12** via stable `?drug=` (alias of `?q=` isolation). Example: `https://faers.mobi/?drug=teplizumab`.
 3. API / LLM — **Live 2026-09-12** `GET /signals?drug=` JSON + `faers-mobi/API.md`. `?q=` fill-on-load also fixed in the #25 deploy.
 4. Event search beyond top-2000 — **Live 2026-09-12** (#26). Full-universe event/drug search; `ischaemic`/`ischemic stroke` → `Ischaemic stroke`; `GET /signals?event=` documented in `API.md`.
+5. CSV export of isolated results — **Live 2026-09-12** (#27). `GET /signals?...&format=csv` (same isolation as JSON; header `drug,event,n,eb05,novel`); UI Download CSV for the current isolated search (not splash). Documented in `faers-mobi/API.md`.
 
-Bars 1–4 exist. Pay gate / billing still needs Harlan (free for individuals, paid for drug companies) — do not implement billing without him. Next usefulness slice: CSV export of isolated drug/event results (#27).
+Bars 1–5 exist. Planned product loop for RWE / drug profile / API (+ CSV) is met. Pay gate / billing still needs Harlan (free for individuals, paid for drug companies) — do not implement billing without him. No next auto-slice until he picks the pay-gate shape (or another bar).
 
 ## Done when (this protocol PR)
 
