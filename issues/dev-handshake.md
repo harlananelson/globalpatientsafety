@@ -75,8 +75,9 @@ Not every commit. No “waiting on Harlan to deploy.”
 1. Usable drug AE report — teplizumab/Tzield reference. **Live 2026-09-12** (typing `tzield` isolates; Novel is `novel`).
 2. Named-drug profile — **Live 2026-09-12** via stable `?drug=` (alias of `?q=` isolation). Example: `https://faers.mobi/?drug=teplizumab`.
 3. API / LLM — **Live 2026-09-12** `GET /signals?drug=` JSON + `faers-mobi/API.md`. `?q=` fill-on-load also fixed in the #25 deploy.
+4. Event search beyond top-2000 — **Live 2026-09-12** (#26). Full-universe event/drug search; `ischaemic`/`ischemic stroke` → `Ischaemic stroke`; `GET /signals?event=` documented in `API.md`.
 
-Bars 1–3 exist. Pay gate / billing still needs Harlan (free for individuals, paid for drug companies) — do not implement billing without him. Next usefulness slice: event search beyond top-2000 (#26).
+Bars 1–4 exist. Pay gate / billing still needs Harlan (free for individuals, paid for drug companies) — do not implement billing without him. Next usefulness slice: CSV export of isolated drug/event results (#27).
 
 ## Done when (this protocol PR)
 
