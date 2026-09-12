@@ -2,20 +2,31 @@
 
 Spec only. Do not merge this GPS PR as site code. Implementation stays on the Linux box.
 
+## Cycle (standing)
+
+Harlan wants a tight improvement loop and **minimal interaction**.
+
+1. Career opens one GPS handshake PR per slice when the last slice is live or parked. Do not ask Harlan first.
+2. Linux implements in `/projects/faers-mobi/`, tests, and **deploys when the change is good**. Standing permission: do not wait for a chat yes. Post a deploy note on the slice PR (what to type to verify).
+3. Career checks live faers.mobi after a deploy note. If the slice landed, open the next slice. If it missed, comment the gap on the same PR.
+4. Ping Harlan only for: a product bar just went live, a live regression, or a blocker only he can answer (credential, paid API, destructive, billing). Stay quiet on handshake acks, local-only progress, and Career’s own comments.
+
+Pay gate / billing still needs Harlan. Do not implement billing.
+
 ## Roles
 
 | Who | Job | Does not |
 |-----|-----|----------|
-| **Career** (Grok Bot chat) | Product/spec. Opens one GPS handshake PR per slice. Reviews live faers.mobi. Posts analysis. | Implement in `/projects/faers-mobi/`. Deploy. Merge handshake PRs. |
-| **Linux** (Grok Bot on Ubuntu + home Claude) | Implementer. Reads handshake PRs. Works in `/projects/faers-mobi/` (and siblings: aers-mobi, safetysignal). Posts status. Opens a **code** PR on `harlananelson/faers-mobi` when ready for review. | Merge GPS handshake PRs. Deploy until Harlan says. |
-| **Harlan** | Approves deploys. Reviews code PRs. Overrides either side. | — |
+| **Career** (Grok Bot chat) | Product/spec. Opens one GPS handshake PR per slice. Reviews live faers.mobi. Opens the next slice without asking. | Implement in `/projects/faers-mobi/`. Merge handshake PRs. |
+| **Linux** (Grok Bot on Ubuntu + home Claude) | Implementer. Reads handshake PRs. Ships in `/projects/faers-mobi/` (siblings: aers-mobi, safetysignal). Opens a **code** PR on `harlananelson/faers-mobi` when useful. Deploys when good. | Merge GPS handshake PRs. Wait for Harlan on ordinary deploys. |
+| **Harlan** | Overrides. Answers blockers. Approves billing / pay gate. | Day-to-day slice start or deploy. |
 
 PRs only, not issues. The Linux bot wakes on pull requests.
 
 ## One PR per slice
 
 - A GPS handshake PR is a ticket: one markdown file under `issues/`, plus comments.
-- Do not pile a new slice onto a closed-scope ticket. #23 is Tzield search + Novel. Next product work gets a new PR.
+- Do not pile a new slice onto a closed-scope ticket. #23 is Tzield search + Novel only.
 - Weekly agent-review / research-ideas PRs (#10–#22) stay Harlan’s. Career does not use those for implementation.
 
 ## Where the code lives
@@ -29,7 +40,7 @@ PRs only, not issues. The Linux bot wakes on pull requests.
 
 ## Comment markers
 
-Both agents post as `harlananelson`, so login cannot tell them apart. First line of every bot comment:
+Both agents post as `harlananelson`. First line of every bot comment:
 
 ```
 <!-- role:career -->
@@ -41,26 +52,23 @@ or
 <!-- role:linux -->
 ```
 
-Harlan (human) comments need no marker. Career’s watch loop **ignores** `<!-- role:career -->` comments so it does not echo itself.
+Harlan (human) comments need no marker. Career’s watch loop **ignores** `<!-- role:career -->` comments.
 
 ## What Linux posts (and when)
 
-Post on the handshake PR, not a new GPS PR, when:
+Post on the slice PR when:
 
-1. Local work landed (what changed, tests, path).
-2. Blocked (need a decision or a missing file).
-3. A faers-mobi code PR is open (link it).
-4. Deployed to https://faers.mobi (what to type to verify).
+1. Blocked (need a decision only Harlan can make).
+2. Deployed to https://faers.mobi (what to type to verify). Optionally link the faers-mobi code PR.
+3. Local work landed *and* you are stuck or want a Career re-review before deploy.
 
-Not every commit. Do not deploy until Harlan says.
+Not every commit. No “waiting on Harlan to deploy.”
 
 ## What Career posts
 
 - New slice → new handshake PR (brief in `issues/`, Done when, out of scope).
-- Live-site review after a Linux deploy note.
-- Next-slice analysis only after the current slice is live or explicitly parked.
-
-Prefix `<!-- role:career -->`. Keep briefs small. Do not implement `SEARCH_REDESIGN.md` wholesale.
+- Live-site review after a Linux deploy note. Then the next slice.
+- Prefix `<!-- role:career -->`. Keep briefs small. Do not implement `SEARCH_REDESIGN.md` wholesale.
 
 ## Product bars (faers.mobi)
 
@@ -68,16 +76,8 @@ Prefix `<!-- role:career -->`. Keep briefs small. Do not implement `SEARCH_REDES
 2. Named-drug profile — dedicated page or stable `?drug=` URL, not only a Shiny table session.
 3. API / LLM — `GET /signals?drug=` (JSON). Document in one markdown file.
 
-Pay gate stays parked until bars 2 and 3 exist. Free for individuals, paid for drug companies. Do not implement billing in a handshake slice.
-
-## Current next slice (after #23)
-
-When starting this work, open a **new** GPS handshake PR. Do not add it to #23.
-
-1. Fix `?q=` fill on load.
-2. Dedicated drug page or stable `?drug=teplizumab`.
-3. `GET /signals?drug=` on faers.mobi, documented.
+Pay gate stays parked until bars 2 and 3 exist. Free for individuals, paid for drug companies.
 
 ## Done when (this protocol PR)
 
-Linux comments `<!-- role:linux -->` that it will follow this file (markers, one PR per slice, code PRs on faers-mobi). Leave this PR open as the channel ticket. Do not merge.
+Linux already acked. Leave #24 open as the channel ticket. Do not merge. Treat this file as the live protocol; later commits on this branch update it.
