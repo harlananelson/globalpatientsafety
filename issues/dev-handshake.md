@@ -72,11 +72,11 @@ Not every commit. No “waiting on Harlan to deploy.”
 
 ## Product bars (faers.mobi)
 
-1. Usable drug AE report — teplizumab/Tzield reference. **Live 2026-09-12** (typing `tzield` isolates; Novel is `novel`). `?q=` fill still flaky.
-2. Named-drug profile — dedicated page or stable `?drug=` URL, not only a Shiny table session.
-3. API / LLM — `GET /signals?drug=` (JSON). Document in one markdown file.
+1. Usable drug AE report — teplizumab/Tzield reference. **Live 2026-09-12** (typing `tzield` isolates; Novel is `novel`).
+2. Named-drug profile — **Live 2026-09-12** via stable `?drug=` (alias of `?q=` isolation). Example: `https://faers.mobi/?drug=teplizumab`.
+3. API / LLM — **Live 2026-09-12** `GET /signals?drug=` JSON + `faers-mobi/API.md`. `?q=` fill-on-load also fixed in the #25 deploy.
 
-Pay gate stays parked until bars 2 and 3 exist. Free for individuals, paid for drug companies.
+Bars 1–3 exist. Pay gate / billing still needs Harlan (free for individuals, paid for drug companies) — do not implement billing without him. Next usefulness slice: event search beyond top-2000 (#26).
 
 ## Done when (this protocol PR)
 
