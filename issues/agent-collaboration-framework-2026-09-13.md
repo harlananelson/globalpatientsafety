@@ -2,7 +2,7 @@
 
 Protocol only. **Do not implement on faers.mobi.** Do not merge this GPS PR as site code.
 
-Harlan asked Career to reach Linux, get consensus on what worked across handshake PRs #23–#63, and write a framework for future work. Career drafted; Linux amended (`<!-- role:linux -->` on this PR). Career folded those amends below. Consensus = both role tags on this PR.
+Harlan asked Career to reach Linux, get consensus on what worked across handshake PRs #23–#63, and write a framework for future work. Career drafted; Linux amended twice (`<!-- role:linux -->` on this PR), including a GPS-vs-hdl-harness comparison. Career folded those amends below. Consensus = both role tags on this PR.
 
 ## What we just did
 
@@ -134,6 +134,45 @@ Handshake for `<product tree>`. Do not merge this handshake PR. Deploy when good
 - **Wrong recycle:** restart everything / wrong app / deploy-script self-SIGTERM / restarting for static docs. Fix: named layer + short recipe in product tree.
 - **Unverified next:** opening the next ticket from a deploy note without hitting the live URL. Fix: verify first.
 - **Human in the inner loop:** asking “deploy?” or “next slice?” Fix: standing permission + ping rules.
+
+
+## Not the same machine as hdl-harness
+
+They look alike (two agents, durable tickets, human only at gates). They are not the same machine. **Do not merge the two systems.**
+
+| | GPS handshake (this file) | hdl-harness |
+|---|---|---|
+| Loop | Spec → ship → live URL | Filer → operator → mailbox |
+| Doer | Implementer **owns the product** and changes it | Operator **must not** patch the notebook / own the science |
+| Extra seat | None | Advisor: harness is a checklist; it may not self-patch |
+| Channel | One: the handshake PR | Queue + addressed inbox + suggestions |
+| Scoreboard | Live product URL + body numbers | Artifact paths + verdict (`CODE` / `ENVIRONMENT` / `OK`) |
+| Overlap | May overlap for a night; not required | **Forbids** overlap. Filer exits before the run |
+
+### Shared (keep)
+
+- Chat is not a bus.
+- Identity is a role, not a model.
+- Ping the human only at gates.
+- Standing permission for ordinary work.
+- Status that cannot fail is not a scoreboard. Live **body** beats live **status**.
+- Do not let the doer redesign the bus in the same session as doing the work. (Here: protocol-only PRs do not deploy to faers.mobi.)
+
+### Do not import from HDL into GPS
+
+These solve a platform the implementer is forbidden to touch. faers.mobi is the opposite.
+
+- **ENVIRONMENT vs CODE.** Linux is supposed to change `faers-mobi`.
+- **Operator must not touch the work.** That rule would stop this loop.
+- **Advisor-for-every-edit.** Puts the human back in the inner loop.
+- **Three channels.** GPS has one: the handshake PR is spec, ticket, and scoreboard thread.
+
+### Steal from HDL (principles only — already in Standing rules)
+
+- Done-when is a live URL **and** numbers in the body; status is not a verdict.
+- The handshake names **which layer to recycle**, or “static docs only.”
+
+Do not import filer/operator, ENVIRONMENT vs CODE, or the advisor seat.
 
 ## Done when (this protocol PR)
 
