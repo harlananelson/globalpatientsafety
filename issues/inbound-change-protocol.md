@@ -28,6 +28,20 @@ An urgent fix does not wait for step 2. It deploys, and the notification says
 so; the ticket is filed after the fact and says that too. The point is the
 record and the second pair of eyes, not a gate on a repair.
 
+## One filer
+
+**This seat files inbound tickets. Career does not.** On 2026-09-17 #82 and #84
+were opened 68 seconds apart for the same deploy, because both seats read the
+same notification as a cue to file. Two records for one change is the drift this
+protocol exists to prevent, so the rule is one canonical ticket per change,
+filed by the seat that holds the decision log and the merge authority.
+
+If a duplicate appears anyway, the earlier one wins as canonical and the later
+is closed with a comment naming it and saying what, if anything, is lost.
+Career's contribution belongs **as a comment on the canonical ticket** — its
+visibility smoke is useful review, and it is worth more attached to the record
+everyone is reading than in a second PR.
+
 ## What else changed because of this
 
 `scripts/monitor_faers_mobi.sh` now pins the four surfaces that regressed:

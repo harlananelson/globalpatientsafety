@@ -2667,3 +2667,26 @@ number, 15 an unstood-up upper bound**.
 **#84 closed as a duplicate of #82** (filed 68 seconds apart, same deploy). One
 canonical inbound record per change; two tickets for one deploy is the drift the
 protocol exists to prevent.
+
+### 2026-09-18 — evidence field verified; one filer for inbound tickets
+
+**The subtype case is better than reported.** `atorvastatin × Pancreatitis
+necrotising` (n=78) returns `novel` **and** `matched_term: "pancreatitis +
+necrotising"`, `matched_by: "separate words, not a phrase; passage shows
+\"pancreatitis\""`, `matched_section: adverse_reactions`, the surrounding
+passage, and the label's set_id, effective time and DailyMed URL. So a reader
+sees the qualified subtype is not in the label *and* that the label lists
+pancreatitis — without the guard forcing it to `known`. `atorvastatin ×
+Pancreatitis` stays `known` by exact phrase. Verified live by this seat on a
+pair neither seat chose in advance.
+
+**The UI pinning test was weaker than described, and the faers-mobi seat said so
+unprompted.** It grepped the source for function names, which passes against
+code that never runs; it now evaluates `.event_in_label_expanded()` and its
+dependencies out of the file and exercises behaviour. **The browser check on the
+Shiny `Novel` column remains open and is Harlan's** — no shell-bound seat can
+close it.
+
+**One filer.** `issues/inbound-change-protocol.md` now says this seat files
+inbound tickets and Career does not; a duplicate is closed in favour of the
+earlier ticket, and Career's smoke belongs as a comment on the canonical one.
