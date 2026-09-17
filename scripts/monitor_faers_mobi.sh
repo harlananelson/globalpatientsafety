@@ -80,6 +80,10 @@ CHECKS=(
   "signals-brief-pair|GET|/signals?drug=tzield&event=Nausea&format=brief|curl|200|text/|RWE brief.*|n=[0-9]+"
   "signals-brief-event|GET|/signals?event=Nausea&format=brief|curl|200|text/|Data through"
   "signals-pdf|GET|/signals?drug=tzield&event=Nausea&format=pdf|curl|200|application/pdf|"
+  "signals-row-flags|GET|/signals?drug=tzield&limit=1|curl|200|application/json|\"indication\":(true|false).*\"low_info\":(true|false)"
+  "signals-class-flags|GET|/signals?drug=tzield&event=Nausea&format=class|curl|200|application/json|\"low_info\":(true|false)"
+  "signals-label-status|GET|/signals?drug=tzield&event=Nausea&format=label|curl|200|application/json|\"label_status\":\"(cached|empty|missing)\""
+  "signals-plus-decode|GET|/signals?event=ischaemic+stroke&limit=1|curl|200|application/json|Ischaemic stroke"
   "well-known-404|GET|/.well-known/ai-plugin.json|curl|404||"
 )
 
