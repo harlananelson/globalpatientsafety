@@ -2638,3 +2638,32 @@ extract while production serves a July one — treat it as a measurement, not a 
 **The process point that matters:** the question was asked because the inbound
 ticket existed. Without #82 there was nothing to ask against, and this defect
 would have sat in production unexamined.
+
+### 2026-09-17 (later still) — synonym guard live (#85); "15" corrected to 6
+
+`80f0f7d` (21:12:08 UTC, build `api-76c55b329037 src-80f0f7d`) ships the
+≥2-informative-token synonym guard on **both** the API and the Shiny UI. The UI
+half had not shipped with #82: `.event_in_label_expanded()` still used
+`nchar >= 5` at 60% overlap, so the Shiny `Novel` column and the API disagreed
+about what counts as label evidence. A test now pins the alignment.
+
+Verified live by this seat: n=319 `known`; `+` and `%20` both 654; 153 → 113
+under hide (exact set match); class flags bool/bool; multi-word synonyms still
+match (clozapine × Myocarditis, nilotinib × Acute MI, semaglutide ×
+Pancreatitis necrotising); **the guard bites** — atorvastatin × Pancreatitis
+necrotising is now `novel` where the one-word `inflammation` fallback reached it,
+while atorvastatin × Pancreatitis chronic and metformin × Cardiac failure
+chronic stay `known`. **Not verified from here:** the Shiny `Novel` column
+itself, which needs a browser; API/UI alignment rests on the pinning test.
+
+**Correction to the entry above:** the faers-mobi seat corrected its own
+"15 of 337" in public — that figure came from a looser comparison than the
+enumeration that produced **6**. The two are unreconciled; **6 is the evidenced
+number, 15 an unstood-up upper bound**.
+
+**Operational fact worth keeping:** `scripts/signals_api.R` parses helpers out of
+`app/view/signal_timeline.R` at startup, so a "UI-only" change can break the API.
+
+**#84 closed as a duplicate of #82** (filed 68 seconds apart, same deploy). One
+canonical inbound record per change; two tickets for one deploy is the drift the
+protocol exists to prevent.
