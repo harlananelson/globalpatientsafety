@@ -2314,3 +2314,298 @@ the subscription itself.
 **Also.** The `.claude/` memory note stating "UMLS Category 3 covers internal MedDRA use but
 MSSO subscription is the gate for shipping MedDRA-derived features" is still directionally
 right, but should record that the individual path is Commercial Level 0, not non-commercial.
+
+## 2026-09-04 — MedDRA Commercial Level 0 paid
+
+The 2026-08-17 "pay the invoice" step is done. Correspondence (invoice, payment
+confirmation) is in `globalpatientsafety-private:correspondence/meddra/` and
+`finances/`; this entry does not quote it.
+
+**Sequence.** Online application received 2026-09-02 (MSSO: process within 2
+business days). Invoice 2668702 the same day: Annual MedDRA Subscription,
+Commercial Level 0, $139.00 + 7% tax $9.73 = **$148.73**. One-time payment
+processed **2026-09-04**, confirmation **I8PT0C97HJ** (MedDRA /
+billerpayments.com).
+
+**Q3 is answered (2026-08-26), and it is the remaining product constraint.**
+Kendra: MedDRA terminology may only be provided or viewed by MedDRA
+subscribers. Paying does **not** authorise SOC / SMQ / hierarchy views on the
+free public site for anonymous visitors. PT labels as they already appear in
+public FAERS/VAERS stay the public surface.
+
+**What paying unblocks.** Internal use of the licensed files — D2
+(PT → HLT/HLGT/SOC from `mdhier.asc`), and the internal `nonclinical` flag
+derived from SOC. Do not commit the files to the public repo. A public
+derived boolean that does not display MedDRA terminology is the intended
+shipped surface; showing SOC names is not.
+
+**Not yet seen (as of 2026-09-05).** Portal activation / download credentials.
+If those do not arrive within a few business days of payment, follow up with
+`mssohelp@meddra.org` citing invoice 2668702 and confirmation I8PT0C97HJ.
+
+**Unchanged on the live site.** Nothing currently published depends on this.
+
+## 2026-09-08 — MedDRA portal activation arrived (ID in private STATUS)
+
+MSSO sent "Subscriber Information (MedDRA) Harlan A Nelson" on 2026-09-08
+from `meddrarenewal@meddra.org`. The subscription is **active**; the formal
+term is still 01 Oct 2026 – 30 Sep 2027. The MedDRA ID / license number is
+filed at `globalpatientsafety-private:correspondence/meddra/STATUS.md` (not
+quoted here). The email does **not** contain a password.
+
+**How to get the files.** Three credentials — MedDRA ID, Password, Unzip
+Password — are retrieved by the subscriber from
+[https://ssa.meddra.org/](https://ssa.meddra.org/). Then download the
+release package at
+[https://www.meddra.org/user/login?page=%2Fsoftware-packages](https://www.meddra.org/user/login?page=%2Fsoftware-packages)
+(English ASCII). Unzip with the unzip password. Official files are `$`
+delimited (not pipe), trailing `$` after the last field. The hierarchy
+file is `MedAscii/mdhier.asc`.
+
+**Loader.** `faers-pipeline/scripts/ingest_meddra_ascii.R` reads `mdhier.asc`
+(+ SMQ files if present), writes licensed parquet under `~/data/meddra/`
+(never git), and left-joins the primary-SOC path onto
+`~/data/diana/meddra_hierarchy.parquet`, preserving the UMLS
+`cui` / `synonyms` / `definition` columns and adding `hlt` / `hlgt` /
+`soc` / `is_low_information_pt`. The public app must still **not display**
+SOC/HLT/HLGT/SMQ names (Q3). The derived boolean is the shippable surface.
+
+**Gmail.** The activation message is in Inbox + Important, Gmail category
+Updates (`CATEGORY_UPDATES`), now starred. It had been in Trash earlier;
+there is no spam/filter label on the message. The Gmail MCP cannot list
+Settings → Filters. If this recurs, check Filters for a match on
+`meddra.org` / `meddrarenewal` that trashes on match, and/or a swipe on
+the Updates tab.
+
+## 2026-09-09 — Licence in hand: SOC-name rules re-evaluated; Fable builder in repo
+
+Fable's original loader is `scripts/build_meddra_hierarchy.R` (copied from
+Downloads; author is Fable). `faers-pipeline/scripts/ingest_meddra_ascii.R` is a
+later, narrower ingest written the same day in the `gps-g` session — keep it,
+do not treat it as the Fable original.
+
+**Flake.** The builder needs `dplyr`, `readr`, `stringr`, and `arrow`. `dplyr`
+and `arrow` were already in `flake.nix`; `readr` and `stringr` are added. A
+missing package is a flake edit, not a reason to skip the builder.
+
+**SOC-name directives, unlicensed-era vs now.** Several living notes still
+talked as if we had no licence: omit `soc` from every parquet, never deploy a
+file that contains hierarchy columns, wait on MSSO before D2. That mix is
+wrong once Level 0 is active.
+
+| Withdrawn | Still in force | Narrow leftover |
+|-----------|----------------|-----------------|
+| Cannot ingest `mdhier.asc` / cannot have `soc` internally | Do not commit `.asc` or licensed parquet to git | Printing SOC/HLT/HLGT/SMQ *names* to anonymous visitors is what Q3 answered |
+| Strip hierarchy columns from the deployed app parquet as a licence control | Do not ship MedDRA as a downloadable terminology product | Confirm that UI with MSSO, or gate it; server-side use of the columns is licensed use by us |
+| D2 blocked on subscription | PT strings from public FAERS/VAERS remain the public event labels | |
+
+Internal parquet **may** carry `soc` / `hlt` / `hlgt` / SMQ. Server-side SOC
+filters and a derived `nonclinical` flag are in-scope. The app `meddra()`
+reactive still requires `synonyms`, so the first real run is
+
+```
+Rscript scripts/build_meddra_hierarchy.R \
+  --meddra-dir ~/data/meddra/<unzip> \
+  --existing ~/data/diana/meddra_hierarchy.parquet \
+  --signals <signals.parquet>
+```
+
+`--signals` keys on `event` (live column), not `outcome_name`. Primary-path
+sanity is one distinct primary `soc_code` per PT (multiple Y rows under one
+SOC are allowed).
+
+**29.1 ingest completed (same night).** English ASCII is at
+`~/data/meddra/MedDRA_29_1_English/`. Builder output is `~/data/meddra/v29.1/`.
+UMLS-only backup: `~/data/diana/meddra_hierarchy.umls-only.parquet`. App path
+`~/data/diana/meddra_hierarchy.parquet` now holds the merged 29.1 file (2,457
+rows, `pt`/`synonyms`/`soc`; 4 unmatched UMLS PTs). faers-mobi / aers-mobi
+symlinks follow that file. Do not commit licensed `.asc` or parquet.
+
+Coverage vs live signals: 22,142 distinct `event` — 91.4% PT, 8.3% current LLT,
+0.3% unmatched. SMQ parquet remains incomplete (no term_level 5). Optional
+later: `is_low_information_pt`, fold `ingest_meddra_ascii.R`.
+
+---
+
+## 2026-09-10 — Treats filter defaults off (hide indication events)
+
+User asked for a filter against Treats in the app, default Treats off, so
+events that are indications do not show.
+
+`Treats` was already computed in `.enrich_label_match()` and shown as
+`yes` vs blank, with no default `searchCols` entry. Indication pairs that
+match the FDA label are also `Novel = known`, so the default Novel filter
+already hid them on splash — but clearing Novel dumped indication events
+back in, and the blank cell could not be filtered as “not treats”.
+
+**Change (faers-mobi + aers-mobi `signal_timeline.R`):**
+
+- Display Treats as `yes` / `no` (`TRUE` → `yes`; `FALSE` and `NA` → `no`
+  so unlabeled drugs stay in the default view).
+- Default DT `searchCols` col 13 is `list(search = "no")`.
+- Do **not** lift Treats when a search query lifts the class-effect
+  filter. Indication events are noise in splash and in search. User can
+  set the Treats filter to `yes` or clear it.
+- Help text and `formatStyle` updated for `yes`/`no`.
+
+Audit path: search `daprodustat`, clear Novel, Treats stays `no` →
+`Nephrogenic anaemia` hidden; set Treats to `yes` → it shows.
+
+---
+
+## 2026-09-10 — Full MedDRA app table, Low-info default-off, Treats via HLT
+
+Follow-on to Treats-off: ship the full 29.1 vocabulary into the app parquet
+(not just the 2,457-row UMLS overlap) and use it for two UI flags. Do not
+print SOC/HLT/HLGT names.
+
+**Data** (`scripts/assemble_app_meddra.R`):
+
+- 27,504 PTs + 54,620 current-LLT alias rows (lookup key = FAERS `event`
+  string) = 82,124 rows at `~/data/diana/meddra_hierarchy.parquet` (~2.5 MB).
+- UMLS `cui`/`synonyms`/`definition` left-joined (2,401 PT hits).
+- `is_low_information` = primary SOC in Investigations, Surgical and
+  medical procedures, Social circumstances, Product issues (28.9% of rows).
+- UMLS-only backup unchanged. Licensed; not committed. Copy also at
+  `~/data/meddra/v29.1/meddra_hierarchy_app.parquet`.
+
+**App (faers-mobi + aers-mobi):**
+
+- `meddra()` NA-safe synonym split (most PTs have no UMLS synonyms).
+- **Low-info** column, default `searchCols` `no`. FLAG not DROP.
+- **Treats via HLT**: if the event’s High-Level Term contains a PT named
+  in the indications text, Treats = yes. Narrower than same-SOC (that
+  would hide real AEs in the indicated body system).
+- Event description still uses UMLS `definition` only.
+
+Spot-check: `No device malfunction` / `Scan myocardial perfusion abnormal`
+/ `Blood glucose increased` → Low-info yes. `Rhabdomyolysis` /
+`Stevens-Johnson syndrome` / `Torsade de pointes` / `Nephrogenic anaemia`
+→ Low-info no.
+
+---
+
+## 2026-09-10 — Monetization plan (Commercial Level 0 is in force)
+
+Working plan is in the private companion:
+`globalpatientsafety-private/finances/BUSINESS-PLAN-2026-09.md`.
+
+Locked there, not here: first SKU is a **$750 signal brief** (not a $5
+PDF); public search stays free; no SOC/SMQ names on anonymous pages;
+hierarchy-named views wait on an MSSO confirmation + MedDRA-ID gate;
+stay Commercial Level 0 (System Developer is the wrong license);
+consulting that uses hierarchy requires the **client** to subscribe too.
+Revenue is allowed under Level 0; crossing **$1M** is the fee-tier event,
+logged in the private ledger.
+
+---
+
+## 2026-09-10 — ClinicalTrials.gov pull (plan)
+
+Plan: `docs/clinicaltrials-gov-plan.md`. Not started.
+
+Locked there: two modes (API v2 on-demand for the news-scan; AACT flat
+files for a bulk index). Join on DiAna substance + MedDRA PT (SAE terms
+are already MedDRA, version-lagged). Flags (`trial_treats`, `trial_sae`,
+`n_open_phase3`) — FLAG not DROP. Data under `~/data/ctgov/`, not git,
+not the VPS, not the static site. Do not republish the registry.
+
+Phase 0 is the slice that feeds the current novel/not-Treats ranking;
+do not wait on a 2.3 GB dump for that.
+
+---
+
+## 2026-09-15 — Merge authority, #72 built, live-site monitor filing handshake PRs
+
+**Merge rule (Harlan).** Merge rights follow repo ownership, not role. The
+globalpatientsafety session is the owner seat for this repo and merges its
+handshake PRs itself once faers-mobi has posted verified live numbers; it closes
+superseded ones. Linux (Grok) owns faers-mobi and commits there directly; it never
+merges here. Career files tickets and merges nothing. "Never merge handshake PRs"
+in the Linux handoff is the bot-side wording of this, not a rule that PRs stay open.
+open = pending, merged = live, closed = superseded.
+
+**Merged** #66, #69, #70 (2026-09-13) and #72 (2026-09-15, after verifying every
+line of its Verify section live). Batch-merging the remaining live slices #31–#63,
+#67, #71 was blocked by the tool sandbox; all were spot-checked live and pass.
+Left open on purpose: #64, #65, #68 (protocol-only), #73, #74 (pending in
+faers-mobi).
+
+**#72 diagnosis.** Discovery layer was already complete (llms.txt, api.md,
+openapi.json, chatgpt.md, /mcp answers initialize). LLM chats still "described
+the table" because a pasted URL is a one-shot fetch of the Shiny shell. Linux
+built the fix within the hour: bot user agents get a markdown homepage with the
+tzield × Nausea brief inlined (`/bot-home.md`, regenerated nightly), and the UI
+shows a copy-able `format=brief` URL on the selected pair. #74 follows up: the
+fetcher rejects `text/markdown`, so machine Markdown moves to `text/plain`.
+
+**Monitor.** `scripts/monitor_faers_mobi.sh`, cron `*/30` on the workstation
+(`~/.claude/gps-monitor/`). 27 checks: every surface the tickets promised, with
+status + content-type + body marker, one 20 s retry, serial with a pause for the
+heavy worker's `limit_req`. On failure it opens one handshake PR per episode
+(`handshake/monitor-alert-<ts>`, spec under `issues/`) so the Linux watcher
+picks it up; comments only when the failing set changes; comments "Recovered"
+when clear so the owner seat merges. First real ticket: #75, `GET /api/`
+(trailing slash) → 500, a leftover already named on #71/#72. Commit identity for
+the alert branch is the GitHub noreply address (gmail was rejected by email
+privacy). `--status` shows last run / result / episode; if `age` exceeds ~35 min
+the cron itself is dead.
+
+**Still Harlan's.** Custom GPT import of `/chatgpt.md` and the MCP connector in
+claude.ai are the only routes to multi-turn "ask the data" in ChatGPT / Claude.
+
+## 2026-09-16 — Backlog drained; #73/#74/#75 live and merged; monitor's first catch
+
+Harlan confirmed the split: the globalpatientsafety seat merges (independent
+check against the live site); the faers-mobi seat (Claude session in tmux
+`faersmobi`, the older Positron one handed off and stopped) implements and posts
+numbers, never merges here. #76 (Shiny idle_timeout) is a faers-mobi slice.
+
+Merged today after live verification: #75 (monitor's first ticket, `/api/`
+trailing slash; monitor ran 27/27 and posted Recovered), #74 (machine Markdown
+now `text/plain`), #73 (pair brief/series/label prefer the exact PT; xarelto ×
+Haemorrhage n=12,583; substring fallback is named in the brief), then the
+verified backlog #23, #25–#63, #67, #71 (42 PRs). Open now: #76 pending;
+protocol-only #24, #64, #65, #68; weekly research-ideas / agent-review #10–#22
+(Harlan's to review — the autonomous loops stop at the PR boundary; precedent
+2026-07-30 was merge one, close the rest as superseded).
+
+## 2026-09-17 — /signals semantics changed; inbound-change path opened
+
+**The change (faers-mobi 59274bf, live 20:03 UTC, from an outside Codex review).**
+Five fixes, verified live by this seat after the fact:
+
+| Before | After |
+|---|---|
+| `+` in a query string was not a space; `event=ischaemic+stroke` → 0 rows, `%20` → 654 | both → 654 |
+| 1,335 of 2,001 cached label rows were empty placeholders, reporting `novel` for every event on **585,273 pairs** | those report `?`; `format=label` carries `label_status` cached/empty/missing |
+| novelty was a literal substring match | 70% word overlap + MedDRA synonyms; on 4,000 sampled pairs novel fell 2,453 → 611 (nilotinib × Acute myocardial infarction is now `known`) |
+| `indication` matched Limitations-of-Use and negated text, so `indication=hide` hid semaglutide × Pancreatitis | those flag `false`; rivaroxaban × Ischaemic stroke still `true` |
+| `format=class` emitted `{}` for the flags — a regression introduced by #81 | booleans again |
+
+**Anything read from the `novel` column before this date was partly reading empty
+labels.** The reviewer's frozen suite went 30/100 → 100/100. A follow-up refactor
+(d83b2c0, 20:11 UTC) extracted the indication rule as a pure function with 18
+assertions. Merged assertions still hold: tzield 153 rows, hide → exactly the 113
+with neither flag, n=319.
+
+**The process failure, and the fix.** It reached production before any
+independent check, changing behaviour already verified and merged under #79 and
+#81, and the #81 regression was caught by an outside reviewer rather than by
+either seat. Cause: the handshake ran one way only — tickets flow from here to
+faers-mobi, and that seat cannot open a PR here without leaving its project
+scope, so a change originating there had no path.
+
+Now `issues/inbound-change-protocol.md` (f23361f, agreed by the faers-mobi seat
+as its 36f09fc): **it notifies before the restart, this seat files the ticket and
+checks the OLD behaviour while it still exists, it deploys and posts numbers,
+this seat verifies and merges.** An urgent repair deploys first and says so in
+both the notification and the ticket. faers-mobi's `reports/evaluation/DEPLOY-LOG.md`
+is local detail; **this log is the durable cross-repo record**, written by this
+seat from those notifications.
+
+Monitor is now 31 checks: the four surfaces that regressed are pinned (boolean
+flags on list rows and on `format=class`, `label_status`, `+` decoding).
+
+**The lesson both seats took:** the log records that something happened, the test
+stops it happening again. Reach for the test first on anything whose meaning changes.
