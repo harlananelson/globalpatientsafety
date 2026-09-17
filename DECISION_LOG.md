@@ -2609,3 +2609,32 @@ flags on list rows and on `format=class`, `label_status`, `+` decoding).
 
 **The lesson both seats took:** the log records that something happened, the test
 stops it happening again. Reach for the test first on anything whose meaning changes.
+
+### 2026-09-17 (later) — the novelty column is now too generous the other way
+
+Asking the reviewer to scrutinise the `novel → known` transitions on #82 turned
+up a defect in the deployed change, self-reported by the faers-mobi seat
+(faers-mobi `reports/evaluation/FINDING-synonym-overmatch.md`, fed5378).
+
+The synonym fallback matches **single-word synonym fragments** — `failure` is a
+listed synonym of Cardiac failure, `inflammation` of Pancreatitis — against a
+label that can run to 300 KB, guarded only by `nchar >= 5`. **41,743 of 212,540**
+synonym strings are one word (`syndrome` is carried by 228 PTs). On 4,000 pairs,
+**15 of 337 `known` (4.5%)** are reached only this way and revert to `novel`
+under a ≥2-informative-token guard; 322 are unaffected. The UI has the identical
+flaw and predates the change. Fix is held while the Codex pass is open.
+
+**So the column has been wrong in both directions this week:** too generous with
+`novel` before 2026-09-17 (585,273 pairs off empty placeholder labels), too
+generous with `known` after, at a far smaller magnitude. Both are now documented.
+
+**Not independently verified.** This seat read the finding and probed live pairs
+whose PT carries a one-word synonym (metformin × Cardiac failure, atorvastatin ×
+Pancreatitis, both `known`); those are consistent with the defect *and* with a
+correct match, since both labels plausibly mention the event. Confirming the 15
+needs the transition dump. The 4.5% is the author's measurement on an April
+extract while production serves a July one — treat it as a measurement, not a verdict.
+
+**The process point that matters:** the question was asked because the inbound
+ticket existed. Without #82 there was nothing to ask against, and this defect
+would have sat in production unexamined.
