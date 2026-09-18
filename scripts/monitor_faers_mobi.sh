@@ -2,7 +2,8 @@
 # monitor_faers_mobi.sh — probe faers.mobi and file a handshake PR when it breaks.
 #
 # Runs from cron on the workstation (see install note at the bottom). Every check
-# is a live request the handshake tickets #31–#74 promised would keep working.
+# is a live request the handshake tickets #31–#82 promised would keep working
+# (incl. bot-home / static-brief freshness stamps from the 2026-09-18 rebuild).
 # A failure is not "HTTP != 200"; it is status, content-type, or a body marker
 # that the ticket's Verify section named.
 #
@@ -67,6 +68,8 @@ CHECKS=(
   "home-bot-perplexity|GET|/|PerplexityBot|200|text/|format=brief"
   "home-bot-claude|GET|/|ClaudeBot|200|text/|format=brief"
   "bot-home-md|GET|/bot-home.md|curl|200|text/|format=brief"
+  "bot-home-fresh|GET|/bot-home.md|curl|200|text/|\(cached 20[0-9]{2}-"
+  "static-brief-fresh|GET|/examples/tzield-nausea-brief.txt|curl|200|text/|Built 20[0-9]{2}-"
   "api-html|GET|/api|curl|200|text/html|How to query"
   "api-html-slash|GET|/api/|curl|200|text/html|How to query"
   "api-md|GET|/api.md|curl|200|text/plain|GET /signals"
@@ -154,6 +157,40 @@ PYEOF
   fi
   if [ -z "$why" ] && [ "$name" = signals-json ]; then
     grep -q '"n":0[,}]' "$out" && why="tzield x Nausea n=0"
+  fi
+  # Silence-looks-like-health: nightly build_bot_home.sh (03:17 UTC) regenerates
+  # /bot-home.md and /examples/tzield-nausea-brief.txt. Both keep returning 200
+  # with plausible content if cron dies — only the freshness stamps catch it.
+  # 48h tolerates one missed run. GPS #82 Linux ask 2026-09-18.
+  if [ -z "$why" ] && [ "$name" = bot-home-fresh ]; then
+    why="$(python3 - "$out" <<'PYEOF'
+import re, sys, datetime
+text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
+m = re.search(r"\(cached (20\d{2}-\d{2}-\d{2})\)", text)
+if not m:
+    print("no (cached YYYY-MM-DD) stamp")
+    raise SystemExit
+day = datetime.datetime.strptime(m.group(1), "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
+age_h = (datetime.datetime.now(datetime.timezone.utc) - day).total_seconds() / 3600.0
+if age_h > 48:
+    print("cached stamp %.1fh old (want <=48h); nightly rebuild likely stopped; site 200 is not health" % age_h)
+PYEOF
+)"
+  fi
+  if [ -z "$why" ] && [ "$name" = static-brief-fresh ]; then
+    why="$(python3 - "$out" <<'PYEOF'
+import re, sys, datetime
+text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
+m = re.search(r"Built (20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)", text)
+if not m:
+    print("no Built ISO timestamp")
+    raise SystemExit
+built = datetime.datetime.strptime(m.group(1), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
+age_h = (datetime.datetime.now(datetime.timezone.utc) - built).total_seconds() / 3600.0
+if age_h > 48:
+    print("Built stamp %.1fh old (want <=48h); nightly rebuild likely stopped; site 200 is not health" % age_h)
+PYEOF
+)"
   fi
   if [ -n "$why" ]; then echo "$why"; else echo OK; fi
 }
@@ -245,6 +282,11 @@ fi
     echo "| brief / pdf / profile / class / series hang | heavy \`:3843\` | \`systemctl restart faers-signals-heavy\` |"
     echo "| static \`/api\`, \`/api.md\`, \`/llms.txt\`, \`/openapi.json\`, bot homepage, \`/mcp\` | nginx | \`nginx -t && systemctl reload nginx\` |"
     echo "| homepage HTML / banner / head | Shiny UI | \`restart.txt\`; kill only the SockJS whose cwd is the faers-mobi dir |"
+    echo "| \`bot-home-fresh\` / \`static-brief-fresh\` stamp >48h | VPS cron \`scripts/build_bot_home.sh\` (03:17 UTC) | restore cron; site 200 with plausible content is not health |"
+    echo
+    echo "## If bot-home / static-brief freshness failed"
+    echo
+    echo "The site is probably fine and serving 200; the nightly rebuild is what has stopped, so the bot homepage and static brief are going stale."
     echo
     echo "## Keep"
     echo
