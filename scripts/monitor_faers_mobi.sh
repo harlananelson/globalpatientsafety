@@ -84,6 +84,7 @@ CHECKS=(
   "signals-class-flags|GET|/signals?drug=tzield&event=Nausea&format=class|curl|200|application/json|\"low_info\":(true|false)"
   "signals-label-status|GET|/signals?drug=tzield&event=Nausea&format=label|curl|200|application/json|\"label_status\":\"(cached|empty|missing)\""
   "signals-plus-decode|GET|/signals?event=ischaemic+stroke&limit=1|curl|200|application/json|Ischaemic stroke"
+  "signals-bad-format-400|GET|/signals?drug=tzield&event=Nausea&format=bogus|curl|400|application/json|\"allowed\":\\[\"json\""
   "well-known-404|GET|/.well-known/ai-plugin.json|curl|404||"
 )
 

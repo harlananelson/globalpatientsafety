@@ -2690,3 +2690,25 @@ close it.
 **One filer.** `issues/inbound-change-protocol.md` now says this seat files
 inbound tickets and Career does not; a duplicate is closed in favour of the
 earlier ticket, and Career's smoke belongs as a comment on the canonical one.
+
+### 2026-09-18 — #86: unknown `format=` returns 400 (was 200 + a 27 KB pair list)
+
+`630ace6` (00:22:27Z, build `api-b283fb76258e src-630ace6`). `format=bogus` now
+returns **400** `application/json` (186 B) with `error`, `allowed` and `usage`.
+Previously it silently served the JSON pair list, so a machine client that
+mistyped a format got 27 KB of plausible-looking data instead of an error.
+
+Verified live by this seat: all eight valid formats unchanged (brief
+`text/plain`, pdf `application/pdf`, the rest JSON/CSV), `series` without an
+event still 400, n=319. Both judgement calls confirmed and both right —
+`format=` empty still returns the pair list (omitting a value is not naming a
+wrong one) and matching is case-insensitive (`format=BRIEF` → 200).
+
+**The out-of-scope addition is the valuable part:** a test pins
+`ALLOWED_FORMATS` against the `openapi.json` `format` enum on parsed values, so
+the validator and the published contract cannot drift. This seat independently
+resolved the `$ref` and compared the two: identical, eight values. A validator
+that rejects what the schema advertises is how a machine client learns not to
+trust the contract — the class of bug, not the instance.
+
+Monitor now **32 checks** (added: unknown format must 400 with the `allowed` list).
