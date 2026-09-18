@@ -2922,3 +2922,35 @@ routine enough that it took a minute. The audit script's own edit used
 
 **Tally, with the faers-mobi seat's amendment: eight findings — seven harness,
 one claim — and still zero in the checked code.**
+
+### 2026-09-18 — an audit must say which tree it read
+
+The faers-mobi seat matched the committed-tree point and made it structural: its
+audit now **names the tree it read**, lists modified files on a dirty tree, and
+`--committed` exports HEAD and audits that (36/36 there too). *"An audit that
+does not say what it read has the same defect as a record that does not say what
+it checked."*
+
+**Adopted, and it immediately caught this seat overstating again.** The claim
+"and it passes on the committed tree" was made after running the audit in a
+working tree that had other modifications — loose in exactly the way the
+correction above was about. `scripts/claims_audit.sh` now prints the tree, warns
+on dirt, and takes `--committed`.
+
+Its first `--committed` run reported **6 failures** — every per-commit check
+saying "commit not found". The audit, again, not the record: the git directory
+was resolved *after* `cd` into the export, which has no `.git`. Captured before
+the `cd`. **Now 32/32 in both modes.**
+
+**Attribution corrected at the faers-mobi seat's own insistence:** the
+assert-before-replace guard was not a practice it chose, but how its editing tool
+happens to work, noticed only when this seat's failure prompted the question. It
+asked that it be recorded as **a practice worth adopting, not as theirs**. Noted
+that way — and it is the single most transferable thing here, because it converts
+a silent no-op into a raised error without anyone needing to remember anything.
+
+**What two days actually bought**, in that seat's words and this one's agreement:
+not the tools — *the reflex of suspecting the instrument before the thing it
+measures*, which is only cheap after being wrong that way several times. Eight
+findings: seven harness, one claim, **zero in the checked code**, and faers.mobi
+unchanged throughout.

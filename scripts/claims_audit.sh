@@ -14,7 +14,23 @@
 #
 # Usage: bash scripts/claims_audit.sh
 set -u
-cd "$(dirname "$0")/.." || exit 2
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+GITDIR="$REPO"   # captured BEFORE any cd: resolving it later pointed at the
+                 # export, which has no .git, so every per-commit check reported
+                 # "commit not found" and the run looked like 6 real failures.
+
+# --committed: audit an export of HEAD in a clean directory, not the working
+# tree. Without this the audit reads YOUR uncommitted files, so a claim can pass
+# here and fail for anyone who clones -- the same defect as a record that does
+# not say what it checked. Adopted from the faers-mobi seat, 2026-09-18, after
+# this seat asserted "passes on the committed tree" having run it in a dirty one.
+TREE="working tree"
+if [ "${1:-}" = "--committed" ]; then
+  EXPORT="$(mktemp -d)"; trap 'rm -rf "$EXPORT"' EXIT
+  git -C "$REPO" archive HEAD | tar -x -C "$EXPORT" || exit 2
+  REPO="$EXPORT"; TREE="HEAD export ($(git -C "$GITDIR" rev-parse --short HEAD))"
+fi
+cd "$REPO" || exit 2
 pass=0; fail=0
 ok()   { printf '  ok    %s\n' "$1"; pass=$((pass+1)); }
 bad()  { printf '  FAIL  %s\n' "$1"; fail=$((fail+1)); }
@@ -26,7 +42,13 @@ M=scripts/monitor_faers_mobi.sh
 S=scripts/monitor_selftest.py
 F=scripts/monitor_failpath_test.sh
 
-echo "1. working tree: does the file do what the record says?"
+echo "audited tree: $TREE"
+if [ "$TREE" = "working tree" ]; then
+  dirty="$(git -C "$GITDIR" status --porcelain -- scripts issues 2>/dev/null)"
+  [ -n "$dirty" ] && { echo "  NOTE uncommitted changes in the audited paths:"; echo "$dirty" | sed 's/^/    /'; echo "  re-run with --committed to audit HEAD instead"; }
+fi
+
+echo "1. does the file do what the record says?"
 claim "monitor: AND semantics for check patterns"        $M ' && '
 claim "monitor: homepage needs banner AND meta AND brief" $M 'alert-secondary && meta name'
 claim "monitor: contract-match compares live surfaces"   $M 'formats-contract-match'
@@ -64,10 +86,10 @@ echo "2. per commit: does each commit contain the change its message announces?"
 # <commit>|<fixed string the message implies>   — the fault a4c6e4f had
 while IFS='|' read -r c needle; do
   [ -z "$c" ] && continue
-  sha=$(git log --format=%H --grep="$c" -1)
+  sha=$(git -C "$GITDIR" log --format=%H --grep="$c" -1)
   if [ -z "$sha" ]; then bad "commit matching '$c' not found"; continue
   fi
-  if git show "$sha" --format="" -U0 | grep -qF -- "$needle"; then
+  if git -C "$GITDIR" show "$sha" --format="" -U0 | grep -qF -- "$needle"; then
     ok "'$c' carries /$needle/"
   else
     bad "'$c' does NOT carry /$needle/ — claim made true by a later commit?"
