@@ -2798,3 +2798,40 @@ Both were harness faults, found by suspecting the mutation first — exactly the
 trap the other seat named. Fixed: unescape `\\` correctly, delete **every**
 occurrence. **Now 35 of 35 parts CAUGHT, 0 inconclusive.** A part that still
 matches after full deletion reports INCONCLUSIVE, never NOT CAUGHT.
+
+### 2026-09-18 — the monitor's own failure branches, and a real PR filed by a test
+
+The faers-mobi seat sharpened the lesson: **"a branch that only executes when
+something is broken is a branch nobody has run."** Its own INCONCLUSIVE path was
+an R syntax error, unreachable in the happy path because it only runs when a
+mutation is missed, and all six are caught.
+
+That indicts the monitor's failure handling directly: filing a PR had run once
+by luck (#75); **comment-because-the-set-changed and comment-recovery had never
+run at all.** `scripts/monitor_failpath_test.sh` now exercises all four, against
+a local fake site with `gh`/`git` stubbed. Nine assertions, all passing: one PR
+per episode, no second PR and no comment on an unchanged set, a comment when the
+set changes, a recovery comment and a cleared episode.
+
+**It filed a real PR (#87) against production on its first run, and this is the
+honest record of that.** The test stubbed `gh` on PATH, but the monitor
+`export`s its own PATH at the top, which overrode the stub. faers.mobi was
+healthy throughout; the "33 failing checks" in #87 were the local fake. Closed
+with that explanation. Three fixes: PATH is prepended rather than replaced,
+`gh`/`git` are overridable by `GPS_MONITOR_GH` / `GPS_MONITOR_GIT` (PATH order
+alone is not reliable, because this script's own prefix shadows a stub), and the
+monitor **refuses GitHub writes when `BASE` is not production** unless explicitly
+allowed.
+
+**Three more harness faults, all reported as monitor faults first:** the `git`
+stub read the clone destination as `$4`, which is `1` from `--depth 1`; the
+`issues/` directory did not exist in the fake clone; and mode `broken-b` failed
+all 33 checks exactly like `broken-a`, so the failing *set* never changed and the
+branch correctly did not fire — **the test was wrong, not the monitor**. That mode
+now proxies production and breaks one path.
+
+**Six harness faults across both seats in two days, zero defects in the things
+they check.** Every one was found by running the branch that only runs when
+something is broken. The monitor's retry and pacing delays are now
+`GPS_MONITOR_RETRY_SLEEP` / `GPS_MONITOR_PACE` so this test runs in a minute
+rather than forty.

@@ -22,9 +22,17 @@
 #   scripts/monitor_faers_mobi.sh --status   # last run, last result, open episode
 
 set -u
-export PATH="$HOME/.local/bin:$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/bin:/usr/bin:/bin"
+# Cron gives a bare PATH, so these must be present. PREPEND rather than replace:
+# replacing it silently overrode the stubbed gh/git in monitor_failpath_test.sh,
+# which then filed a real PR (#87, 2026-09-17) against a healthy production site.
+export PATH="$HOME/.local/bin:$HOME/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/bin:/usr/bin:/bin${PATH:+:$PATH}"
 
-BASE="https://faers.mobi"
+BASE="${GPS_MONITOR_BASE:-https://faers.mobi}"
+# Overridable so monitor_failpath_test.sh can substitute recording stubs. PATH
+# alone cannot do that: this script prepends its own dirs, which shadowed the
+# stubs and filed a real PR (#87, 2026-09-17) while pointed at a fake site.
+GH="${GPS_MONITOR_GH:-gh}"
+GIT="${GPS_MONITOR_GIT:-git}"
 REPO="harlananelson/globalpatientsafety"
 STATE="${GPS_MONITOR_DIR:-$HOME/.claude/gps-monitor}"
 LOG="$STATE/monitor.log"
@@ -45,7 +53,7 @@ if [ "$STATUS" = 1 ]; then
   exit 0
 fi
 
-for t in curl gh git jq; do command -v "$t" >/dev/null || { echo "$(date -Is) FATAL: $t not on PATH" | tee -a "$LOG"; exit 3; }; done
+for t in curl "$GH" "$GIT" jq; do command -v "$t" >/dev/null || { echo "$(date -Is) FATAL: $t not on PATH" | tee -a "$LOG"; exit 3; }; done
 
 # ---------------------------------------------------------------------------
 # Checks. Fields: name | method | path | user-agent | expected status |
@@ -154,11 +162,11 @@ for spec in "${CHECKS[@]}"; do
   IFS='|' read -r name method path ua want ct re <<<"$spec"
   r="$(probe "$name" "$method" "$path" "$ua" "$want" "$ct" "$re")"
   if [ "$r" != OK ]; then
-    sleep 20   # one retry: a single blip during a Shiny recycle is not an incident
+    sleep "${GPS_MONITOR_RETRY_SLEEP:-20}"   # one retry: a blip during a Shiny recycle is not an incident
     r="$(probe "$name" "$method" "$path" "$ua" "$want" "$ct" "$re")"
   fi
   if [ "$r" = OK ]; then PASSES=$((PASSES+1)); else FAILS+=("$name|$method $path|$r"); fi
-  sleep 1.2  # heavy worker limit_req is 1 r/s burst 3
+  sleep "${GPS_MONITOR_PACE:-1.2}"  # heavy worker limit_req is 1 r/s burst 3
 done
 
 NOW="$(date -Is)"; echo "$NOW" >"$LASTRUN_FILE"
@@ -173,16 +181,23 @@ report() {
 }
 [ "$DRY" = 1 ] && { echo "--- dry run: $PASSES/$TOTAL pass"; [ "$NFAIL" -gt 0 ] && report; exit $(( NFAIL > 0 )); }
 
+# Belt and braces after #87: filing against the real repo while pointed at a
+# fake site is never intended, whatever PATH happens to hold.
+if [ "$BASE" != "https://faers.mobi" ] && [ -z "${GPS_MONITOR_ALLOW_WRITES:-}" ]; then
+  echo "$NOW refusing GitHub writes: BASE=$BASE is not production" | tee -a "$LOG"
+  exit $(( NFAIL > 0 ))
+fi
+
 EPISODE="$(cat "$EPISODE_FILE" 2>/dev/null || true)"
 if [ -n "$EPISODE" ]; then
-  st="$(gh pr view "$EPISODE" --repo "$REPO" --json state -q .state 2>/dev/null || echo UNKNOWN)"
+  st="$("$GH" pr view "$EPISODE" --repo "$REPO" --json state -q .state 2>/dev/null || echo UNKNOWN)"
   [ "$st" = OPEN ] || { rm -f "$EPISODE_FILE" "$FAILSET_FILE"; EPISODE=""; }
 fi
 
 # ---- recovery -------------------------------------------------------------
 if [ "$NFAIL" = 0 ]; then
   if [ -n "$EPISODE" ]; then
-    gh pr comment "$EPISODE" --repo "$REPO" --body "$(printf '<!-- role:monitor -->\nRecovered %s: all %d/%d checks pass. Owner seat: merge or close this PR.' "$NOW" "$PASSES" "$TOTAL")" >/dev/null \
+    "$GH" pr comment "$EPISODE" --repo "$REPO" --body "$(printf '<!-- role:monitor -->\nRecovered %s: all %d/%d checks pass. Owner seat: merge or close this PR.' "$NOW" "$PASSES" "$TOTAL")" >/dev/null \
       && echo "$NOW commented recovery on #$EPISODE" | tee -a "$LOG"
     rm -f "$EPISODE_FILE" "$FAILSET_FILE"
   fi
@@ -192,7 +207,7 @@ fi
 # ---- failure: comment on the open episode if the failing set changed --------
 if [ -n "$EPISODE" ]; then
   if [ "$FAILSET" != "$(cat "$FAILSET_FILE" 2>/dev/null)" ]; then
-    gh pr comment "$EPISODE" --repo "$REPO" --body "$(printf '<!-- role:monitor -->\nStill failing %s, set changed (%d/%d pass):\n\n%s' "$NOW" "$PASSES" "$TOTAL" "$(report)")" >/dev/null \
+    "$GH" pr comment "$EPISODE" --repo "$REPO" --body "$(printf '<!-- role:monitor -->\nStill failing %s, set changed (%d/%d pass):\n\n%s' "$NOW" "$PASSES" "$TOTAL" "$(report)")" >/dev/null \
       && echo "$NOW commented change on #$EPISODE" | tee -a "$LOG"
     echo "$FAILSET" >"$FAILSET_FILE"
   fi
@@ -202,11 +217,11 @@ fi
 # ---- failure: open a new episode PR ----------------------------------------
 TS="$(date +%Y%m%d-%H%M)"; BR="handshake/monitor-alert-$TS"; FILE="issues/monitor-alert-$TS.md"
 if [ ! -d "$CLONE/.git" ]; then
-  git clone -q --depth 1 "https://github.com/$REPO.git" "$CLONE" || { echo "$NOW FATAL clone" | tee -a "$LOG"; exit 3; }
+  "$GIT" clone -q --depth 1 "https://github.com/$REPO.git" "$CLONE" || { echo "$NOW FATAL clone" | tee -a "$LOG"; exit 3; }
 fi
 (
   cd "$CLONE" || exit 3
-  git fetch -q --depth 1 origin main && git checkout -q -B "$BR" origin/main || exit 3
+  "$GIT" fetch -q --depth 1 origin main && "$GIT" checkout -q -B "$BR" origin/main || exit 3
   {
     echo "# Monitor alert $TS: faers.mobi check failures"
     echo
@@ -236,11 +251,11 @@ fi
     echo "- No new \`/signals\` params, no pay gate, no \`/api/v1/\`"
     echo "- Fix the cause, not the check: if a check is wrong, say so here and the owner seat edits the monitor"
   } >"$FILE"
-  git add "$FILE" && git -c user.name="gps-monitor" -c user.email="4999279+harlananelson@users.noreply.github.com" commit -q -m "Monitor alert $TS: $NFAIL faers.mobi check(s) failing" \
-    && git push -q -u origin "$BR"
+  "$GIT" add "$FILE" && "$GIT" -c user.name="gps-monitor" -c user.email="4999279+harlananelson@users.noreply.github.com" commit -q -m "Monitor alert $TS: $NFAIL faers.mobi check(s) failing" \
+    && "$GIT" push -q -u origin "$BR"
 ) || { echo "$NOW FATAL branch/push" | tee -a "$LOG"; exit 3; }
 
-PRURL="$(gh pr create --repo "$REPO" --head "$BR" --base main \
+PRURL="$("$GH" pr create --repo "$REPO" --head "$BR" --base main \
   --title "Monitor alert $TS: $NFAIL faers.mobi check(s) failing" \
   --body "$(printf 'Handshake, filed by the site monitor. Do not merge until it comments Recovered.\n\nFailing (%d/%d):\n\n%s\n\nSpec: `%s`' "$NFAIL" "$TOTAL" "$(report)" "$FILE")" 2>&1 | tail -1)"
 PRNUM="${PRURL##*/}"
