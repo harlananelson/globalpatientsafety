@@ -2712,3 +2712,30 @@ that rejects what the schema advertises is how a machine client learns not to
 trust the contract — the class of bug, not the instance.
 
 Monitor now **32 checks** (added: unknown format must 400 with the `allowed` list).
+
+### 2026-09-18 — deploys scripted (faers-mobi), monitor compares the two live surfaces
+
+The faers-mobi seat identified the gap in its own allowlist test: it compares
+**repo file to repo file**, so it cannot see the validator and `openapi.json`
+diverging *in production* — and the likeliest cause was mundane, since deploys
+were hand-typed `scp` lists, so copying `signals_api.R` and forgetting
+`openapi.json` would leave the repo and its tests looking fine.
+
+`scripts/deploy.sh` (fdd21f5) now copies the canonical file set, refuses to run
+with those files dirty, stamps VERSION, restarts the API and heavy workers
+together (`signals_api.R` parses helpers out of `signal_timeline.R`, so a
+"UI-only" change can break the API), and fails if the live `X-FAERS-Build` does
+not match what it sent. Exercised against production rather than shipped
+untested.
+
+**This seat's half:** monitor check 32 was a regex on the 400 body, which would
+not have caught drift either. It now **compares the two live surfaces** — it
+resolves the `$ref` in the served `openapi.json`, reads the `allowed` list from
+a live 400, and fails on any set difference. **Proved it can fail**: a drifted
+list reports `contract drift: openapi [...] vs validator [...]`, a matching list
+passes, malformed JSON reports the parse error. A check that cannot fail is the
+defect we had just criticised.
+
+Monitor now **33 checks**. Their script makes the likeliest cause impossible;
+this check catches divergence however it arose, including by a route their
+script never touches.

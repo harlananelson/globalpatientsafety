@@ -85,6 +85,7 @@ CHECKS=(
   "signals-label-status|GET|/signals?drug=tzield&event=Nausea&format=label|curl|200|application/json|\"label_status\":\"(cached|empty|missing)\""
   "signals-plus-decode|GET|/signals?event=ischaemic+stroke&limit=1|curl|200|application/json|Ischaemic stroke"
   "signals-bad-format-400|GET|/signals?drug=tzield&event=Nausea&format=bogus|curl|400|application/json|\"allowed\":\\[\"json\""
+  "formats-contract-match|GET|/openapi.json|curl|200|application/json|"
   "well-known-404|GET|/.well-known/ai-plugin.json|curl|404||"
 )
 
@@ -110,6 +111,28 @@ probe() {
   if [ -z "$why" ] && [ "$name" = signals-headers ]; then
     grep -qi '^x-total-count:' "$hdr" || why="no X-Total-Count header"
     grep -qi '^x-faers-through:' "$hdr" || why="no X-FAERS-Through header"
+  fi
+  if [ -z "$why" ] && [ "$name" = formats-contract-match ]; then
+    # The production divergence this exists for: the validator and the published
+    # schema disagreeing on the live box, however that arose. Compares the two
+    # SERVED surfaces, not two files in a repo.
+    curl -sS --max-time 45 -o "$TMP/$name.err400" "$BASE/signals?drug=tzield&event=Nausea&format=__monitor_probe__" 2>/dev/null
+    why="$(python3 - "$out" "$TMP/$name.err400" <<'PYEOF'
+import json,sys
+try:
+    d=json.load(open(sys.argv[1]))
+    ps=d["paths"]["/signals"]["get"]["parameters"]
+    ps=[d["components"]["parameters"][p["$ref"].split("/")[-1]] if "$ref" in p else p for p in ps]
+    enum=[p for p in ps if p.get("name")=="format"][0]["schema"].get("enum")
+    allowed=json.load(open(sys.argv[2])).get("allowed")
+    if not enum: print("openapi format enum missing")
+    elif not allowed: print("400 body has no allowed list")
+    elif sorted(enum)!=sorted(allowed):
+        print("contract drift: openapi %s vs validator %s" % (sorted(enum), sorted(allowed)))
+except Exception as e:
+    print("contract check failed: %s" % e)
+PYEOF
+)"
   fi
   if [ -z "$why" ] && [ "$name" = signals-json ]; then
     grep -q '"n":0[,}]' "$out" && why="tzield x Nausea n=0"
