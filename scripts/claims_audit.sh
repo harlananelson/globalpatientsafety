@@ -70,6 +70,8 @@ claim "failpath: harness pid is passed to the server"    $F '"$PORT" "$$"'
 claim "failpath: os.kill(owner, 0) liveness probe"       $F 'os.kill(owner, 0)'
 claim "failpath: broken-b proxies production"            $F 'urllib.request.urlopen("https://faers.mobi"'
 claim "failpath: stubs gh and git explicitly"            $F 'GPS_MONITOR_GH='
+claim "heartbeat: notices a stale monitor"              scripts/monitor_heartbeat.sh 'STALE'
+claim "heartbeat: states the same-cron residual risk"   scripts/monitor_heartbeat.sh 'RESIDUAL RISK'
 claim "protocol: inbound path documented"                issues/inbound-change-protocol.md 'it notifies, this seat files'
 claim "protocol: one filer rule"                         issues/inbound-change-protocol.md '## One filer'
 
@@ -80,7 +82,8 @@ if [ "$n" -ge 33 ]; then ok "monitor: $n checks (record says 33)"; else bad "mon
 # Suspect the check before the record -- the standing lesson of this loop.
 a=$(( $(grep -cE '^\s*(want|wantnot) ' $F) + $(grep -c 'PASS episode cleared' $F) ))
 if [ "$a" -eq 9 ]; then ok "failpath: $a assertions (record says 9)"; else bad "failpath: $a assertions, record says 9"; fi
-if crontab -l 2>/dev/null | grep -q monitor_faers_mobi; then ok "cron entry installed"; else bad "cron entry missing"; fi
+if crontab -l 2>/dev/null | grep -q monitor_faers_mobi; then ok "monitor cron entry installed"; else bad "monitor cron entry missing"; fi
+if crontab -l 2>/dev/null | grep -q monitor_heartbeat; then ok "heartbeat cron entry installed"; else bad "heartbeat cron entry missing"; fi
 
 echo "2. per commit: does each commit contain the change its message announces?"
 # <commit>|<fixed string the message implies>   — the fault a4c6e4f had

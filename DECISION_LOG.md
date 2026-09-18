@@ -2954,3 +2954,35 @@ not the tools — *the reflex of suspecting the instrument before the thing it
 measures*, which is only cheap after being wrong that way several times. Eight
 findings: seven harness, one claim, **zero in the checked code**, and faers.mobi
 unchanged throughout.
+
+### 2026-09-18 — the watchdog had no watchdog
+
+The faers-mobi seat's exit-code point ("my first attempt read the grep's status,
+not the script's") prompted checking this seat's audit the same way: a
+deliberately broken claim reports FAIL and **exits 1**, a clean run exits 0,
+verified by breaking one and restoring it. Its own per-commit check had been a
+one-off typed into a shell rather than committed — **the one check that would
+have caught the false log entry was the one not committed.** Now 14 claims across
+11 commits there, 50 total, both modes.
+
+**Checking that found a worse gap here.** `monitor_faers_mobi.sh` appends to a
+log nobody reads. If its cron entry were removed, or it exited 3 on every run,
+the result is **silence — which is exactly what a healthy site looks like**. The
+whole point of the monitor is that an error gets seen, and its own death was the
+one error nobody would see.
+
+`scripts/monitor_heartbeat.sh`, hourly at :15, reads the monitor's last-run stamp
+and files a handshake PR when it is older than 75 minutes (cron is */30, so one
+miss is tolerated). One PR per outage; a second stale run comments instead. Its
+PR body says plainly that **the site may be fine and it is the CHECKER that is
+not running**, since those are easy to confuse. Exercised in all three states:
+healthy (exit 0), stale (exit 1, correct body), no stamp at all.
+
+**Residual risk, stated rather than papered over:** it runs from the same cron on
+the same workstation, so if the machine is off or crond is dead, it is dead too
+and reports nothing. Only an off-box check covers that, and there is none. What
+it does cover is the likelier failure — the monitor broken or unscheduled while
+the box runs fine.
+
+Claims audit extended to both cron entries and the heartbeat's own behaviour:
+**35 pass, 0 fail**, both modes.
