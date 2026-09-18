@@ -2770,3 +2770,31 @@ what it checked. Both passed their author's inspection. Only the question found 
 
 **Correction accepted:** a deploy script removes the cause only when it is run,
 so the protocol step carries as much weight as the script.
+
+### 2026-09-18 — mutation self-test for the monitor (35 parts, all caught)
+
+The faers-mobi seat built `tools/dev/mutation_check.py`, which reintroduces each
+defect that repo has actually had and confirms the tests fail — all six caught.
+Its finding about the **method** is the transferable part: its first run reported
+`compact_pairs` NOT CAUGHT, and the mutation was at fault, not the test
+(`row$x <- NULL` *removes* the element in R, while the real defect was
+`list(x = NULL)`, which keeps it and serialises as `{}`). **A false NOT CAUGHT
+sends you to rewrite a test that was fine, and "fixing" it to catch a no-op makes
+it assert something untrue. Suspect the mutation before the test.**
+
+`scripts/monitor_selftest.py` is this seat's adaptation. A monitor cannot mutate
+production, so it mutates the other side: fetch each check's real response, delete
+the text the pattern matches, confirm the pattern then rejects the body. It parses
+the `CHECKS` table out of the monitor so the two cannot drift.
+
+**Its own first run proved the point twice, against itself:**
+
+| First run said | Actually |
+|---|---|
+| `BAD REGEX` on `signals-bad-format-400` | harness mis-handled bash `\\[`; `grep -E` matches it fine |
+| 17 of 34 parts `INCONCLUSIVE` | mutation deleted **one** occurrence; the evidence appears several times per page |
+
+Both were harness faults, found by suspecting the mutation first — exactly the
+trap the other seat named. Fixed: unescape `\\` correctly, delete **every**
+occurrence. **Now 35 of 35 parts CAUGHT, 0 inconclusive.** A part that still
+matches after full deletion reports INCONCLUSIVE, never NOT CAUGHT.
