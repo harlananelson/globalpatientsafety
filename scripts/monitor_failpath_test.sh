@@ -21,8 +21,31 @@ STATE="$TMP/state"; LOG="$TMP/calls.log"; mkdir -p "$STATE" "$TMP/bin"
 
 # --- a server that answers every path with a body we control -----------------
 cat > "$TMP/srv.py" <<'PY'
-import http.server, os, sys
+import http.server, os, sys, threading, time
 MODE = os.environ["MODE_FILE"]
+
+
+def _die_with(owner):
+    """Exit when the HARNESS dies.
+
+    SIGKILL cannot be trapped, so the trap in this script never runs, and in
+    broken-b mode this server PROXIES PRODUCTION -- an orphan is an open
+    forwarder to faers.mobi that nobody owns. Measured 2026-09-18: killing the
+    harness left exactly that.
+
+    Watching getppid() is not enough: the server's parent is an intermediate
+    shell that survives a kill of the harness, so getppid() never changes.
+    Watch the harness PID itself, passed as argv[2].
+    """
+    while True:
+        try:
+            os.kill(owner, 0)
+        except OSError:
+            os._exit(0)
+        time.sleep(1)
+
+
+threading.Thread(target=_die_with, args=(int(sys.argv[2]),), daemon=True).start()
 class H(http.server.BaseHTTPRequestHandler):
     def _mode(self): return open(MODE).read().strip()
     def do_GET(self):
@@ -87,7 +110,7 @@ chmod +x "$TMP/bin/gh" "$TMP/bin/git"
 
 PORT=$(python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1]);s.close()')
 echo broken-a > "$TMP/mode"
-MODE_FILE="$TMP/mode" python3 "$TMP/srv.py" "$PORT" & SRV=$!
+MODE_FILE="$TMP/mode" python3 "$TMP/srv.py" "$PORT" "$$" & SRV=$!   # $$ = this harness, the PID the server watches
 for _ in $(seq 20); do curl -s -o /dev/null "http://127.0.0.1:$PORT/" && break; sleep 0.2; done
 
 run() {

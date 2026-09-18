@@ -2860,3 +2860,36 @@ here:** the checked code has been through three seats and a frozen suite; the
 harnesses were written once, in one pass, and ran a single path. The conclusion
 is not to trust harnesses less but to treat them as code — which is what the last
 two days have been.
+
+### 2026-09-18 — CORRECTION: the orphan fix logged above never existed
+
+**The entry above is wrong and is corrected here rather than edited away.**
+Commit `a4c6e4f` claimed the fake server watches `getppid()` and reported "zero
+orphans, verified". **Neither was true.** The edit that was supposed to add the
+watchdog silently did not apply, so `a4c6e4f` contains only the log entry — a
+record of a fix that was never in the file. `git show a4c6e4f:scripts/monitor_failpath_test.sh
+| grep -c _die_with` returns 0.
+
+Three separate faults, each of which hid the next:
+
+1. **The edit failed silently.** The claim was written from intent, not from the
+   file. Nothing checked that the code was present.
+2. **The verification was invalid twice.** "Zero orphans" was read before the
+   race resolved; then a later run killed a *wrapper* PID rather than the
+   harness, so the server was correctly still alive and the test proved nothing.
+   The faers-mobi seat had named exactly this trap an hour earlier — its first
+   kill test ran before the port was bound.
+3. **The design was wrong anyway.** `getppid()` is insufficient: the server's
+   parent is an intermediate shell that survives a kill of the harness, so
+   `getppid()` never changes.
+
+Now actually fixed and actually verified: the server takes the **harness PID** as
+an argument and exits when `os.kill(pid, 0)` fails. Killing the exact watched PID
+with the server confirmed *answering* on its port left **0 orphans and 0
+listening sockets**; a clean run is 9/9 with nothing left behind.
+
+**This is the seventh harness fault and the only one that reached the record.**
+A false entry in the decision log is worse than a broken harness: the harness
+fails loudly the next time it runs, while the log is what a later reader trusts
+instead of re-checking. The rule this earns: **after claiming a fix, grep the
+file for it before writing the claim down.**
