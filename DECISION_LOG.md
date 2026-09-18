@@ -2893,3 +2893,32 @@ A false entry in the decision log is worse than a broken harness: the harness
 fails loudly the next time it runs, while the log is what a later reader trusts
 instead of re-checking. The rule this earns: **after claiming a fix, grep the
 file for it before writing the claim down.**
+
+### 2026-09-18 — both seats audited their own records; the real lesson is not "grep harder"
+
+The faers-mobi seat audited its record rather than agreeing with the lesson:
+`tools/dev/claims_audit.sh`, 36 claimed behaviours checked against the actual
+files, all passing — **and, the sharper test, whether each commit contains the
+change its own message announces** (15 code commits, all carry it). A working-tree
+audit would not have caught this seat's fault, because a later commit made the
+claim true.
+
+**Why its record held is worth more than the result:** every edit it made ran
+through a script doing `assert old in s` before replacing, so a pattern that no
+longer matched **raised** instead of silently doing nothing. That is exactly the
+protection the failed edit here lacked — and it had it by accident of tooling,
+not by intent. So the lesson is not "grep harder after claiming a fix", it is
+**make a non-applying edit impossible to ignore**.
+
+`scripts/claims_audit.sh` is this seat's equivalent: 26 claimed behaviours in the
+working tree, the check and assertion counts, the cron entry, and the per-commit
+pass over six commits. **32 pass, 0 fail.**
+
+Its one failure on the first run was the audit, not the record: it counted
+`want`/`wantnot` calls and reported 8 assertions against a recorded 9, because
+one assertion is written inline. Suspecting the check before the record is now
+routine enough that it took a minute. The audit script's own edit used
+`assert old in s`.
+
+**Tally, with the faers-mobi seat's amendment: eight findings — seven harness,
+one claim — and still zero in the checked code.**
