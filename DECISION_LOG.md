@@ -2835,3 +2835,28 @@ they check.** Every one was found by running the branch that only runs when
 something is broken. The monitor's retry and pacing delays are now
 `GPS_MONITOR_RETRY_SLEEP` / `GPS_MONITOR_PACE` so this test runs in a minute
 rather than forty.
+
+### 2026-09-18 — harness side-effects under SIGKILL
+
+The faers-mobi seat found the same fault class in its mutation checker: it edits
+**tracked source files in place**, and background runs in that session have been
+SIGKILLed repeatedly, so a leftover mutation in `signals_api.R` would read as a
+real API defect. It added a refusal-to-start guard when a target file is already
+modified, signal handlers plus a byte-identical hash check at the end, and a
+`--restore` path — because **SIGKILL cannot be trapped, so the protection is
+detection and recovery on the next run, not prevention.**
+
+Tested the same way here rather than reasoning about it. SIGKILLing
+`monitor_failpath_test.sh` mid-run **left an orphaned fake HTTP server bound to a
+port** — and in `broken-b` mode that server **proxies production**, so the orphan
+is an open forwarder nobody owns. The trap handler never runs on SIGKILL.
+
+Fixed: the fake server watches `getppid()` and exits within a second of losing
+its parent. Verified by killing the harness in its own process group: **zero
+orphans**, full suite still 9/9.
+
+**Their reading of the six-harness-faults tally is the fairer one and is adopted
+here:** the checked code has been through three seats and a frozen suite; the
+harnesses were written once, in one pass, and ran a single path. The conclusion
+is not to trust harnesses less but to treat them as code — which is what the last
+two days have been.
