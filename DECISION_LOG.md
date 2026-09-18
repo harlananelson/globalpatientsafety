@@ -2739,3 +2739,34 @@ defect we had just criticised.
 Monitor now **33 checks**. Their script makes the likeliest cause impossible;
 this check catches divergence however it arose, including by a route their
 script never touches.
+
+### 2026-09-18 — the same question asked of both suites; three of this seat's checks were weak
+
+The faers-mobi seat applied "can this fail, and for the right reason?" to its own
+`deploy.sh` and it failed: verification had only ever run on the happy path, and
+the first `--verify-only` run reported MISMATCH on a clean tree because the build
+string embedded the `src-` commit, which moves on any commit including docs-only
+ones. **A check that cries wolf gets ignored, which is how a real drift goes
+unnoticed.** It now compares the `api-` content hash and reports a differing
+commit as a note; exercised three ways (clean passes; one line appended to
+`signals_api.R` reports API CODE MISMATCH and exits 1; restoring passes).
+
+**Asking it of this seat's suite found three weak checks.** The check table is
+`|`-delimited and the regex is the last field, so a regex containing `|` reads as
+**alternation**: `home-human`, `signals-series` and `signals-brief-pair` passed
+when *either* half matched. The homepage check would have passed with the
+machine-client banner gone.
+
+Fixed: ` && ` now separates regexes that must **all** match, and the three are
+strengthened (homepage needs the banner **and** the meta description **and** a
+`format=brief` link; series needs a quarter label **and** a quarter pattern
+**and** `eb05`; brief needs the heading **and** `sum n=` **and** `Data through`).
+Proved by doctoring a fetched homepage: with `alert-secondary` removed the check
+now fails, where before it passed on the meta tag alone.
+
+**Twice in two days, in opposite directions:** this seat asserted presence rather
+than agreement; the other compared a string containing something irrelevant to
+what it checked. Both passed their author's inspection. Only the question found them.
+
+**Correction accepted:** a deploy script removes the cause only when it is run,
+so the protocol step carries as much weight as the script.

@@ -54,7 +54,7 @@ for t in curl gh git jq; do command -v "$t" >/dev/null || { echo "$(date -Is) FA
 # so requests run serially with a pause; treat that as part of the contract.
 # ---------------------------------------------------------------------------
 CHECKS=(
-  "home-human|GET|/|Mozilla/5.0|200|text/html|alert-secondary.*|meta name=\"description\""
+  "home-human|GET|/|Mozilla/5.0|200|text/html|alert-secondary && meta name=\"description\" && format=brief"
   "home-bot-chatgpt|GET|/|ChatGPT-User|200|text/|format=brief"
   "home-bot-perplexity|GET|/|PerplexityBot|200|text/|format=brief"
   "home-bot-claude|GET|/|ClaudeBot|200|text/|format=brief"
@@ -72,12 +72,12 @@ CHECKS=(
   "mcp-server-py|GET|/mcp/server.py|curl|200|text/|def "
   "signals-json|GET|/signals?drug=tzield&event=Nausea|curl|200|application/json|\"n\":[0-9]+.*\"eb05\":[0-9.]+"
   "signals-headers|HEAD|/signals?event=rash&sort=n&limit=5|curl|200|application/json|"
-  "signals-series|GET|/signals?drug=tzield&event=Nausea&format=series|curl|200|application/json|\"quarter\"|20[0-9]{2}Q[1-4]"
+  "signals-series|GET|/signals?drug=tzield&event=Nausea&format=series|curl|200|application/json|\"quarter\" && 20[0-9]{2}Q[1-4] && \"eb05\""
   "signals-profile-drug|GET|/signals?drug=tzield&format=profile|curl|200|application/json|n_pairs"
   "signals-profile-event|GET|/signals?event=Nausea&format=profile|curl|200|application/json|faers_through"
   "signals-class|GET|/signals?drug=tzield&event=Nausea&format=class|curl|200|application/json|class_wide"
   "signals-label|GET|/signals?drug=tzield&event=Nausea&format=label|curl|200|application/json|novel"
-  "signals-brief-pair|GET|/signals?drug=tzield&event=Nausea&format=brief|curl|200|text/|RWE brief.*|n=[0-9]+"
+  "signals-brief-pair|GET|/signals?drug=tzield&event=Nausea&format=brief|curl|200|text/|RWE brief && sum n=[0-9]+ && Data through 20[0-9]{2}Q[1-4]"
   "signals-brief-event|GET|/signals?event=Nausea&format=brief|curl|200|text/|Data through"
   "signals-pdf|GET|/signals?drug=tzield&event=Nausea&format=pdf|curl|200|application/pdf|"
   "signals-row-flags|GET|/signals?drug=tzield&limit=1|curl|200|application/json|\"indication\":(true|false).*\"low_info\":(true|false)"
@@ -106,7 +106,17 @@ probe() {
   [ "$code" = "$want" ] || why="status $code (want $want)"
   [ -z "$why" ] && [ -n "$ct" ] && [[ "$ctype" != "$ct"* ]] && why="content-type '$ctype' (want $ct*)"
   if [ -z "$why" ] && [ -n "$re" ] && [ "$method" != HEAD ]; then
-    grep -q -E "$re" "$out" || why="body missing /$re/ ($(wc -c <"$out")B)"
+    # " && " separates regexes that must ALL match. Without this, a regex
+    # containing "|" reads as alternation and the check passes when only one
+    # half holds -- three checks were silently that weak until 2026-09-18.
+    local part rest="$re"
+    while [ -n "$rest" ]; do
+      case "$rest" in
+        *" && "*) part="${rest%%" && "*}"; rest="${rest#*" && "}" ;;
+        *) part="$rest"; rest="" ;;
+      esac
+      grep -q -E "$part" "$out" || { why="body missing /$part/ ($(wc -c <"$out")B)"; break; }
+    done
   fi
   if [ -z "$why" ] && [ "$name" = signals-headers ]; then
     grep -qi '^x-total-count:' "$hdr" || why="no X-Total-Count header"
