@@ -2,7 +2,8 @@
 # monitor_faers_mobi.sh — probe faers.mobi and file a handshake PR when it breaks.
 #
 # Runs from cron on the workstation (see install note at the bottom). Every check
-# is a live request the handshake tickets #31–#74 promised would keep working.
+# is a live request the handshake tickets #31–#90 promised would keep working
+# (incl. brief↔json agree — GPS #90 cheap/:3841 vs heavy/:3843 split).
 # A failure is not "HTTP != 200"; it is status, content-type, or a body marker
 # that the ticket's Verify section named.
 #
@@ -86,6 +87,7 @@ CHECKS=(
   "signals-class|GET|/signals?drug=tzield&event=Nausea&format=class|curl|200|application/json|class_wide"
   "signals-label|GET|/signals?drug=tzield&event=Nausea&format=label|curl|200|application/json|novel"
   "signals-brief-pair|GET|/signals?drug=tzield&event=Nausea&format=brief|curl|200|text/|RWE brief && sum n=[0-9]+ && Data through 20[0-9]{2}Q[1-4]"
+  "signals-brief-json-agree|GET|/signals?drug=tzield&event=Nausea|curl|200|application/json|"
   "signals-brief-event|GET|/signals?event=Nausea&format=brief|curl|200|text/|Data through"
   "signals-pdf|GET|/signals?drug=tzield&event=Nausea&format=pdf|curl|200|application/pdf|"
   "signals-row-flags|GET|/signals?drug=tzield&limit=1|curl|200|application/json|\"indication\":(true|false).*\"low_info\":(true|false)"
@@ -154,6 +156,22 @@ PYEOF
   fi
   if [ -z "$why" ] && [ "$name" = signals-json ]; then
     grep -q '"n":0[,}]' "$out" && why="tzield x Nausea n=0"
+  fi
+  # GPS #90: cheap JSON (:3841) stayed 200 while heavy brief/pdf (:3843) 504'd
+  # for ~26 min after a missing API-loader helper. Individual brief checks catch
+  # the outage; this names the exact disagreement so the alert points at the
+  # cheap-vs-heavy split / API loader, not capacity. Both-up and both-down agree.
+  if [ "$name" = signals-brief-json-agree ]; then
+    brief_code="$(curl -sS --max-time 45 -A curl -o "$TMP/$name.brief" -w '%{http_code}' \
+      "$BASE/signals?drug=tzield&event=Nausea&format=brief" 2>"$TMP/$name.brief.err")" || brief_code="000"
+    json_code="$code"
+    if [ "$json_code" = 200 ] && [ "$brief_code" = 200 ]; then
+      why=""
+    elif [ "$json_code" != 200 ] && [ "$brief_code" != 200 ]; then
+      why=""
+    else
+      why="disagree: json=$json_code brief=$brief_code; cheap :3841 vs heavy :3843 / API loader (GPS #90 signature)"
+    fi
   fi
   if [ -n "$why" ]; then echo "$why"; else echo OK; fi
 }
@@ -243,8 +261,13 @@ fi
     echo "|---|---|---|"
     echo "| \`/signals\` JSON hangs or 0 bytes | cheap JSON \`:3841\` | \`systemctl restart faers-signals-api\` |"
     echo "| brief / pdf / profile / class / series hang | heavy \`:3843\` | \`systemctl restart faers-signals-heavy\` |"
+    echo "| \`signals-brief-json-agree\` (json up, brief down) | heavy \`:3843\` / API \`load_search_helpers()\` | recycle heavy; check API loader lists every helper brief calls |"
     echo "| static \`/api\`, \`/api.md\`, \`/llms.txt\`, \`/openapi.json\`, bot homepage, \`/mcp\` | nginx | \`nginx -t && systemctl reload nginx\` |"
     echo "| homepage HTML / banner / head | Shiny UI | \`restart.txt\`; kill only the SockJS whose cwd is the faers-mobi dir |"
+    echo
+    echo "## If signals-brief-json-agree failed"
+    echo
+    echo "Cheap JSON and heavy brief disagree about being up. That is the GPS #90 signature: look at \`:3843\` / the API loader hand-list, not capacity on \`:3841\`."
     echo
     echo "## Keep"
     echo
