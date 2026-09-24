@@ -39,15 +39,13 @@ Hypothesis-only language in every report: trials are registry facts; FAERS (if o
 
 ## Host decision (Harlan)
 
-Pick one before Linux codes:
+**Decided 2026-09-24: Host B — globalpatientsafety.com** (marketing site + API). Not faers.mobi. Keep FAERS signal math on faers.mobi; pipeline is a GPS content/API product with optional link-out to `/signals` later.
 
-| Option | Where | Fit |
-|--------|--------|-----|
-| **A. faers.mobi sibling path** | e.g. `GET /pipeline?sponsor=` next to `/signals` | Same LLM discoverability; keep signal math separate |
-| **B. globalpatientsafety.com** | Static or small API on the marketing site | Pipeline as content product; FAERS link-out |
-| **C. New thin service** | `pipeline.gps…` or path under existing box | Cleanest separation; more ops |
-
-Career default if Harlan doesn’t pick: **A** — one additive API surface beside `/signals`, no change to signal ranking.
+| Option | Where | Status |
+|--------|--------|--------|
+| A. faers.mobi sibling path | `GET /pipeline` next to `/signals` | Not chosen |
+| **B. globalpatientsafety.com** | Marketing site + API | **Chosen** |
+| C. New thin service | Separate host | Not chosen |
 
 ## Slice 1 (thin, mergeable)
 
@@ -98,7 +96,7 @@ Markdown `text/plain` (same Content-Type rule as signals briefs): sponsor, count
 - Live `sponsor=Sanofi` (or Harlan’s pick) returns 200 with ≥1 real NCT from CT.gov  
 - Unknown sponsor → empty studies + clear `n_studies: 0` (not 500)  
 - CT.gov timeout/5xx → 502/503 JSON with `source` error; never empty 200 pretending success  
-- Documented in api.md / openapi when hosted on faers.mobi  
+- Documented on globalpatientsafety.com (API page or `/pipeline` docs); link from homepage / llms if present  
 - Monitor: one check `pipeline-sponsor-sanofi` (or host equivalent)
 
 ## Slice 2 (later)
@@ -116,7 +114,7 @@ Standing refresh: cache sponsor snapshots nightly (respect CT.gov rate limits), 
 
 - **Career:** this ticket; verify live after deploy; ping Harlan when the first sponsor report is useful  
 - **Linux:** implement on chosen host; deploy when green; post deploy note with sample curl  
-- **Codex:** only if this lands under faers.mobi eval surface — otherwise skip frozen suite  
+- **Codex:** skip frozen faers.mobi suite — this is GPS host, not `/signals`  
 
 ## Do not from this PR alone
 
@@ -125,4 +123,4 @@ Standing refresh: cache sponsor snapshots nightly (respect CT.gov rate limits), 
 - Scrape CT.gov HTML  
 - Claim pipeline = safety signal  
 
-Refs: GPS #93 (CT.gov maybe enricher), #68 (pay parked).
+Refs: GPS #93 (CT.gov maybe enricher), #68 (pay parked). Host = B (Harlan 2026-09-24).
