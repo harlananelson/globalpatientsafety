@@ -91,7 +91,7 @@ Counts below are the Mistral idea table, not a roadmap commitment.
 | Signal comparison tool | **maybe** | Thin compare of two drugs or two windows on existing formats. |
 | Collaborative workspaces / accounts | **parked** | Needs auth; rides with pay gate. |
 | Train custom ML on FAERS in-product | **don't** | Compute + liability + not our wedge. |
-| Literature links (PubMed, etc.) | **maybe** | Optional enrich in brief; never invent citations. |
+| Literature / trial links (PubMed, ClinicalTrials.gov) | **maybe** | Optional enrich in brief/profile. ClinicalTrials.gov has a public REST **API v2** (`https://clinicaltrials.gov/api/v2/`, no key for ordinary search; classic API retired). Link NCT studies by intervention/condition; never invent NCT ids or citations. |
 
 ---
 
@@ -131,10 +131,17 @@ Do **not** automate this rubric as a standing “improve the site” loop — it
 
 1. **Alerts** (parked with pay) — watch drug×event, email on novel+rising flip.  
 2. **Subgroup or co-med** — one engine slice, not both at once.  
-3. **Ops** — merge #91; optional brief cache.  
-4. **Pay gate** — only when Harlan says go (#68).
+3. **ClinicalTrials.gov enrich** — thin brief/profile stanza: related NCT studies via API v2 (intervention ≈ substance); hypothesis-only, no efficacy claims.  
+4. **Ops** — merge #91; optional brief cache.  
+5. **Pay gate** — only when Harlan says go (#68).
 
 Everything else stays **don't** or waits.
+
+## ClinicalTrials.gov (Harlan 2026-09-24)
+
+Yes — public API exists. Prefer **v2**: docs at https://clinicaltrials.gov/data-api/api. Useful as an **enricher** next to FAERS signals (what trials exist for this substance / condition), not as a second signal engine. Do not scrape the HTML UI; do not assert causality from trial titles.
+
+When opened as a handshake: one additive field or brief stanza (e.g. top few NCT ids + status + title), fail soft if CT.gov is down, never block `/signals`.
 
 ## Do not do from this note
 
