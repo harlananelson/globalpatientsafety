@@ -1,0 +1,909 @@
+{
+ "testEngine": {
+  "name": "axe-core",
+  "version": "4.13.0"
+ },
+ "testRunner": {
+  "name": "axe"
+ },
+ "testEnvironment": {
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+  "windowWidth": 1366,
+  "windowHeight": 900,
+  "orientationAngle": 0,
+  "orientationType": "portrait-primary"
+ },
+ "timestamp": "2026-10-09T10:19:44.843Z",
+ "url": "https://globalpatientsafety.com/shingles",
+ "toolOptions": {
+  "runOnly": {
+   "type": "tag",
+   "values": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "best-practice"
+   ]
+  },
+  "reporter": "v1"
+ },
+ "inapplicable": [
+  "accesskeys",
+  "area-alt",
+  "aria-braille-equivalent",
+  "aria-command-name",
+  "aria-dialog-name",
+  "aria-input-field-name",
+  "aria-meter-name",
+  "aria-progressbar-name",
+  "aria-required-children",
+  "aria-required-parent",
+  "aria-tab-name",
+  "aria-text",
+  "aria-toggle-field-name",
+  "aria-tooltip-name",
+  "aria-treeitem-name",
+  "autocomplete-valid",
+  "blink",
+  "definition-list",
+  "dlitem",
+  "duplicate-id-aria",
+  "form-field-multiple-labels",
+  "frame-focusable-content",
+  "frame-tested",
+  "frame-title-unique",
+  "frame-title",
+  "input-button-name",
+  "input-image-alt",
+  "label-title-only",
+  "label",
+  "landmark-banner-is-top-level",
+  "landmark-contentinfo-is-top-level",
+  "landmark-no-duplicate-contentinfo",
+  "marquee",
+  "meta-refresh",
+  "object-alt",
+  "presentation-role-conflict",
+  "role-img-alt",
+  "select-name",
+  "server-side-image-map",
+  "skip-link",
+  "svg-img-alt",
+  "tabindex",
+  "valid-lang",
+  "video-caption",
+  "no-autoplay-audio"
+ ],
+ "passes": [
+  "aria-allowed-attr",
+  "aria-allowed-role",
+  "aria-conditional-attr",
+  "aria-deprecated-role",
+  "aria-hidden-body",
+  "aria-hidden-focus",
+  "aria-prohibited-attr",
+  "aria-required-attr",
+  "aria-roles",
+  "aria-valid-attr-value",
+  "aria-valid-attr",
+  "avoid-inline-spacing",
+  "button-name",
+  "bypass",
+  "color-contrast",
+  "document-title",
+  "empty-heading",
+  "empty-table-header",
+  "heading-order",
+  "html-has-lang",
+  "html-lang-valid",
+  "html-xml-lang-mismatch",
+  "image-redundant-alt",
+  "landmark-main-is-top-level",
+  "landmark-no-duplicate-banner",
+  "landmark-no-duplicate-main",
+  "landmark-one-main",
+  "landmark-unique",
+  "link-in-text-block",
+  "link-name",
+  "list",
+  "listitem",
+  "meta-viewport-large",
+  "meta-viewport",
+  "nested-interactive",
+  "page-has-heading-one",
+  "region",
+  "scope-attr-valid",
+  "summary-name",
+  "table-duplicate-name",
+  "td-headers-attr"
+ ],
+ "incomplete": [
+  {
+   "id": "th-has-data-cells",
+   "impact": "serious",
+   "tags": [
+    "cat.tables",
+    "wcag2a",
+    "wcag131",
+    "section508",
+    "section508.22.g",
+    "TTv5",
+    "TT14.b",
+    "EN-301-549",
+    "EN-9.1.3.1",
+    "RGAAv4",
+    "RGAA-5.7.1"
+   ],
+   "description": "Ensure that <th> elements and elements with role=columnheader/rowheader have data cells they describe",
+   "help": "Table headers in a data table must refer to data cells",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/th-has-data-cells?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [],
+     "all": [
+      {
+       "id": "th-has-data-cells",
+       "data": null,
+       "relatedNodes": [
+        {
+         "html": "<th colspan=\"6\" class=\"gt_heading gt_subtitle gt_font_normal gt_bottom_border\">One row per (vaccine, event) at its first-detection quarter</th>",
+         "target": [
+          ".gt_subtitle.gt_bottom_border[colspan=\"6\"]"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Table data cells are missing or empty"
+      }
+     ],
+     "none": [],
+     "impact": "serious",
+     "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+     "target": [
+      "#qhtfeuxnux > table"
+     ],
+     "failureSummary": "Fix all of the following:\n  Table data cells are missing or empty"
+    },
+    {
+     "any": [],
+     "all": [
+      {
+       "id": "th-has-data-cells",
+       "data": null,
+       "relatedNodes": [
+        {
+         "html": "<th colspan=\"8\" class=\"gt_heading gt_subtitle gt_font_normal gt_bottom_border\">Statistics at first-detection quarter \u00b7 top 12 per family by EB05</th>",
+         "target": [
+          "#jobllsqeem > table > thead > .gt_heading.even > .gt_subtitle.gt_bottom_border[colspan=\"8\"]"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Table data cells are missing or empty"
+      }
+     ],
+     "none": [],
+     "impact": "serious",
+     "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+     "target": [
+      "#jobllsqeem > table"
+     ],
+     "failureSummary": "Fix all of the following:\n  Table data cells are missing or empty"
+    },
+    {
+     "any": [],
+     "all": [
+      {
+       "id": "th-has-data-cells",
+       "data": null,
+       "relatedNodes": [
+        {
+         "html": "<th colspan=\"8\" class=\"gt_heading gt_subtitle gt_font_normal gt_bottom_border\">Statistics at first-detection quarter \u00b7 top 12 per family by EB05</th>",
+         "target": [
+          "#lhdhjocrzh > table > thead > .gt_heading.even > .gt_subtitle.gt_bottom_border[colspan=\"8\"]"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Table data cells are missing or empty"
+      }
+     ],
+     "none": [],
+     "impact": "serious",
+     "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+     "target": [
+      "#lhdhjocrzh > table"
+     ],
+     "failureSummary": "Fix all of the following:\n  Table data cells are missing or empty"
+    },
+    {
+     "any": [],
+     "all": [
+      {
+       "id": "th-has-data-cells",
+       "data": null,
+       "relatedNodes": [
+        {
+         "html": "<th colspan=\"8\" class=\"gt_heading gt_subtitle gt_font_normal gt_bottom_border\">Statistics at first-detection quarter \u00b7 top 12 per family by EB05</th>",
+         "target": [
+          "#ffvppriyfx > table > thead > .gt_heading.even > .gt_subtitle.gt_bottom_border[colspan=\"8\"]"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Table data cells are missing or empty"
+      }
+     ],
+     "none": [],
+     "impact": "serious",
+     "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+     "target": [
+      "#ffvppriyfx > table"
+     ],
+     "failureSummary": "Fix all of the following:\n  Table data cells are missing or empty"
+    }
+   ]
+  }
+ ],
+ "violations": [
+  {
+   "id": "color-contrast",
+   "impact": "serious",
+   "tags": [
+    "cat.color",
+    "wcag2aa",
+    "wcag143",
+    "TTv5",
+    "TT13.c",
+    "EN-301-549",
+    "EN-9.1.4.3",
+    "ACT",
+    "RGAAv4",
+    "RGAA-3.2.1"
+   ],
+   "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+   "help": "Elements must meet minimum color contrast ratio thresholds",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "11.2pt (14.875px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"quarto-light\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 11.2pt (14.875px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"#context\" id=\"toc-context\" class=\"nav-link active\" data-scroll-target=\"#context\">Context</a>",
+     "target": [
+      "#toc-context"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 11.2pt (14.875px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#c0575b",
+        "contrastRatio": 4.41,
+        "fontSize": "9.0pt (12px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(165,15,21,0.7); color: #FFFFFF\">36.5</td>",
+         "target": [
+          "#jobllsqeem > table > tbody > .odd:nth-child(1) > .gt_right[headers=\"eb05\"]"
+         ]
+        },
+        {
+         "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+         "target": [
+          "#jobllsqeem > table"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 4.41 (foreground color: #ffffff, background color: #c0575b, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(165,15,21,0.7); color: #FFFFFF\">36.5</td>",
+     "target": [
+      "#jobllsqeem > table > tbody > .odd:nth-child(1) > .gt_right[headers=\"eb05\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.41 (foreground color: #ffffff, background color: #c0575b, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#5285ba",
+        "contrastRatio": 3.87,
+        "fontSize": "9.0pt (12px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(8,81,156,0.7); color: #FFFFFF\">19.3</td>",
+         "target": [
+          "#lhdhjocrzh > table > tbody > .odd:nth-child(1) > .gt_right[headers=\"eb05\"]"
+         ]
+        },
+        {
+         "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+         "target": [
+          "#lhdhjocrzh > table"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 3.87 (foreground color: #ffffff, background color: #5285ba, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(8,81,156,0.7); color: #FFFFFF\">19.3</td>",
+     "target": [
+      "#lhdhjocrzh > table > tbody > .odd:nth-child(1) > .gt_right[headers=\"eb05\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.87 (foreground color: #ffffff, background color: #5285ba, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#abb6d8",
+        "contrastRatio": 2.01,
+        "fontSize": "9.0pt (12px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(135,151,199,0.7); color: #FFFFFF\">12.0</td>",
+         "target": [
+          "#lhdhjocrzh > table > tbody > .odd:nth-child(13) > .gt_right[headers=\"eb05\"]"
+         ]
+        },
+        {
+         "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+         "target": [
+          "#lhdhjocrzh > table"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.01 (foreground color: #ffffff, background color: #abb6d8, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(135,151,199,0.7); color: #FFFFFF\">12.0</td>",
+     "target": [
+      "#lhdhjocrzh > table > tbody > .odd:nth-child(13) > .gt_right[headers=\"eb05\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.01 (foreground color: #ffffff, background color: #abb6d8, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#8d6eb4",
+        "contrastRatio": 4.18,
+        "fontSize": "9.0pt (12px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(92,48,148,0.7); color: #FFFFFF\">5.4</td>",
+         "target": [
+          "#ffvppriyfx > table > tbody > .odd:nth-child(1) > .gt_right[headers=\"eb05\"]"
+         ]
+        },
+        {
+         "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+         "target": [
+          "#ffvppriyfx > table"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 4.18 (foreground color: #ffffff, background color: #8d6eb4, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(92,48,148,0.7); color: #FFFFFF\">5.4</td>",
+     "target": [
+      "#ffvppriyfx > table > tbody > .odd:nth-child(1) > .gt_right[headers=\"eb05\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.18 (foreground color: #ffffff, background color: #8d6eb4, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#9173b7",
+        "contrastRatio": 3.93,
+        "fontSize": "9.0pt (12px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(98,55,152,0.7); color: #FFFFFF\">5.3</td>",
+         "target": [
+          "#ffvppriyfx > table > tbody > .even:nth-child(2) > .gt_right[headers=\"eb05\"]"
+         ]
+        },
+        {
+         "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+         "target": [
+          "#ffvppriyfx > table"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 3.93 (foreground color: #ffffff, background color: #9173b7, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(98,55,152,0.7); color: #FFFFFF\">5.3</td>",
+     "target": [
+      "#ffvppriyfx > table > tbody > .even:nth-child(2) > .gt_right[headers=\"eb05\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.93 (foreground color: #ffffff, background color: #9173b7, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#a78cc4",
+        "contrastRatio": 2.92,
+        "fontSize": "9.0pt (12px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(129,91,171,0.7); color: #FFFFFF\">4.7</td>",
+         "target": [
+          "#ffvppriyfx > table > tbody > .odd:nth-child(3) > .gt_right[headers=\"eb05\"]"
+         ]
+        },
+        {
+         "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+         "target": [
+          "#ffvppriyfx > table"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.92 (foreground color: #ffffff, background color: #a78cc4, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(129,91,171,0.7); color: #FFFFFF\">4.7</td>",
+     "target": [
+      "#ffvppriyfx > table > tbody > .odd:nth-child(3) > .gt_right[headers=\"eb05\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.92 (foreground color: #ffffff, background color: #a78cc4, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#b199cb",
+        "contrastRatio": 2.53,
+        "fontSize": "9.0pt (12px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(144,109,181,0.7); color: #FFFFFF\">4.4</td>",
+         "target": [
+          "#ffvppriyfx > table > tbody > .even:nth-child(4) > .gt_right[headers=\"eb05\"]"
+         ]
+        },
+        {
+         "html": "<table class=\"gt_table caption-top table table-sm table-striped small\" data-quarto-postprocess=\"true\" data-quarto-disable-processing=\"false\" data-quarto-bootstrap=\"false\">",
+         "target": [
+          "#ffvppriyfx > table"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.53 (foreground color: #ffffff, background color: #b199cb, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<td class=\"gt_row gt_right\" headers=\"eb05\" style=\"background-color: rgba(144,109,181,0.7); color: #FFFFFF\">4.4</td>",
+     "target": [
+      "#ffvppriyfx > table > tbody > .even:nth-child(4) > .gt_right[headers=\"eb05\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.53 (foreground color: #ffffff, background color: #b199cb, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "12.8pt (17px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"quarto-light\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.8pt (17px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"https://github.com/harlananelson\">globalpatientsafety</a>",
+     "target": [
+      "p > a:nth-child(2)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.8pt (17px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "12.8pt (17px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"quarto-light\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.8pt (17px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"https://vaers.hhs.gov/data.html\" class=\"uri\">https://vaers.hhs.gov/data.html</a>",
+     "target": [
+      ".uri"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.8pt (17px), font weight: normal). Expected contrast ratio of 4.5:1"
+    }
+   ]
+  },
+  {
+   "id": "image-alt",
+   "impact": "critical",
+   "tags": [
+    "cat.text-alternatives",
+    "wcag2a",
+    "wcag111",
+    "section508",
+    "section508.22.a",
+    "TTv5",
+    "TT7.a",
+    "TT7.b",
+    "EN-301-549",
+    "EN-9.1.1.1",
+    "ACT",
+    "RGAAv4",
+    "RGAA-1.1.1"
+   ],
+   "description": "Ensure <img> elements have alternative text or a role of none or presentation",
+   "help": "Images must have alternative text",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/image-alt?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "has-alt",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element does not have an alt attribute"
+      },
+      {
+       "id": "aria-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "aria-label attribute does not exist or is empty"
+      },
+      {
+       "id": "aria-labelledby",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+      },
+      {
+       "id": "non-empty-title",
+       "data": {
+        "messageKey": "noAttr"
+       },
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element has no title attribute"
+      },
+      {
+       "id": "presentational-role",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "critical",
+     "html": "<img role=\"img\" src=\"data:image/png;base6...\" class=\"img-fluid figure-img\" width=\"960\">",
+     "target": [
+      "#bubble-chart-eb05-vs-methods-flagged-faceted-by-category > .cell > .cell-output-display > div > figure > p > img"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element does not have an alt attribute\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+    },
+    {
+     "any": [
+      {
+       "id": "has-alt",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element does not have an alt attribute"
+      },
+      {
+       "id": "aria-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "aria-label attribute does not exist or is empty"
+      },
+      {
+       "id": "aria-labelledby",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+      },
+      {
+       "id": "non-empty-title",
+       "data": {
+        "messageKey": "noAttr"
+       },
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element has no title attribute"
+      },
+      {
+       "id": "presentational-role",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "critical",
+     "html": "<img role=\"img\" src=\"data:image/png;base6...\" class=\"img-fluid figure-img\" width=\"960\">",
+     "target": [
+      "#signal-emergence-timeline > .cell > .cell-output-display > div > figure > p > img"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element does not have an alt attribute\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+    },
+    {
+     "any": [
+      {
+       "id": "has-alt",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element does not have an alt attribute"
+      },
+      {
+       "id": "aria-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "aria-label attribute does not exist or is empty"
+      },
+      {
+       "id": "aria-labelledby",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+      },
+      {
+       "id": "non-empty-title",
+       "data": {
+        "messageKey": "noAttr"
+       },
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element has no title attribute"
+      },
+      {
+       "id": "presentational-role",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "critical",
+     "html": "<img role=\"img\" src=\"data:image/png;base6...\" class=\"img-fluid figure-img\" width=\"960\">",
+     "target": [
+      "#manufacturer-comparison > .cell > .cell-output-display > div > figure > p > img"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element does not have an alt attribute\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+    }
+   ]
+  },
+  {
+   "id": "region",
+   "impact": "moderate",
+   "tags": [
+    "cat.keyboard",
+    "best-practice",
+    "RGAAv4",
+    "RGAA-9.2.1"
+   ],
+   "description": "Ensure all page content is contained by landmarks",
+   "help": "All page content should be contained by landmarks",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/region?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<div>\n    <a href=\"/\" style=\"color:#4aa8d8; text-decoration:none; margin-right:1rem;\">\u2190 Global Patient Safety</a>\n    <a href=\"/articles\" style=\"color:#fff; text-decoration:none; opacity:0.7;\">All articles</a>\n  </div>",
+     "target": [
+      ".align-items-center > div"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    }
+   ]
+  },
+  {
+   "id": "scrollable-region-focusable",
+   "impact": "serious",
+   "tags": [
+    "cat.keyboard",
+    "wcag2a",
+    "wcag211",
+    "wcag213",
+    "TTv5",
+    "TT4.a",
+    "EN-301-549",
+    "EN-9.2.1.1",
+    "EN-9.2.1.3",
+    "RGAAv4",
+    "RGAA-7.3.2"
+   ],
+   "description": "Ensure elements that have scrollable content are accessible by keyboard in Safari",
+   "help": "Scrollable region must have keyboard access",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/scrollable-region-focusable?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "focusable-content",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "serious",
+       "message": "Element should have focusable content"
+      },
+      {
+       "id": "focusable-element",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "serious",
+       "message": "Element should be focusable"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<pre>",
+     "target": [
+      "#replicable-r > .cell > .cell-output.cell-output-stdout > pre"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element should have focusable content\n  Element should be focusable"
+    }
+   ]
+  }
+ ]
+}

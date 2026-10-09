@@ -1,0 +1,251 @@
+{
+ "title": "Global Patient Safety — Pharmacovigilance tools and signal analyses",
+ "lang": "en",
+ "skipLink": [
+  {
+   "text": "Global Patient Safety",
+   "href": "/"
+  },
+  {
+   "text": "Home",
+   "href": "/"
+  },
+  {
+   "text": "Articles",
+   "href": "/articles"
+  }
+ ],
+ "landmarks": {
+  "main": 0,
+  "nav": 1
+ },
+ "h1": [
+  "Global Patient Safety"
+ ],
+ "headings": [
+  "H1:Global Patient Safety",
+  "H4:Inside the AEMS Data: What 4.8 Million Reports Do ",
+  "H2:Tools",
+  "H5:faers.mobi",
+  "H5:aers.mobi",
+  "H5:pico-dag",
+  "H5:VAERS vaccine safety",
+  "H5:Signal methods",
+  "H5:MAUDE device safety",
+  "H2:Recent articles",
+  "H5:Inside the AEMS Data: What 4.8 Million Reports Do ",
+  "H5:Tested Against VAERS: Christine Cotton's Safety Cl",
+  "H5:Independent Reanalysis: COVID/Shingles Vaccine Sig",
+  "H2:About",
+  "H6:Data sources",
+  "H6:Methods",
+  "H6:Privacy"
+ ],
+ "tables": [],
+ "inputs": [],
+ "imgs": [],
+ "svgs": [],
+ "canvases": 0,
+ "plots": [],
+ "ariaLive": [],
+ "shinyOutputs": 0,
+ "colorCues": [
+  {
+   "text": "Live",
+   "style": "badge bg-success"
+  },
+  {
+   "text": "Beta",
+   "style": "badge bg-warning text-dark"
+  },
+  {
+   "text": "Live",
+   "style": "badge bg-success"
+  },
+  {
+   "text": "Live",
+   "style": "badge bg-success"
+  },
+  {
+   "text": "Live",
+   "style": "badge bg-success"
+  },
+  {
+   "text": "Coming soon",
+   "style": "badge bg-secondary"
+  }
+ ],
+ "tabOrder": [
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Global Patient Safety",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Home",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Articles",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Signal & Noise",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "AEMS",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "faers.mobi",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "pico-dag",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "vaers",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "About",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Read →",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "faers.mobi\n          Live\n        \n     ",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "aers.mobi\n          Beta\n        \n      ",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "pico-dag\n          Live\n        \n       ",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "VAERS vaccine safety\n          Live\n    ",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Signal methods\n          Live\n        \n ",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "MAUDE device safety\n          Coming soo",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "View all →",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Inside the AEMS Data: What 4.8 Million R",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Tested Against VAERS: Christine Cotton's",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Independent Reanalysis: COVID/Shingles V",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "GPS framework (DuMouchel 1999)",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BODY"
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Global Patient Safety",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Home",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Articles",
+   "outline": "none 0px",
+   "boxShadow": true
+  }
+ ]
+}

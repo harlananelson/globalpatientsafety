@@ -1,0 +1,315 @@
+{
+ "testEngine": {
+  "name": "axe-core",
+  "version": "4.13.0"
+ },
+ "testRunner": {
+  "name": "axe"
+ },
+ "testEnvironment": {
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+  "windowWidth": 1366,
+  "windowHeight": 900,
+  "orientationAngle": 0,
+  "orientationType": "portrait-primary"
+ },
+ "timestamp": "2026-10-09T10:19:40.174Z",
+ "url": "https://globalpatientsafety.com/articles",
+ "toolOptions": {
+  "runOnly": {
+   "type": "tag",
+   "values": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "best-practice"
+   ]
+  },
+  "reporter": "v1"
+ },
+ "inapplicable": [
+  "accesskeys",
+  "area-alt",
+  "aria-allowed-attr",
+  "aria-allowed-role",
+  "aria-braille-equivalent",
+  "aria-command-name",
+  "aria-conditional-attr",
+  "aria-deprecated-role",
+  "aria-dialog-name",
+  "aria-hidden-focus",
+  "aria-input-field-name",
+  "aria-meter-name",
+  "aria-progressbar-name",
+  "aria-prohibited-attr",
+  "aria-required-attr",
+  "aria-required-children",
+  "aria-required-parent",
+  "aria-roles",
+  "aria-tab-name",
+  "aria-text",
+  "aria-toggle-field-name",
+  "aria-tooltip-name",
+  "aria-treeitem-name",
+  "aria-valid-attr-value",
+  "aria-valid-attr",
+  "autocomplete-valid",
+  "blink",
+  "button-name",
+  "definition-list",
+  "dlitem",
+  "duplicate-id-aria",
+  "empty-table-header",
+  "form-field-multiple-labels",
+  "frame-focusable-content",
+  "frame-tested",
+  "frame-title-unique",
+  "frame-title",
+  "html-xml-lang-mismatch",
+  "image-alt",
+  "image-redundant-alt",
+  "input-button-name",
+  "input-image-alt",
+  "label-title-only",
+  "label",
+  "landmark-main-is-top-level",
+  "landmark-no-duplicate-main",
+  "marquee",
+  "meta-refresh",
+  "nested-interactive",
+  "object-alt",
+  "presentation-role-conflict",
+  "role-img-alt",
+  "scope-attr-valid",
+  "scrollable-region-focusable",
+  "select-name",
+  "server-side-image-map",
+  "skip-link",
+  "summary-name",
+  "svg-img-alt",
+  "tabindex",
+  "table-duplicate-name",
+  "td-headers-attr",
+  "th-has-data-cells",
+  "valid-lang",
+  "video-caption",
+  "no-autoplay-audio"
+ ],
+ "passes": [
+  "aria-hidden-body",
+  "avoid-inline-spacing",
+  "bypass",
+  "color-contrast",
+  "document-title",
+  "empty-heading",
+  "heading-order",
+  "html-has-lang",
+  "html-lang-valid",
+  "landmark-banner-is-top-level",
+  "landmark-contentinfo-is-top-level",
+  "landmark-no-duplicate-banner",
+  "landmark-no-duplicate-contentinfo",
+  "landmark-unique",
+  "link-in-text-block",
+  "link-name",
+  "list",
+  "listitem",
+  "meta-viewport-large",
+  "meta-viewport",
+  "page-has-heading-one",
+  "region"
+ ],
+ "incomplete": [],
+ "violations": [
+  {
+   "id": "color-contrast",
+   "impact": "serious",
+   "tags": [
+    "cat.color",
+    "wcag2aa",
+    "wcag143",
+    "TTv5",
+    "TT13.c",
+    "EN-301-549",
+    "EN-9.1.4.3",
+    "ACT",
+    "RGAAv4",
+    "RGAA-3.2.1"
+   ],
+   "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+   "help": "Elements must meet minimum color contrast ratio thresholds",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#6c757d",
+        "bgColor": "#f8fafc",
+        "contrastRatio": 4.48,
+        "fontSize": "8.9pt (11.9px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<footer>",
+         "target": [
+          "footer"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 4.48 (foreground color: #6c757d, background color: #f8fafc, font size: 8.9pt (11.9px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<small>",
+     "target": [
+      "small"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.48 (foreground color: #6c757d, background color: #f8fafc, font size: 8.9pt (11.9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#0d6efd",
+        "bgColor": "#f8fafc",
+        "contrastRatio": 4.3,
+        "fontSize": "8.9pt (11.9px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<footer>",
+         "target": [
+          "footer"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 4.3 (foreground color: #0d6efd, background color: #f8fafc, font size: 8.9pt (11.9px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"https://doi.org/10.1177/009286159903300105\" target=\"_blank\" rel=\"noopener\">GPS framework (DuMouchel 1999)</a>",
+     "target": [
+      "small > a[target=\"_blank\"][rel=\"noopener\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.3 (foreground color: #0d6efd, background color: #f8fafc, font size: 8.9pt (11.9px), font weight: normal). Expected contrast ratio of 4.5:1"
+    }
+   ]
+  },
+  {
+   "id": "heading-order",
+   "impact": "moderate",
+   "tags": [
+    "cat.semantics",
+    "best-practice"
+   ],
+   "description": "Ensure the order of headings is semantically correct",
+   "help": "Heading levels should only increase by one",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/heading-order?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "heading-order",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Heading order invalid"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<h5 class=\"card-title\">Inside the AEMS Data: What 4.8 Million Reports Do and Don't Tell You</h5>",
+     "target": [
+      "a[href$=\"aems\"] > .card.h-100 > .card-body > h5"
+     ],
+     "failureSummary": "Fix any of the following:\n  Heading order invalid"
+    }
+   ]
+  },
+  {
+   "id": "landmark-one-main",
+   "impact": "moderate",
+   "tags": [
+    "cat.semantics",
+    "best-practice"
+   ],
+   "description": "Ensure the document has a main landmark",
+   "help": "Document should have one main landmark",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/landmark-one-main?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [],
+     "all": [
+      {
+       "id": "page-has-main",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Document does not have a main landmark"
+      }
+     ],
+     "none": [],
+     "impact": "moderate",
+     "html": "<html lang=\"en\">",
+     "target": [
+      "html"
+     ],
+     "failureSummary": "Fix all of the following:\n  Document does not have a main landmark"
+    }
+   ]
+  },
+  {
+   "id": "region",
+   "impact": "moderate",
+   "tags": [
+    "cat.keyboard",
+    "best-practice",
+    "RGAAv4",
+    "RGAA-9.2.1"
+   ],
+   "description": "Ensure all page content is contained by landmarks",
+   "help": "All page content should be contained by landmarks",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/region?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<section class=\"container my-4\">",
+     "target": [
+      "section"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    }
+   ]
+  }
+ ]
+}

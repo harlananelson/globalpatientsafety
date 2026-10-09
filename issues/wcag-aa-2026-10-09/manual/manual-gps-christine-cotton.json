@@ -1,0 +1,285 @@
+{
+ "title": "Tested Against VAERS: Christine Cotton’s Safety Claims and the Post-Market Record",
+ "lang": "en",
+ "skipLink": [
+  {
+   "text": "← Global Patient Safety",
+   "href": "/"
+  },
+  {
+   "text": "All articles",
+   "href": "/articles"
+  },
+  {
+   "text": "Cotton’s Claims About the Trial",
+   "href": "#cottons-claims-about-the-trial"
+  }
+ ],
+ "landmarks": {
+  "main": 1,
+  "nav": 1
+ },
+ "h1": [
+  "Tested Against VAERS: Christine Cotton’s Safety Claims and t"
+ ],
+ "headings": [
+  "H2:Table of contents",
+  "H1:Tested Against VAERS: Christine Cotton’s Safety Cl",
+  "H2:Cotton’s Claims About the Trial",
+  "H2:VAERS Disproportionality in the Categories Cotton ",
+  "H3:Cardiac Signals",
+  "H3:Menstrual and Reproductive Signals",
+  "H3:Thrombotic Signals",
+  "H3:Stroke Signals",
+  "H2:What This Can and Cannot Say",
+  "H2:A Note on Methodology"
+ ],
+ "tables": [
+  {
+   "id": "",
+   "cls": "gt_table caption-top table table-sm tabl",
+   "caption": false,
+   "th": 3,
+   "thScope": 3,
+   "rows": 8
+  },
+  {
+   "id": "",
+   "cls": "gt_table caption-top table table-sm tabl",
+   "caption": false,
+   "th": 3,
+   "thScope": 3,
+   "rows": 3
+  },
+  {
+   "id": "",
+   "cls": "gt_table caption-top table table-sm tabl",
+   "caption": false,
+   "th": 3,
+   "thScope": 3,
+   "rows": 7
+  },
+  {
+   "id": "",
+   "cls": "gt_table caption-top table table-sm tabl",
+   "caption": false,
+   "th": 3,
+   "thScope": 3,
+   "rows": 3
+  }
+ ],
+ "inputs": [],
+ "imgs": [],
+ "svgs": [],
+ "canvases": 0,
+ "plots": [],
+ "ariaLive": [],
+ "shinyOutputs": 0,
+ "colorCues": [
+  {
+   "text": "Myocarditis",
+   "style": "background-color: #FFF3CD"
+  },
+  {
+   "text": "3.14",
+   "style": "background-color: #FFF3CD"
+  },
+  {
+   "text": "4",
+   "style": "background-color: #FFF3CD"
+  },
+  {
+   "text": "Pericarditis",
+   "style": "background-color: #FFF3CD"
+  },
+  {
+   "text": "2.27",
+   "style": "background-color: #FFF3CD"
+  },
+  {
+   "text": "4",
+   "style": "background-color: #FFF3CD"
+  },
+  {
+   "text": "Myopericarditis",
+   "style": "background-color: #FFF3CD"
+  },
+  {
+   "text": "2.14",
+   "style": "background-color: #FFF3CD"
+  }
+ ],
+ "tabOrder": [
+  {
+   "tag": "A",
+   "id": "",
+   "text": "← Global Patient Safety",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "All articles",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "id": "",
+   "text": "Copy link",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "toc-cottons-claims-about-the-trial",
+   "text": "Cotton’s Claims About the Trial",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-vaers-disproportionality-in-the-categories-cotton-flagged",
+   "text": "VAERS Disproportionality in the Categori",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-what-this-can-and-cannot-say",
+   "text": "What This Can and Cannot Say",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-a-note-on-methodology",
+   "text": "A Note on Methodology",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "faers.mobi",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BODY"
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "← Global Patient Safety",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "All articles",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "id": "",
+   "text": "Copy link",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "toc-cottons-claims-about-the-trial",
+   "text": "Cotton’s Claims About the Trial",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-vaers-disproportionality-in-the-categories-cotton-flagged",
+   "text": "VAERS Disproportionality in the Categori",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-cardiac-signals",
+   "text": "Cardiac Signals",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-menstrual-and-reproductive-signals",
+   "text": "Menstrual and Reproductive Signals",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-thrombotic-signals",
+   "text": "Thrombotic Signals",
+   "outline": "none 0px",
+   "boxShadow": true
+  }
+ ]
+}
