@@ -144,5 +144,44 @@ for (sf in standalone) {
   ok("%s has no draft-article hrefs", sf)
 }
 
+site <- file.path(PROJ_ROOT, "static_site")
+index_html <- file.path(site, "index.html")
+# static_site/ is gitignored build output. CI checks registries against
+# app/static and does not run the builder. After a local build, this block
+# is the gate that the machine-access pages actually landed in the tree
+# that gets rsynced.
+if (!file.exists(index_html)) {
+  ok("static_site/ not present; machine-access markers are checked after a local build")
+  cat("\nAll consistency checks passed.\n")
+  quit(status = 0)
+}
+index_txt <- paste(readLines(index_html, warn = FALSE), collapse = "\n")
+markers <- c(
+  'href="/pipeline"',
+  'id="main"',
+  'aria-label="Toggle navigation"',
+  'rel="alternate"',
+  "LLM / API access",
+  "Machine path:"
+)
+for (needle in markers) {
+  if (!grepl(needle, index_txt, fixed = TRUE)) {
+    fail("static_site/index.html is missing %s", needle)
+  }
+}
+ok("homepage has the pipeline link, skip target, and machine-access head")
+for (f in c(
+  "robots.txt", "sitemap.xml", "llms.txt", "openapi.json",
+  "api.md", "chatgpt.md", "mcp.md", "methods.md", "pipeline.md",
+  "accessibility.html", "api.html"
+)) {
+  if (!file.exists(file.path(site, f))) fail("static_site/%s is missing", f)
+}
+openapi_txt <- paste(readLines(file.path(site, "openapi.json"), warn = FALSE), collapse = "\n")
+if (!grepl("/pipeline", openapi_txt, fixed = TRUE)) {
+  fail("openapi.json does not describe /pipeline")
+}
+ok("machine-access files are in the built site")
+
 cat("\nAll consistency checks passed.\n")
 quit(status = 0)

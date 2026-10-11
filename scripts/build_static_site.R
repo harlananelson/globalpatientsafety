@@ -104,7 +104,15 @@ esc <- function(s) {
   s
 }
 
-site_head <- function(title, description = "") {
+# First sentence of every description names the machine path (handshake 2026-10-10).
+MACHINE_SENTENCE <- paste(
+  "Machine path: GET /pipeline?sponsor= on this site, and",
+  "GET https://faers.mobi/signals for FAERS signals."
+)
+
+site_head <- function(title, description = "", page = "/") {
+  md <- if (identical(page, "/")) "/index.md" else paste0(page, ".md")
+  desc <- paste(MACHINE_SENTENCE, description)
   sprintf('<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -112,27 +120,58 @@ site_head <- function(title, description = "") {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>%s</title>
   <meta name="description" content="%s">
+  <link rel="alternate" type="text/markdown" href="%s">
+  <link rel="alternate" href="/llms.txt" title="llms.txt">
+  <link rel="service-desc" type="application/json" href="/openapi.json">
   <link rel="icon" href="/favicon.ico">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: "Inter", -apple-system, system-ui, sans-serif; background: #f8fafc; color: #1a2332; }
+    a { color: #0b4f6a; }
     .navbar-dark { background-color: #1a2332 !important; }
+    .navbar-dark .nav-link { color: #e8f4fb; }
     .navbar-brand { font-weight: 500; letter-spacing: -0.02em; }
-    .navbar-brand .brand-accent { color: #4aa8d8; }
-    .hero { background-color: #1a6b9a; color: white; padding: 4rem 0 3rem; }
+    .navbar-brand .brand-accent { color: #7ec8e8; }
+    .hero { background-color: #0f4c6e; color: white; padding: 4rem 0 3rem; }
     .hero h1 { font-weight: 300; letter-spacing: -0.02em; }
+    .hero a.btn { background: #fff; color: #0f4c6e; }
     .card { border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     .card-tool { transition: transform 0.15s ease; }
     .card-tool:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .featured-card { border: 1px solid #1a6b9a; }
-    .featured-card .card-header { background: #1a6b9a; color: white; font-weight: 600; }
+    .featured-card { border: 1px solid #0f4c6e; }
+    .featured-card .card-header { background: #0f4c6e; color: white; font-weight: 600; }
     .section-title { font-weight: 300; margin: 2rem 0 1rem; }
-    footer { background: #f8fafc; padding: 1.5rem 0; text-align: center; color: #6c757d; font-size: 0.85rem; margin-top: 4rem; }
+    .text-muted { color: #495057 !important; }
+    .badge-soon { background: #334155; color: #fff; }
+    .llm-access { background: #e7eef3; color: #1a2332; padding: .75rem 0; }
+    .llm-access a { color: #0b4f6a; }
+    .skip-link { position: absolute; left: 0; top: -3rem; background: #fff; color: #0b4f6a; padding: .5rem 1rem; z-index: 2000; }
+    .skip-link:focus { top: 0; }
+    footer { background: #f8fafc; padding: 1.5rem 0; text-align: center; color: #334155; font-size: 0.95rem; margin-top: 4rem; }
+    footer a { color: #0b4f6a; }
+    :focus-visible { outline: 3px solid #0b4f6a; outline-offset: 2px; }
+    .navbar :focus-visible { outline-color: #b9e2f5; }
   </style>
 </head>
 <body>
-', esc(title), esc(description))
+', esc(title), esc(desc), esc(md))
+}
+
+skip_link <- '<a class="skip-link" href="#main">Skip to content</a>\n'
+
+llm_banner <- function(md_href) {
+  sprintf('
+<div class="llm-access">
+  <div class="container">
+    <strong>LLM / API access.</strong>
+    <a href="/api">API</a> ·
+    <a href="/llms.txt">llms.txt</a> ·
+    <a href="/mcp.md">MCP</a> ·
+    <a href="%s">Markdown</a>
+  </div>
+</div>
+', esc(md_href))
 }
 
 site_nav <- function(active = "") {
@@ -154,12 +193,13 @@ site_nav <- function(active = "") {
     '<nav class="navbar navbar-expand-md navbar-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/"><span class="brand-accent">Global</span> Patient Safety</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="nav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/pipeline">Pipeline analysis</a></li>
         <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
 ',
     standalone_items,
@@ -181,6 +221,7 @@ site_foot <- '
     <small>© Global Patient Safety · CDC VAERS + FDA FAERS public-domain data ·
       <a href="https://doi.org/10.1177/009286159903300105" target="_blank" rel="noopener">GPS framework (DuMouchel 1999)</a> ·
       Signals are statistical patterns, not evidence of causation. Not medical advice.
+      · <a href="/accessibility">Accessibility</a>
     </small>
   </div>
 </footer>
@@ -204,7 +245,7 @@ article_card_html <- function(row) {
   <a href="/%s" style="text-decoration:none; color:inherit;">
     <div class="card h-100">
       <div class="card-body">
-        <h5 class="card-title">%s</h5>
+        <h3 class="card-title h5">%s</h3>
         <p class="text-muted small mb-2">%s</p>
         <p class="card-text">%s</p>
       </div>
@@ -217,32 +258,34 @@ tool_card_html <- function(row) {
   status_badge <- switch(row$status,
     live        = '<span class="badge bg-success">Live</span>',
     beta        = '<span class="badge bg-warning text-dark">Beta</span>',
-    coming_soon = '<span class="badge bg-secondary">Coming soon</span>',
+    coming_soon = '<span class="badge badge-soon">Coming soon</span>',
     "")
-  href <- if (!is.na(row$url) && nzchar(row$url)) row$url else "#"
+  href <- if (!is.na(row$url) && nzchar(row$url)) row$url else ""
   # Same-site paths (e.g. /methods) stay in this tab; external tools open blank.
-  attrs <- if (row$status == "coming_soon") {
-    'style="opacity:0.55; cursor: not-allowed;" onclick="return false;"'
-  } else if (grepl("^/", href)) {
+  # A coming-soon card is not a link: an href of "#" is a keyboard trap.
+  attrs <- if (grepl("^/", href)) {
     ""
   } else {
     'target="_blank" rel="noopener"'
   }
-  sprintf('
-<div class="col">
-  <a href="%s" %s style="text-decoration:none; color:inherit;">
+  inner <- sprintf('
     <div class="card card-tool h-100">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start mb-2">
-          <h5 class="card-title m-0">%s</h5>
+          <h3 class="card-title h5 m-0">%s</h3>
           %s
         </div>
         <p class="card-text text-muted small">%s</p>
       </div>
-    </div>
-  </a>
-</div>',
-    esc(href), attrs, esc(row$name), status_badge, esc(row$tagline))
+    </div>',
+    esc(row$name), status_badge, esc(row$tagline))
+  wrapped <- if (row$status == "coming_soon" || !nzchar(href)) {
+    sprintf('<div class="h-100" aria-disabled="true">%s</div>', inner)
+  } else {
+    sprintf('<a href="%s" %s style="text-decoration:none; color:inherit;">%s</a>',
+            esc(href), attrs, inner)
+  }
+  sprintf('<div class="col">%s</div>', wrapped)
 }
 
 # ── INDEX -------------------------------------------------------------------
@@ -259,7 +302,7 @@ build_index <- function() {
   <div class="card featured-card mb-3">
     <div class="card-header">%s</div>
     <div class="card-body">
-      <h4 class="card-title mb-2">%s</h4>
+      <h2 class="card-title h4 mb-2">%s</h2>
       <p class="text-muted small mb-2">%s</p>
       <p class="card-text">%s</p>
       <a href="/%s" class="btn btn-primary btn-sm mt-2">Read →</a>
@@ -283,13 +326,18 @@ build_index <- function() {
   html <- paste0(
     site_head(
       "Global Patient Safety — Pharmacovigilance tools and signal analyses",
-      "Open tools for pharmacovigilance signal detection and clinical research acceleration. CDC VAERS and FDA FAERS analyses using peer-reviewed Bayesian and frequentist disproportionality methods."
+      "Open tools for pharmacovigilance signal detection and clinical research acceleration. CDC VAERS and FDA FAERS analyses using peer-reviewed Bayesian and frequentist disproportionality methods.",
+      page = "/"
     ),
+    skip_link,
     site_nav(active = "home"),
+    llm_banner("/index.md"),
+    '<main id="main" tabindex="-1">',
     '<header class="hero">
   <div class="container text-center">
     <h1 class="display-5 mb-3">Global Patient Safety</h1>
-    <p class="lead mb-0">Open tools for pharmacovigilance signal detection and clinical research acceleration.</p>
+    <p class="lead mb-3">Open tools for pharmacovigilance signal detection and clinical research acceleration.</p>
+    <p class="mb-0"><a class="btn" href="/pipeline">Pipeline analysis</a></p>
   </div>
 </header>',
     featured_html,
@@ -313,14 +361,14 @@ build_index <- function() {
   <p class="lead text-muted">We analyse 35 years of FDA and CDC adverse-event data using peer-reviewed Bayesian statistics to surface drug safety signals that matter to patients and clinicians.</p>
   <div class="row g-4 my-4">
     <div class="col-md-4">
-      <h6 class="fw-semibold mb-2">Data sources</h6>
+      <h3 class="h6 fw-semibold mb-2">Data sources</h3>
       <ul class="text-muted small mb-0">
         <li>FDA FAERS (2018–present)</li>
         <li>CDC VAERS (1990–present)</li>
       </ul>
     </div>
     <div class="col-md-4">
-      <h6 class="fw-semibold mb-2">Methods</h6>
+      <h3 class="h6 fw-semibold mb-2">Methods</h3>
       <ul class="text-muted small mb-0">
         <li>GPS — 5th-percentile credible bound, dual-Gamma posterior, linear RR scale (DuMouchel 1999 framework)</li>
         <li>PRR, ROR, BCPNN/IC</li>
@@ -328,11 +376,12 @@ build_index <- function() {
       </ul>
     </div>
     <div class="col-md-4">
-      <h6 class="fw-semibold mb-2">Privacy</h6>
+      <h3 class="h6 fw-semibold mb-2">Privacy</h3>
       <p class="text-muted small mb-0">No data is stored. No account required.</p>
     </div>
   </div>
 </section>',
+    '</main>',
     site_foot
   )
   writeLines(html, file.path(OUT_DIR, "index.html"))
@@ -348,8 +397,12 @@ build_articles_index <- function() {
 
   html <- paste0(
     site_head("Articles — Global Patient Safety",
-              "Pharmacovigilance signal analyses and reanalyses."),
+              "Pharmacovigilance signal analyses and reanalyses.",
+              page = "/articles"),
+    skip_link,
     site_nav(active = "articles"),
+    llm_banner("/articles.md"),
+    '<main id="main" tabindex="-1">',
     '<header class="container mt-4">
   <h1 class="section-title">Articles</h1>
   <p class="text-muted">Independent signal analyses using the project\'s standard disproportionality methodology.</p>
@@ -359,6 +412,7 @@ build_articles_index <- function() {
     cards,
     '</div>
 </section>',
+    '</main>',
     site_foot)
   writeLines(html, file.path(OUT_DIR, "articles.html"))
   cat("  wrote", file.path(OUT_DIR, "articles.html"), "\n")
@@ -370,25 +424,43 @@ build_articles_index <- function() {
 # links to / and /articles, and a share button. The Quarto <body> contents
 # remain intact below.
 #
-# The bar is the same on every page — it carries no per-article content — so it
-# is a constant, not a function. It was a function taking (article_id, title)
-# whose body was a sprintf() with no format placeholders: `title` was ignored
-# outright and `esc(article_id)` was passed to a format string that had nowhere
-# to put it, so every page emitted "one argument not used by format". Rendered
-# output is unchanged.
-NAV_INJECTION <- '
+# One %s: the page id, used only in the markdown-twin href. The old constant
+# form could not name that per-page link.
+article_chrome <- function(page) {
+  sprintf('
+<a class="skip-link" href="#quarto-document-content">Skip to content</a>
+<div class="llm-access">
+  <strong>LLM / API access.</strong>
+  <a href="/api">API</a> ·
+  <a href="/llms.txt">llms.txt</a> ·
+  <a href="/mcp.md">MCP</a> ·
+  <a href="/%s.md">Markdown</a>
+</div>
 <div class="d-flex align-items-center justify-content-between px-3 py-2"
      style="background:#1a2332; color:#fff; font-family:Inter,sans-serif; font-size:14px; position:sticky; top:0; z-index:1000;">
   <div>
-    <a href="/" style="color:#4aa8d8; text-decoration:none; margin-right:1rem;">&larr; Global Patient Safety</a>
-    <a href="/articles" style="color:#fff; text-decoration:none; opacity:0.7;">All articles</a>
+    <a href="/" style="color:#7ec8e8; text-decoration:none; margin-right:1rem;">&larr; Global Patient Safety</a>
+    <a href="/pipeline" style="color:#d7eef8; text-decoration:none; margin-right:1rem;">Pipeline analysis</a>
+    <a href="/articles" style="color:#d7eef8; text-decoration:none;">All articles</a>
   </div>
-  <button onclick="navigator.clipboard.writeText(location.href);this.textContent=\'✓ Copied\';setTimeout(()=>this.textContent=\'Copy link\',1500);"
-          style="background:transparent; color:#fff; border:1px solid #4aa8d8; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:13px;">
+  <button onclick="navigator.clipboard.writeText(location.href);this.textContent=\'Copied\';setTimeout(()=>this.textContent=\'Copy link\',1500);"
+          style="background:transparent; color:#fff; border:1px solid #7ec8e8; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:13px;">
     Copy link
   </button>
 </div>
-'
+', esc(page))
+}
+
+finish_quarto <- function(html, out, page) {
+  nav <- article_chrome(page)
+  html <- sub("(<body[^>]*>)", paste0("\\1\n", nav), html, perl = TRUE)
+  writeLines(html, out)
+  py <- file.path(PROJ_ROOT, "scripts/polish_html.py")
+  status <- system2("python3", c(py, out, page))
+  if (!identical(as.integer(status), 0L)) {
+    stop(sprintf("polish_html.py failed for %s", page))
+  }
+}
 
 build_article_pages <- function() {
   for (i in seq_len(nrow(published))) {
@@ -400,10 +472,7 @@ build_article_pages <- function() {
     }
     out <- file.path(OUT_DIR, paste0(row$id, ".html"))
     html <- paste(readLines(src, warn = FALSE), collapse = "\n")
-    nav <- NAV_INJECTION
-    # Inject right after <body...> tag
-    html <- sub("(<body[^>]*>)", paste0("\\1\n", nav), html, perl = TRUE)
-    writeLines(html, out)
+    finish_quarto(html, out, row$id)
     cat("  wrote", out,
         sprintf("(%.1f KB)", file.info(out)$size / 1024), "\n")
   }
@@ -423,9 +492,7 @@ build_standalone_pages <- function() {
     }
     out  <- file.path(OUT_DIR, paste0(row$id, ".html"))
     html <- paste(readLines(src, warn = FALSE), collapse = "\n")
-    nav  <- NAV_INJECTION
-    html <- sub("(<body[^>]*>)", paste0("\\1\n", nav), html, perl = TRUE)
-    writeLines(html, out)
+    finish_quarto(html, out, row$id)
     cat("  wrote", out, sprintf("(%.1f KB)", file.info(out)$size / 1024), "\n")
   }
 }
@@ -450,7 +517,7 @@ check_internal_links <- function() {
   }
   # Known-good built pages (index/articles plus published + standalone)
   known <- c(
-    "index", "articles",
+    "index", "articles", "pipeline", "api", "mcp", "accessibility",
     published$id,
     available_standalone$id
   )
@@ -495,6 +562,8 @@ build_index()
 build_articles_index()
 build_article_pages()
 build_standalone_pages()
+source(file.path(PROJ_ROOT, "scripts/static_site_access.R"))
+build_machine_access()
 check_internal_links()
 
 cat("\nDone. Deploy with:\n",

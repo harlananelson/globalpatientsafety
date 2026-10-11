@@ -108,6 +108,11 @@ probe() {
     MCP)  cmd+=(-X POST -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream'
                 -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"gps-monitor","version":"0"}}}') ;;
   esac
+  # Bare /pipeline is JSON for curl's default Accept. The form check is the
+  # browser contract: Ask for HTML and the picker must come back.
+  if [ "$name" = gps-pipeline-form ]; then
+    cmd+=(-H 'Accept: text/html')
+  fi
   code="$("${cmd[@]}" "$BASE$path" 2>"$TMP/$name.err")" || code="000"
   ctype="$(grep -i '^content-type:' "$hdr" 2>/dev/null | tail -1 | cut -d' ' -f2- | tr -d '\r')"
   local why=""
@@ -169,8 +174,40 @@ for spec in "${CHECKS[@]}"; do
   sleep "${GPS_MONITOR_PACE:-1.2}"  # heavy worker limit_req is 1 r/s burst 3
 done
 
+# globalpatientsafety.com. Kept out of CHECKS so the faers mutation self-test
+# and the fail-path stub, which only speak the faers contract, do not see them.
+# They run only against production, including the recovery run of that stub.
+GPS_N=0
+if [ "$BASE" = "https://faers.mobi" ]; then
+  GPS_BASE="${GPS_MONITOR_GPS_BASE:-https://globalpatientsafety.com}"
+  GPS_CHECKS=(
+    "gps-home|GET|/|Mozilla/5.0|200|text/html|Pipeline analysis && LLM / API access && rel=\"alternate\""
+    "gps-pipeline-form|GET|/pipeline|curl|200|text/html|<form"
+    "gps-pipeline-sanofi|GET|/pipeline?sponsor=Sanofi&limit=5|curl|200|application/json|NCT[0-9]{8}"
+    "gps-llms|GET|/llms.txt|curl|200|text/plain|pipeline"
+    "gps-robots|GET|/robots.txt|curl|200|text/plain|llms.txt"
+    "gps-openapi|GET|/openapi.json|curl|200|application/json|/pipeline"
+    "gps-methods-md|GET|/methods.md|curl|200|text/plain|Signal"
+    "gps-api|GET|/api|curl|200|text/html|GET /pipeline"
+  )
+  GPS_N=${#GPS_CHECKS[@]}
+  SAVED_BASE="$BASE"
+  BASE="$GPS_BASE"
+  for spec in "${GPS_CHECKS[@]}"; do
+    IFS='|' read -r name method path ua want ct re <<<"$spec"
+    r="$(probe "$name" "$method" "$path" "$ua" "$want" "$ct" "$re")"
+    if [ "$r" != OK ]; then
+      sleep "${GPS_MONITOR_RETRY_SLEEP:-20}"
+      r="$(probe "$name" "$method" "$path" "$ua" "$want" "$ct" "$re")"
+    fi
+    if [ "$r" = OK ]; then PASSES=$((PASSES+1)); else FAILS+=("$name|$method $path|$r"); fi
+    sleep "${GPS_MONITOR_PACE:-1.2}"
+  done
+  BASE="$SAVED_BASE"
+fi
+
 NOW="$(date -Is)"; echo "$NOW" >"$LASTRUN_FILE"
-TOTAL=${#CHECKS[@]}; NFAIL=${#FAILS[@]}
+TOTAL=$(( ${#CHECKS[@]} + GPS_N )); NFAIL=${#FAILS[@]}
 FAILSET="$(printf '%s\n' "${FAILS[@]}" | cut -d'|' -f1 | sort | tr '\n' ' ')"
 echo "$NOW pass=$PASSES fail=$NFAIL ${FAILSET}" | tee -a "$LOG"
 [ "$NFAIL" = 0 ] && echo "OK $PASSES/$TOTAL" >"$LASTRESULT_FILE" || echo "FAIL $NFAIL/$TOTAL: $FAILSET" >"$LASTRESULT_FILE"
