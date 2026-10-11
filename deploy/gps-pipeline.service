@@ -6,7 +6,8 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory=/opt/gps-pipeline
-ExecStart=/usr/bin/python3 /opt/gps-pipeline/gps_pipeline.py --bind 127.0.0.1 --port 3843
+# 3842 is the faers MCP server. 3843 and 3844 are the FAERS R APIs.
+ExecStart=/usr/bin/python3 /opt/gps-pipeline/gps_pipeline.py --bind 127.0.0.1 --port 3845
 Restart=on-failure
 RestartSec=3
 
