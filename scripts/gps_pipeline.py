@@ -5,6 +5,8 @@ GET /pipeline?sponsor=Sanofi
   format omitted + Accept: text/html  -> HTML (the human page)
   format omitted otherwise             -> JSON
   format=json | brief | html
+  role omitted                         -> lead sponsor only
+  role=collaborator | any              -> collaborator only, or either
 
 Registry facts only. Study ids are copied from the API response.
 A timeout or a 5xx from ClinicalTrials.gov is 503/502, never an empty 200.
@@ -66,6 +68,21 @@ PHASE_RANK = {name: i for i, name in enumerate(
 
 # Seed list for the picker. Free text still works; names are not expanded
 # into competitors.
+ROLES = ("lead", "collaborator", "any")
+ROLE_TEXT = {
+    "lead": (
+        "Lead sponsor only. The name has to appear in the lead sponsor, "
+        "including a company-family name such as Sanofi Pasteur. "
+        "Collaborator-only trials are not included."
+    ),
+    "collaborator": (
+        "Collaborator only. The name has to appear on a collaborator, "
+        "and the lead sponsor is someone else."
+    ),
+    "any": (
+        "Lead or collaborator. This is the ClinicalTrials.gov sponsor search."
+    ),
+}
 SPONSORS = (
     "Pfizer", "Sanofi", "Novartis", "Roche", "Genentech",
     "Johnson & Johnson", "Janssen", "Merck", "AstraZeneca",
@@ -116,7 +133,21 @@ def _as_list(value: Any) -> list[str]:
     return []
 
 
-def shape_study(raw: dict[str, Any]) -> dict[str, Any] | None:
+def _name_has(name: str, query: str) -> bool:
+    """True when the registry name contains the query, ignoring case."""
+    folded = query.casefold()
+    return bool(folded) and folded in name.casefold()
+
+
+def _study_role(lead: str, collaborators: list[str], query: str) -> str:
+    if _name_has(lead, query):
+        return "lead"
+    if any(_name_has(name, query) for name in collaborators):
+        return "collaborator"
+    return ""
+
+
+def shape_study(raw: dict[str, Any], sponsor_query: str) -> dict[str, Any] | None:
     """Copy one study. Return None when the registry did not send an NCT id."""
     ps = raw.get("protocolSection") or {}
     nct = str((ps.get("identificationModule") or {}).get("nctId") or "")
@@ -124,7 +155,13 @@ def shape_study(raw: dict[str, Any]) -> dict[str, Any] | None:
         return None
     status_mod = ps.get("statusModule") or {}
     design = ps.get("designModule") or {}
-    sponsor = ((ps.get("sponsorCollaboratorsModule") or {}).get("leadSponsor") or {})
+    module = ps.get("sponsorCollaboratorsModule") or {}
+    sponsor = module.get("leadSponsor") or {}
+    collaborators = []
+    for item in module.get("collaborators") or []:
+        if isinstance(item, dict) and item.get("name"):
+            collaborators.append(str(item["name"]))
+    lead = str(sponsor.get("name") or "")
     ident = ps.get("identificationModule") or {}
     conditions = _as_list((ps.get("conditionsModule") or {}).get("conditions"))
     interventions = []
@@ -141,7 +178,8 @@ def shape_study(raw: dict[str, Any]) -> dict[str, Any] | None:
         "phases": phases,
         "conditions": conditions,
         "interventions": interventions,
-        "lead_sponsor": str(sponsor.get("name") or ""),
+        "lead_sponsor": lead,
+        "role": _study_role(lead, collaborators, sponsor_query),
         "url": f"https://clinicaltrials.gov/study/{nct}",
     }
 
@@ -157,14 +195,24 @@ def _sort_key(study: dict[str, Any]) -> tuple:
     )
 
 
-def shape_payload(payload: dict[str, Any], sponsor_query: str, retrieved_at: str) -> dict[str, Any]:
+def shape_payload(payload: dict[str, Any], sponsor_query: str, retrieved_at: str,
+                   role_filter: str = "lead") -> dict[str, Any]:
     studies = []
     for raw in payload.get("studies") or []:
         if not isinstance(raw, dict):
             continue
-        study = shape_study(raw)
+        study = shape_study(raw, sponsor_query)
         if study is not None:
             studies.append(study)
+    # n_studies stays the registry totalCount. The request has to ask
+    # ClinicalTrials.gov for this role, or that total still counts the
+    # other role.
+    if role_filter == "any":
+        for study in studies:
+            if study["role"] not in ("lead", "collaborator"):
+                study["role"] = "collaborator"
+    else:
+        studies = [study for study in studies if study["role"] == role_filter]
     studies.sort(key=_sort_key)
     by_phase: Counter[str] = Counter()
     by_status: Counter[str] = Counter()
@@ -184,6 +232,7 @@ def shape_payload(payload: dict[str, Any], sponsor_query: str, retrieved_at: str
         n_studies = len(studies)
     return {
         "sponsor_query": sponsor_query,
+        "role_filter": role_filter,
         "sponsor_matched": (exact or matched or [None])[0],
         "matched_sponsors": matched,
         "retrieved_at": retrieved_at,
@@ -210,29 +259,50 @@ def suggestions_for(sponsor: str) -> list[str]:
     return hits[:5]
 
 
+def _essie_phrase(text: str) -> str:
+    """Quote a sponsor so Essie treats it as one phrase, not separate words."""
+    cleaned = text.replace('"', " ").replace("[", " ").replace("]", " ")
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return '"' + cleaned + '"'
+
+
 def ct_request_url(sponsor: str, status: str, phase: str, limit: int,
-                   page_token: str) -> str:
+                   page_token: str, role: str = "lead") -> str:
+    # query.spons matches lead, collaborator, and organization name.
+    # The default asks only LeadSponsorName, so totalCount matches the rows.
+    # A quoted phrase still matches a family name that contains it
+    # ("Sanofi" matches "Sanofi Pasteur, a Sanofi Company").
     query = {
-        "query.spons": sponsor,
         "pageSize": str(limit),
         "countTotal": "true",
         "fields": ",".join((
             "NCTId", "BriefTitle", "OverallStatus", "Phase",
-            "LeadSponsorName", "Condition", "InterventionName",
+            "LeadSponsorName", "CollaboratorName", "Condition", "InterventionName",
         )),
     }
+    phrase = _essie_phrase(sponsor)
+    advanced = []
+    if role == "lead":
+        advanced.append(f"AREA[LeadSponsorName]{phrase}")
+    elif role == "collaborator":
+        advanced.append(f"AREA[CollaboratorName]{phrase}")
+    else:
+        query["query.spons"] = sponsor
     if status:
         query["filter.overallStatus"] = status
     if phase:
-        query["filter.advanced"] = f"AREA[Phase]{phase}"
+        advanced.append(f"AREA[Phase]{phase}")
+    if advanced:
+        query["filter.advanced"] = " AND ".join(advanced)
     if page_token:
         query["pageToken"] = page_token
     return CT_URL + "?" + urllib.parse.urlencode(query)
 
 
 def fetch_payload(sponsor: str, status: str, phase: str, limit: int,
-                  page_token: str, opener: Opener | None = None) -> dict[str, Any]:
-    url = ct_request_url(sponsor, status, phase, limit, page_token)
+                  page_token: str, opener: Opener | None = None,
+                  role: str = "lead") -> dict[str, Any]:
+    url = ct_request_url(sponsor, status, phase, limit, page_token, role)
     key = url
     now = time.time()
     with _cache_lock:
@@ -274,8 +344,13 @@ def validate(args: dict[str, str]) -> dict[str, Any] | UpstreamError | dict[str,
     # ALL is an explicit "do not filter". Empty means the ongoing default.
     token = (args.get("pagetoken") or args.get("page_token") or "").strip()
     fmt = (args.get("format") or "").strip().lower()
+    role = (args.get("role") or "").strip().lower()
     if fmt not in ("", "json", "brief", "html"):
         return {"status": 400, "error": "unknown format", "allowed": ["json", "brief", "html"]}
+    if role == "":
+        role = "lead"
+    elif role not in ROLES:
+        return {"status": 400, "error": "unknown role", "allowed": list(ROLES)}
     if status and status != "ALL" and status not in STATUSES:
         return {"status": 400, "error": "unknown status", "allowed": ["ALL", *STATUSES]}
     if phase and phase not in PHASES:
@@ -301,6 +376,7 @@ def validate(args: dict[str, str]) -> dict[str, Any] | UpstreamError | dict[str,
         "limit": limit,
         "page_token": token,
         "format": fmt,
+        "role": role,
     }
 
 
@@ -401,7 +477,21 @@ def html_document(title: str, body: str, notice: str = "") -> str:
 """
 
 
-def form_html(sponsor: str = "", status: str = "", phase: str = "") -> str:
+def _role_options(selected: str) -> str:
+    options = (
+        ("lead", "Lead sponsor"),
+        ("collaborator", "Collaborator"),
+        ("any", "Lead or collaborator"),
+    )
+    parts = []
+    for value, label in options:
+        sel = " selected" if value == selected else ""
+        parts.append(f'<option value="{value}"{sel}>{label}</option>')
+    return "\n".join(parts)
+
+
+def form_html(sponsor: str = "", status: str = "", phase: str = "",
+              role: str = "lead") -> str:
     return f"""
 <form method="get" action="/pipeline">
   <label for="sponsor">Company or sponsor</label>
@@ -409,6 +499,10 @@ def form_html(sponsor: str = "", status: str = "", phase: str = "") -> str:
   <datalist id="sponsor-list">
     {_datalist()}
   </datalist>
+  <label for="role">Sponsor role</label>
+  <select id="role" name="role">
+    {_role_options(role)}
+  </select>
   <label for="status">Status</label>
   <select id="status" name="status">
     {_status_options(status)}
@@ -422,21 +516,35 @@ def form_html(sponsor: str = "", status: str = "", phase: str = "") -> str:
 """
 
 
+def _suggest_href(name: str, role: str) -> str:
+    query = {"sponsor": name}
+    if role != "lead":
+        query["role"] = role
+    return "/pipeline?" + urllib.parse.urlencode(query)
+
+
 def results_html(doc: dict[str, Any], status: str, phase: str) -> str:
     sponsor = doc["sponsor_query"]
+    role = doc.get("role_filter") or "lead"
     if doc["n_studies"] == 0:
         hints = suggestions_for(sponsor)
         hint_html = ""
         if hints:
             links = ", ".join(
-                f'<a href="/pipeline?sponsor={urllib.parse.quote(name)}">{_esc(name)}</a>'
+                f'<a href="{_esc(_suggest_href(name, role))}">{_esc(name)}</a>'
                 for name in hints
             )
             hint_html = f"<p>Did you mean {links}?</p>"
-        body = form_html(sponsor, status, phase) + (
-            f"<p>No studies found for {_esc(sponsor)}.</p>{hint_html}"
+        where = {
+            "lead": " as lead sponsor",
+            "collaborator": " as a collaborator",
+            "any": " as lead or collaborator",
+        }[role]
+        body = form_html(sponsor, status, phase, role) + (
+            f"<p>No studies found for {_esc(sponsor)}{where}.</p>{hint_html}"
             "<p>The name has to match the sponsor string ClinicalTrials.gov stores. "
             "Nothing was filled in from another company.</p>"
+            f"<p>{_esc(ROLE_TEXT[role])}</p>"
         )
         return html_document(f"No studies found for {sponsor}", body)
     matched = ", ".join(doc["matched_sponsors"]) or doc["sponsor_query"]
@@ -453,11 +561,13 @@ def results_html(doc: dict[str, Any], status: str, phase: str) -> str:
             f'<td>{_esc(phases)}</td>'
             f'<td>{_esc(cond)}</td>'
             f'<td>{_esc(drugs)}</td>'
+            f'<td>{_esc(study["role"])}</td>'
             "</tr>"
         )
     phase_bits = ", ".join(f"{k} {v}" for k, v in sorted(doc["by_phase"].items())) or "none"
     status_bits = ", ".join(f"{k} {v}" for k, v in sorted(doc["by_status"].items())) or "none"
-    body = form_html(sponsor, status, phase) + f"""
+    body = form_html(sponsor, status, phase, role) + f"""
+<p>{_esc(ROLE_TEXT[role])}</p>
 <p>Matched sponsor(s): {_esc(matched)}. Data pulled {_esc(doc["retrieved_at"])}.
 Showing {doc["n_returned"]} of {doc["n_studies"]} matching studies.
 {"Ongoing studies only. Choose Any status to include completed and stopped trials." if doc.get("status_default") else "Phase and status counts below are for the studies shown."}</p>
@@ -473,6 +583,7 @@ Showing {doc["n_returned"]} of {doc["n_studies"]} matching studies.
       <th scope="col">Phase</th>
       <th scope="col">Conditions</th>
       <th scope="col">Interventions</th>
+      <th scope="col">Role</th>
     </tr>
   </thead>
   <tbody>
@@ -494,6 +605,7 @@ def brief_text(doc: dict[str, Any]) -> str:
         f"Matching studies: {doc['n_studies']}",
         f"Showing: {doc['n_returned']} (recruiting first, then later phase)",
         "Scope: ongoing studies." if doc.get("status_default") else "Scope: the status filter in the query.",
+        ROLE_TEXT[doc.get("role_filter") or "lead"],
     ]
     if doc["matched_sponsors"]:
         lines.append("Matched sponsor(s): " + ", ".join(doc["matched_sponsors"]))
@@ -517,7 +629,7 @@ def brief_text(doc: dict[str, Any]) -> str:
     for study in doc["studies"]:
         phases = ",".join(study["phases"]) or "NA"
         lines.append(
-            f"- {study['nct_id']} — {study['title']} — {study['status']} — {phases}"
+            f"- {study['nct_id']} — {study['title']} — {study['status']} — {phases} — {study['role']}"
         )
         if study["conditions"]:
             lines.append("  Conditions: " + "; ".join(study["conditions"]))
@@ -529,7 +641,8 @@ def brief_text(doc: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def error_body(status: int, message: str, sponsor: str, fmt: str, accept: str) -> tuple[int, str, bytes]:
+def error_body(status: int, message: str, sponsor: str, fmt: str, accept: str,
+               role: str = "lead") -> tuple[int, str, bytes]:
     payload = {
         "error": message,
         "source": SOURCE,
@@ -540,7 +653,7 @@ def error_body(status: int, message: str, sponsor: str, fmt: str, accept: str) -
     if want_html and status != 400:
         page = html_document(
             "ClinicalTrials.gov is unavailable",
-            form_html(sponsor) + (
+            form_html(sponsor, role=role) + (
                 "<p>No study list is shown. This site does not invent NCT ids "
                 "when the registry cannot be reached.</p>"
             ),
@@ -571,7 +684,8 @@ def handle_query(query: dict[str, str], accept: str,
             form_html() + (
                 "<p>Pick a company, or type the sponsor name ClinicalTrials.gov uses. "
                 "The list is a shortcut. A name that is not in the list is still searched as you typed it. "
-                "The default list is ongoing studies.</p>"
+                "The default list is ongoing studies. "
+                "The default role is lead sponsor. Collaborator-only trials stay out unless you change the role.</p>"
             ),
         )
         return 200, "text/html; charset=utf-8", page.encode("utf-8")
@@ -587,11 +701,11 @@ def handle_query(query: dict[str, str], accept: str,
     try:
         payload = fetch_payload(
             sponsor, status_param, checked["phase"], checked["limit"],
-            checked["page_token"], opener=opener,
+            checked["page_token"], opener=opener, role=checked["role"],
         )
     except UpstreamError as exc:
-        return error_body(exc.status, exc.message, sponsor, fmt, accept)
-    doc = shape_payload(payload, sponsor, _now())
+        return error_body(exc.status, exc.message, sponsor, fmt, accept, checked["role"])
+    doc = shape_payload(payload, sponsor, _now(), checked["role"])
     # Filters echo so a client can see they were applied. They are not study facts.
     doc["status_filter"] = status_param or None
     doc["status_default"] = status_default
@@ -622,7 +736,18 @@ def openapi_spec() -> dict[str, Any]:
                     "summary": "ClinicalTrials.gov studies for one sponsor",
                     "parameters": [
                         {"name": "sponsor", "in": "query", "required": True,
+                         "description": (
+                             "Matched against the lead sponsor name unless role says otherwise. "
+                             "A family name that contains the query counts. "
+                             "Not expanded to other companies."
+                         ),
                          "schema": {"type": "string"}},
+                        {"name": "role", "in": "query", "required": False,
+                         "description": (
+                             "Default lead. collaborator is collaborator-only. "
+                             "any is lead or collaborator, the ClinicalTrials.gov sponsor search."
+                         ),
+                         "schema": {"type": "string", "enum": list(ROLES), "default": "lead"}},
                         {"name": "status", "in": "query", "required": False,
                          "description": "Omitted means ongoing studies. ALL means every status.",
                          "schema": {"type": "string", "enum": ["ALL", *list(STATUSES)]}},

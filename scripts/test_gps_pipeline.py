@@ -5,6 +5,7 @@ import io
 import json
 import unittest
 import urllib.error
+import urllib.parse
 
 import gps_pipeline as gp
 
@@ -157,6 +158,9 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("filter.overallStatus=RECRUITING", seen[0])
         self.assertIn("ACTIVE_NOT_RECRUITING", seen[0])
+        self.assertIn("AREA%5BLeadSponsorName%5D", seen[0])
+        self.assertIn("%22Sanofi%22", seen[0])
+        self.assertNotIn("query.spons", seen[0])
         doc = json.loads(body)
         self.assertTrue(doc["status_default"])
         self.assertIn("RECRUITING", doc["status_filter"])
@@ -196,7 +200,105 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(status, 200)
         text = body.decode()
         self.assertIn("No studies found for NoSuchCoZZZ", text)
+        self.assertIn("as lead sponsor", text)
         self.assertNotIn("<table>", text)
+
+    def _mixed(self):
+        def study(nct, lead, collaborators=None, title="T"):
+            module = {"leadSponsor": {"name": lead}}
+            if collaborators:
+                module["collaborators"] = [{"name": name} for name in collaborators]
+            return {
+                "protocolSection": {
+                    "identificationModule": {"nctId": nct, "briefTitle": title},
+                    "statusModule": {"overallStatus": "RECRUITING"},
+                    "sponsorCollaboratorsModule": module,
+                    "designModule": {"phases": ["PHASE3"]},
+                }
+            }
+        return {
+            "totalCount": 4,
+            "studies": [
+                study("NCT00000001", "Sanofi", title="Plain"),
+                study("NCT00000002", "Sanofi Pasteur, a Sanofi Company", title="Family"),
+                study("NCT00000003", "Regeneron Pharmaceuticals", ["Sanofi"], title="Collab"),
+                study("NCT00000004", "Karolinska Institutet", title="Neither"),
+            ],
+        }
+
+    def test_default_role_keeps_family_leads_only(self):
+        doc = gp.shape_payload(self._mixed(), "Sanofi", "2026-10-11T00:00:00Z")
+        self.assertEqual(doc["role_filter"], "lead")
+        self.assertEqual(
+            sorted(s["nct_id"] for s in doc["studies"]),
+            ["NCT00000001", "NCT00000002"],
+        )
+        self.assertEqual({s["role"] for s in doc["studies"]}, {"lead"})
+        self.assertEqual(doc["n_returned"], 2)
+        # Registry total stays totalCount. The live request asks LeadSponsorName
+        # so that total is already the lead-only count.
+        self.assertEqual(doc["n_studies"], 4)
+        self.assertNotIn("Regeneron", json.dumps(doc["studies"]))
+
+    def test_role_any_restores_every_row_and_labels_it(self):
+        seen = []
+
+        def opener(req, timeout=0):
+            seen.append(req.full_url)
+            return FakeResp(json.dumps(self._mixed()).encode())
+
+        status, _c, body = gp.handle_query(
+            {"sponsor": "Sanofi", "role": "any", "format": "json", "status": "ALL"},
+            "", opener,
+        )
+        self.assertEqual(status, 200)
+        self.assertIn("query.spons=Sanofi", seen[0])
+        self.assertNotIn("filter.advanced", seen[0])
+        doc = json.loads(body)
+        self.assertEqual(doc["role_filter"], "any")
+        self.assertEqual(doc["n_studies"], 4)
+        roles = {s["nct_id"]: s["role"] for s in doc["studies"]}
+        self.assertEqual(roles["NCT00000001"], "lead")
+        self.assertEqual(roles["NCT00000002"], "lead")
+        self.assertEqual(roles["NCT00000003"], "collaborator")
+        self.assertEqual(roles["NCT00000004"], "collaborator")
+
+    def test_role_collaborator_uses_collaborator_area(self):
+        seen = []
+
+        def opener(req, timeout=0):
+            seen.append(urllib.parse.unquote(req.full_url))
+            return FakeResp(json.dumps(self._mixed()).encode())
+
+        status, _c, body = gp.handle_query(
+            {"sponsor": "Sanofi", "role": "collaborator", "format": "brief", "status": "ALL"},
+            "", opener,
+        )
+        self.assertEqual(status, 200)
+        self.assertIn('AREA[CollaboratorName]"Sanofi"', seen[0])
+        self.assertNotIn("query.spons", seen[0])
+        text = body.decode()
+        self.assertIn("Collaborator only", text)
+        self.assertIn("NCT00000003", text)
+        self.assertNotIn("NCT00000001", text)
+        self.assertIn("collaborator", text)
+
+    def test_unknown_role_is_400(self):
+        status, _c, body = gp.handle_query(
+            {"sponsor": "Sanofi", "role": "both"}, "", opener_ok
+        )
+        self.assertEqual(status, 400)
+        self.assertIn("collaborator", body.decode())
+
+    def test_html_names_the_lead_role(self):
+        status, _c, body = gp.handle_query(
+            {"sponsor": "Sanofi", "format": "html"}, "", opener_ok
+        )
+        text = body.decode()
+        self.assertEqual(status, 200)
+        self.assertIn('for="role"', text)
+        self.assertIn("Lead sponsor only", text)
+        self.assertIn("<th scope=\"col\">Role</th>", text)
 
 
 if __name__ == "__main__":
