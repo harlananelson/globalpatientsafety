@@ -1,0 +1,306 @@
+{
+ "title": "Independent Reanalysis: COVID/Shingles Vaccine Signals Amid FDA Publication Blocks",
+ "lang": "en",
+ "skipLink": [
+  {
+   "text": "← Global Patient Safety",
+   "href": "/"
+  },
+  {
+   "text": "All articles",
+   "href": "/articles"
+  },
+  {
+   "text": "Context",
+   "href": "#context"
+  }
+ ],
+ "landmarks": {
+  "main": 1,
+  "nav": 1
+ },
+ "h1": [
+  "Independent Reanalysis: COVID/Shingles Vaccine Signals Amid "
+ ],
+ "headings": [
+  "H2:Table of contents",
+  "H1:Independent Reanalysis: COVID/Shingles Vaccine Sig",
+  "H2:Context",
+  "H2:Methods",
+  "H2:Headline counts",
+  "H2:Top signals — cardiac",
+  "H2:Top signals — neurological",
+  "H2:Top signals — thrombotic",
+  "H2:Bubble chart: EB05 vs methods-flagged, faceted by ",
+  "H2:Signal emergence timeline",
+  "H2:Manufacturer comparison",
+  "H2:Interpretation",
+  "H2:Limitations",
+  "H2:Replicable R"
+ ],
+ "tables": [
+  {
+   "id": "",
+   "cls": "gt_table caption-top table table-sm tabl",
+   "caption": false,
+   "th": 8,
+   "thScope": 6,
+   "rows": 10
+  },
+  {
+   "id": "",
+   "cls": "gt_table caption-top table table-sm tabl",
+   "caption": false,
+   "th": 10,
+   "thScope": 8,
+   "rows": 24
+  },
+  {
+   "id": "",
+   "cls": "gt_table caption-top table table-sm tabl",
+   "caption": false,
+   "th": 10,
+   "thScope": 8,
+   "rows": 24
+  },
+  {
+   "id": "",
+   "cls": "gt_table caption-top table table-sm tabl",
+   "caption": false,
+   "th": 10,
+   "thScope": 8,
+   "rows": 24
+  }
+ ],
+ "inputs": [],
+ "imgs": [
+  {
+   "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB4AAAAbACAIAAA",
+   "alt": null
+  },
+  {
+   "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB4AAAAeACAIAAA",
+   "alt": null
+  },
+  {
+   "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB4AAAASACAIAAA",
+   "alt": null
+  }
+ ],
+ "svgs": [],
+ "canvases": 0,
+ "plots": [],
+ "ariaLive": [],
+ "shinyOutputs": 0,
+ "colorCues": [
+  {
+   "text": "36.5",
+   "style": "background-color: rgba(165,15,21,0.7); color: #FFFFFF"
+  },
+  {
+   "text": "4.4",
+   "style": "background-color: rgba(252,241,238,0.7); color: #000000"
+  },
+  {
+   "text": "4.0",
+   "style": "background-color: rgba(253,243,241,0.7); color: #000000"
+  },
+  {
+   "text": "3.8",
+   "style": "background-color: rgba(253,245,243,0.7); color: #000000"
+  },
+  {
+   "text": "3.8",
+   "style": "background-color: rgba(253,245,243,0.7); color: #000000"
+  },
+  {
+   "text": "3.3",
+   "style": "background-color: rgba(254,248,246,0.7); color: #000000"
+  },
+  {
+   "text": "3.3",
+   "style": "background-color: rgba(254,248,247,0.7); color: #000000"
+  },
+  {
+   "text": "3.1",
+   "style": "background-color: rgba(254,249,248,0.7); color: #000000"
+  }
+ ],
+ "tabOrder": [
+  {
+   "tag": "A",
+   "id": "",
+   "text": "← Global Patient Safety",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "All articles",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "id": "",
+   "text": "Copy link",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "toc-context",
+   "text": "Context",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-methods",
+   "text": "Methods",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-headline-counts",
+   "text": "Headline counts",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-top-signals-cardiac",
+   "text": "Top signals — cardiac",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-top-signals-neurological",
+   "text": "Top signals — neurological",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-top-signals-thrombotic",
+   "text": "Top signals — thrombotic",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-bubble-chart-eb05-vs-methods-flagged-faceted-by-category",
+   "text": "Bubble chart: EB05 vs methods-flagged, f",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-signal-emergence-timeline",
+   "text": "Signal emergence timeline",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-manufacturer-comparison",
+   "text": "Manufacturer comparison",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-interpretation",
+   "text": "Interpretation",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-limitations",
+   "text": "Limitations",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-replicable-r",
+   "text": "Replicable R",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "SUMMARY",
+   "id": "",
+   "text": "Show code",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "SUMMARY",
+   "id": "",
+   "text": "Show code",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "SUMMARY",
+   "id": "",
+   "text": "Show code",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "SUMMARY",
+   "id": "",
+   "text": "Show code",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "SUMMARY",
+   "id": "",
+   "text": "Show code",
+   "outline": "auto 1px",
+   "boxShadow": false
+  }
+ ]
+}

@@ -1,0 +1,2218 @@
+{
+ "testEngine": {
+  "name": "axe-core",
+  "version": "4.13.0"
+ },
+ "testRunner": {
+  "name": "axe"
+ },
+ "testEnvironment": {
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+  "windowWidth": 1366,
+  "windowHeight": 900,
+  "orientationAngle": 0,
+  "orientationType": "portrait-primary"
+ },
+ "timestamp": "2026-10-09T10:47:24.195Z",
+ "url": "https://faers.mobi/?drug=tzield",
+ "toolOptions": {
+  "runOnly": {
+   "type": "tag",
+   "values": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "best-practice"
+   ]
+  },
+  "reporter": "v1"
+ },
+ "inapplicable": [
+  "accesskeys",
+  "area-alt",
+  "aria-braille-equivalent",
+  "aria-dialog-name",
+  "aria-input-field-name",
+  "aria-meter-name",
+  "aria-progressbar-name",
+  "aria-tab-name",
+  "aria-text",
+  "aria-toggle-field-name",
+  "aria-tooltip-name",
+  "aria-treeitem-name",
+  "autocomplete-valid",
+  "blink",
+  "definition-list",
+  "dlitem",
+  "frame-focusable-content",
+  "frame-tested",
+  "frame-title-unique",
+  "frame-title",
+  "html-lang-valid",
+  "html-xml-lang-mismatch",
+  "input-button-name",
+  "input-image-alt",
+  "landmark-banner-is-top-level",
+  "landmark-main-is-top-level",
+  "landmark-no-duplicate-banner",
+  "landmark-no-duplicate-main",
+  "list",
+  "listitem",
+  "marquee",
+  "meta-refresh",
+  "object-alt",
+  "role-img-alt",
+  "scope-attr-valid",
+  "scrollable-region-focusable",
+  "server-side-image-map",
+  "skip-link",
+  "summary-name",
+  "svg-img-alt",
+  "valid-lang",
+  "video-caption",
+  "no-autoplay-audio"
+ ],
+ "passes": [
+  "aria-allowed-attr",
+  "aria-allowed-role",
+  "aria-command-name",
+  "aria-conditional-attr",
+  "aria-deprecated-role",
+  "aria-hidden-body",
+  "aria-hidden-focus",
+  "aria-prohibited-attr",
+  "aria-required-attr",
+  "aria-required-children",
+  "aria-required-parent",
+  "aria-roles",
+  "aria-valid-attr-value",
+  "aria-valid-attr",
+  "avoid-inline-spacing",
+  "button-name",
+  "bypass",
+  "color-contrast",
+  "document-title",
+  "duplicate-id-aria",
+  "empty-heading",
+  "empty-table-header",
+  "form-field-multiple-labels",
+  "heading-order",
+  "image-alt",
+  "image-redundant-alt",
+  "label-title-only",
+  "label",
+  "landmark-contentinfo-is-top-level",
+  "landmark-no-duplicate-contentinfo",
+  "landmark-unique",
+  "link-in-text-block",
+  "link-name",
+  "meta-viewport-large",
+  "meta-viewport",
+  "nested-interactive",
+  "presentation-role-conflict",
+  "region",
+  "select-name",
+  "tabindex",
+  "table-duplicate-name",
+  "td-headers-attr",
+  "th-has-data-cells"
+ ],
+ "incomplete": [
+  {
+   "id": "color-contrast",
+   "impact": "serious",
+   "tags": [
+    "cat.color",
+    "wcag2aa",
+    "wcag143",
+    "TTv5",
+    "TT13.c",
+    "EN-301-549",
+    "EN-9.1.4.3",
+    "ACT",
+    "RGAAv4",
+    "RGAA-3.2.1"
+   ],
+   "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+   "help": "Elements must meet minimum color contrast ratio thresholds",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "contrastRatio": 0,
+        "fontSize": "12.0pt (16px)",
+        "fontWeight": "normal",
+        "messageKey": "shortTextContent",
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<a class=\"paginate_button current\" aria-controls=\"DataTables_Table_0\" role=\"link\" aria-current=\"page\" data-dt-idx=\"0\" tabindex=\"0\">1</a>",
+         "target": [
+          ".current"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element content is too short to determine if it is actual text content"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a class=\"paginate_button current\" aria-controls=\"DataTables_Table_0\" role=\"link\" aria-current=\"page\" data-dt-idx=\"0\" tabindex=\"0\">1</a>",
+     "target": [
+      ".current"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element content is too short to determine if it is actual text content"
+    }
+   ]
+  }
+ ],
+ "violations": [
+  {
+   "id": "color-contrast",
+   "impact": "serious",
+   "tags": [
+    "cat.color",
+    "wcag2aa",
+    "wcag143",
+    "TTv5",
+    "TT13.c",
+    "EN-301-549",
+    "EN-9.1.4.3",
+    "ACT",
+    "RGAAv4",
+    "RGAA-3.2.1"
+   ],
+   "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+   "help": "Elements must meet minimum color contrast ratio thresholds",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          ".col-sm-12 > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<div class=\"alert alert-secondary small py-2\">",
+     "target": [
+      ".col-sm-12 > .alert-secondary.alert.py-2"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "bold",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          ".col-sm-12 > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<strong>LLM / API access. </strong>",
+     "target": [
+      ".col-sm-12 > .alert-secondary.alert.py-2 > strong:nth-child(1)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "bold",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          ".col-sm-12 > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<strong>do not scrape this page.</strong>",
+     "target": [
+      ".alert-secondary.alert.py-2 > strong:nth-child(2)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          ".col-sm-12 > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/signals?drug=tzield&amp;event=Nausea&amp;format=brief\">https://faers.mobi/signals?drug=tzield&amp;event=Nausea&amp;format=brief</a>",
+     "target": [
+      ".alert-secondary.alert.py-2 > a:nth-child(4)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          ".col-sm-12 > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/api\">/api</a>",
+     "target": [
+      ".alert-secondary.alert.py-2 > a[href$=\"api\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          ".col-sm-12 > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/API.md\">API.md</a>",
+     "target": [
+      ".alert-secondary.alert.py-2 > a[href$=\"API.md\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          ".col-sm-12 > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/openapi.json\">OpenAPI</a>",
+     "target": [
+      ".alert-secondary.alert.py-2 > a[href$=\"openapi.json\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          ".col-sm-12 > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/chatgpt.md\">ChatGPT</a>",
+     "target": [
+      ".alert-secondary.alert.py-2 > a[href$=\"chatgpt.md\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          ".col-sm-12 > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/mcp\">MCP</a>",
+     "target": [
+      ".alert-secondary.alert.py-2 > a[href$=\"mcp\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          ".col-sm-12 > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/signals?drug=tzield\">GET /signals?drug=tzield</a>",
+     "target": [
+      "a[href=\"/signals?drug=tzield\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "12.0pt (16px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/signals?drug=tzield&amp;event=Nausea&amp;format=brief\">https://faers.mobi/signals?drug=tzield&amp;event=Nausea&amp;format=brief</a>",
+     "target": [
+      "p:nth-child(3) > a:nth-child(2)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "12.0pt (16px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/api\">https://faers.mobi/api</a>",
+     "target": [
+      "p:nth-child(3) > a[href$=\"api\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "12.0pt (16px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/api.md\">https://faers.mobi/api.md</a>",
+     "target": [
+      "p:nth-child(3) > a[href$=\"api.md\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "12.0pt (16px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/openapi.json\">https://faers.mobi/openapi.json</a>",
+     "target": [
+      "p:nth-child(3) > a[href$=\"openapi.json\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "12.0pt (16px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/chatgpt.md\">https://faers.mobi/chatgpt.md</a>",
+     "target": [
+      "p:nth-child(3) > a[href$=\"chatgpt.md\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "12.0pt (16px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/mcp\">https://faers.mobi/mcp</a>",
+     "target": [
+      "p:nth-child(3) > a[href$=\"mcp\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#3498db",
+        "contrastRatio": 3.15,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-info small py-2\">",
+         "target": [
+          ".alert-info"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 3.15 (foreground color: #ffffff, background color: #3498db, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<div class=\"alert alert-info small py-2\">",
+     "target": [
+      ".alert-info"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.15 (foreground color: #ffffff, background color: #3498db, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#3498db",
+        "contrastRatio": 3.15,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "bold",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-info small py-2\">",
+         "target": [
+          ".alert-info"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 3.15 (foreground color: #ffffff, background color: #3498db, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<strong>Note:</strong>",
+     "target": [
+      ".alert-info > strong"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.15 (foreground color: #ffffff, background color: #3498db, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "12.0pt (16px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/api\">/api</a>",
+     "target": [
+      "p:nth-child(5) > a[href$=\"api\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "12.0pt (16px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/api.md\">/api.md</a>",
+     "target": [
+      "p:nth-child(5) > a[href$=\"api.md\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#95a5a6",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.55,
+        "fontSize": "12.0pt (16px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<span class=\"action-label\">Clear</span>",
+     "target": [
+      "#app-timeline-clear_search > .action-label"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#95a5a6",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/signals?drug=tzield&amp;format=csv\" class=\"btn btn-outline-secondary btn-sm\">Download CSV</a>",
+     "target": [
+      "#app-timeline-csv_download > .btn-sm.btn-outline-secondary.btn"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#7b8a8b",
+        "bgColor": "#ecf0f1",
+        "contrastRatio": 3.12,
+        "fontSize": "9.0pt (12px)",
+        "fontWeight": "bold",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<span class=\"badge bg-light text-dark border\" style=\"margin: 2px 4px 2px 0;\">tzield</span>",
+         "target": [
+          ".badge.bg-light.text-dark:nth-child(1)"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 3.12 (foreground color: #7b8a8b, background color: #ecf0f1, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<span class=\"badge bg-light text-dark border\" style=\"margin: 2px 4px 2px 0;\">tzield</span>",
+     "target": [
+      ".badge.bg-light.text-dark:nth-child(1)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.12 (foreground color: #7b8a8b, background color: #ecf0f1, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#7b8a8b",
+        "bgColor": "#ecf0f1",
+        "contrastRatio": 3.12,
+        "fontSize": "9.0pt (12px)",
+        "fontWeight": "bold",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<span class=\"badge bg-light text-dark border\" style=\"margin: 2px 4px 2px 0;\">teplizumab</span>",
+         "target": [
+          ".badge.bg-light.text-dark:nth-child(2)"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 3.12 (foreground color: #7b8a8b, background color: #ecf0f1, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<span class=\"badge bg-light text-dark border\" style=\"margin: 2px 4px 2px 0;\">teplizumab</span>",
+     "target": [
+      ".badge.bg-light.text-dark:nth-child(2)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.12 (foreground color: #7b8a8b, background color: #ecf0f1, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#95a5a6",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" onclick=\"(function(){var t=document.getElementById('app-timeline-rwe_brief_copy');if(!t)return; t.focus(); t.select();navigator.clipboard.writeText(t.value);})()\">Copy</button>",
+     "target": [
+      "#app-timeline-rwe_brief > div > button"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#95a5a6",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/signals?drug=tzield&amp;format=pdf&amp;event=Lymphocyte%20count%20abnormal\" class=\"btn btn-outline-secondary btn-sm\">Download PDF</a>",
+     "target": [
+      "#app-timeline-rwe_brief > div > .btn-sm.btn-outline-secondary.btn:nth-child(3)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#18bc9c",
+        "contrastRatio": 2.41,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-success small py-2\">\n  <strong>KNOWN</strong>\n   \u2014 \"\n  <em>Lymphocyte count abnormal</em>\n  \" appears in \n  <em>tzield</em>\n  's label (\n  Boxed, Warnings/Precautions, Adverse Reactions\n  ). This signal is already documented.\n</div>",
+         "target": [
+          ".alert-success"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #ffffff, background color: #18bc9c, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<div class=\"alert alert-success small py-2\">\n  <strong>KNOWN</strong>\n   \u2014 \"\n  <em>Lymphocyte count abnormal</em>\n  \" appears in \n  <em>tzield</em>\n  's label (\n  Boxed, Warnings/Precautions, Adverse Reactions\n  ). This signal is already documented.\n</div>",
+     "target": [
+      ".alert-success"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #ffffff, background color: #18bc9c, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#18bc9c",
+        "contrastRatio": 2.41,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "bold",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-success small py-2\">\n  <strong>KNOWN</strong>\n   \u2014 \"\n  <em>Lymphocyte count abnormal</em>\n  \" appears in \n  <em>tzield</em>\n  's label (\n  Boxed, Warnings/Precautions, Adverse Reactions\n  ). This signal is already documented.\n</div>",
+         "target": [
+          ".alert-success"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #ffffff, background color: #18bc9c, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<strong>KNOWN</strong>",
+     "target": [
+      ".alert-success > strong"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #ffffff, background color: #18bc9c, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#18bc9c",
+        "contrastRatio": 2.41,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-success small py-2\">\n  <strong>KNOWN</strong>\n   \u2014 \"\n  <em>Lymphocyte count abnormal</em>\n  \" appears in \n  <em>tzield</em>\n  's label (\n  Boxed, Warnings/Precautions, Adverse Reactions\n  ). This signal is already documented.\n</div>",
+         "target": [
+          ".alert-success"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #ffffff, background color: #18bc9c, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<em>Lymphocyte count abnormal</em>",
+     "target": [
+      "em:nth-child(2)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #ffffff, background color: #18bc9c, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#18bc9c",
+        "contrastRatio": 2.41,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-success small py-2\">\n  <strong>KNOWN</strong>\n   \u2014 \"\n  <em>Lymphocyte count abnormal</em>\n  \" appears in \n  <em>tzield</em>\n  's label (\n  Boxed, Warnings/Precautions, Adverse Reactions\n  ). This signal is already documented.\n</div>",
+         "target": [
+          ".alert-success"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #ffffff, background color: #18bc9c, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<em>tzield</em>",
+     "target": [
+      "em:nth-child(3)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #ffffff, background color: #18bc9c, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          "#app-timeline-explain_signal > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<div class=\"alert alert-secondary small py-2\">",
+     "target": [
+      "#app-timeline-explain_signal > .alert-secondary.alert.py-2"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#ffffff",
+        "bgColor": "#95a5a6",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "bold",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<div class=\"alert alert-secondary small py-2\">",
+         "target": [
+          "#app-timeline-explain_signal > .alert-secondary.alert.py-2"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<strong>Hypothesis. </strong>",
+     "target": [
+      "#app-timeline-explain_signal > .alert-secondary.alert.py-2 > strong"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #ffffff, background color: #95a5a6, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#95a5a6",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<button type=\"button\" class=\"btn btn-outline-secondary btn-sm\" onclick=\"(function(){var t=document.getElementById('app-timeline-llm_link_copy');if(!t)return; t.focus(); t.select();navigator.clipboard.writeText(t.value);})()\">Copy</button>",
+     "target": [
+      ".small > div:nth-child(1) > button"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#95a5a6",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.55,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/signals?drug=tzield&amp;event=Lymphocyte%20count%20abnormal&amp;format=brief\" target=\"_blank\" class=\"btn btn-outline-secondary btn-sm\">Open</a>",
+     "target": [
+      "a[target=\"_blank\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.55 (foreground color: #95a5a6, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/API.md\">API.md</a>",
+     "target": [
+      "footer > a[href$=\"API.md\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/chatgpt.md\">ChatGPT</a>",
+     "target": [
+      "footer > a[href$=\"chatgpt.md\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/openapi.json\">OpenAPI</a>",
+     "target": [
+      "footer > a[href$=\"openapi.json\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/llms.txt\">llms.txt</a>",
+     "target": [
+      "footer > a[href$=\"llms.txt\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/mcp.md\">MCP</a>",
+     "target": [
+      "footer > a[href$=\"mcp.md\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    },
+    {
+     "any": [
+      {
+       "id": "color-contrast",
+       "data": {
+        "fgColor": "#18bc9c",
+        "bgColor": "#ffffff",
+        "contrastRatio": 2.41,
+        "fontSize": "10.5pt (14px)",
+        "fontWeight": "normal",
+        "messageKey": null,
+        "expectedContrastRatio": "4.5:1"
+       },
+       "relatedNodes": [
+        {
+         "html": "<body class=\"bslib-page-navbar\">",
+         "target": [
+          "body"
+         ]
+        }
+       ],
+       "impact": "serious",
+       "message": "Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<a href=\"/mcp\">hosted MCP</a>",
+     "target": [
+      "footer > a[href$=\"mcp\"]"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.41 (foreground color: #18bc9c, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+    }
+   ]
+  },
+  {
+   "id": "html-has-lang",
+   "impact": "serious",
+   "tags": [
+    "cat.language",
+    "wcag2a",
+    "wcag311",
+    "TTv5",
+    "TT11.a",
+    "EN-301-549",
+    "EN-9.3.1.1",
+    "ACT",
+    "RGAAv4",
+    "RGAA-8.3.1"
+   ],
+   "description": "Ensure every HTML document has a lang attribute",
+   "help": "<html> element must have a lang attribute",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/html-has-lang?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "has-lang",
+       "data": {
+        "messageKey": "noLang"
+       },
+       "relatedNodes": [],
+       "impact": "serious",
+       "message": "The <html> element does not have a lang attribute"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "serious",
+     "html": "<html class=\"\">",
+     "target": [
+      "html"
+     ],
+     "failureSummary": "Fix any of the following:\n  The <html> element does not have a lang attribute"
+    }
+   ]
+  },
+  {
+   "id": "label-title-only",
+   "impact": "serious",
+   "tags": [
+    "cat.forms",
+    "best-practice"
+   ],
+   "description": "Ensure that every form element has a visible label and is not solely labeled using hidden labels, or the title or aria-describedby attributes",
+   "help": "Form elements should have a visible label",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/label-title-only?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [],
+     "all": [],
+     "none": [
+      {
+       "id": "title-only",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "serious",
+       "message": "Only title used to generate label for form element"
+      }
+     ],
+     "impact": "serious",
+     "html": "<input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" title=\"3 ... 11\">",
+     "target": [
+      "input[title=\"3 ... 11\"]"
+     ],
+     "failureSummary": "Fix all of the following:\n  Only title used to generate label for form element"
+    },
+    {
+     "any": [],
+     "all": [],
+     "none": [
+      {
+       "id": "title-only",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "serious",
+       "message": "Only title used to generate label for form element"
+      }
+     ],
+     "impact": "serious",
+     "html": "<input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" title=\"5 ... 319\">",
+     "target": [
+      "input[title=\"5 ... 319\"]"
+     ],
+     "failureSummary": "Fix all of the following:\n  Only title used to generate label for form element"
+    }
+   ]
+  },
+  {
+   "id": "label",
+   "impact": "critical",
+   "tags": [
+    "cat.forms",
+    "wcag2a",
+    "wcag412",
+    "section508",
+    "section508.22.n",
+    "TTv5",
+    "TT5.c",
+    "EN-301-549",
+    "EN-9.4.1.2",
+    "ACT",
+    "RGAAv4",
+    "RGAA-11.1.1"
+   ],
+   "description": "Ensure every form element has a label",
+   "help": "Form elements must have labels",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/label?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "implicit-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element does not have an implicit (wrapped) <label>"
+      },
+      {
+       "id": "explicit-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element does not have an explicit <label>"
+      },
+      {
+       "id": "aria-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "aria-label attribute does not exist or is empty"
+      },
+      {
+       "id": "aria-labelledby",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+      },
+      {
+       "id": "non-empty-title",
+       "data": {
+        "messageKey": "noAttr"
+       },
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element has no title attribute"
+      },
+      {
+       "id": "non-empty-placeholder",
+       "data": {
+        "messageKey": "noAttr"
+       },
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element has no placeholder attribute"
+      },
+      {
+       "id": "presentational-role",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "critical",
+     "html": "<textarea id=\"app-timeline-rwe_brief_copy\" readonly=\"readonly\" rows=\"12\" style=\"width:100%; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px;\" class=\"shiny-bound-input\">",
+     "target": [
+      "#app-timeline-rwe_brief_copy"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+    },
+    {
+     "any": [
+      {
+       "id": "implicit-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element does not have an implicit (wrapped) <label>"
+      },
+      {
+       "id": "explicit-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element does not have an explicit <label>"
+      },
+      {
+       "id": "aria-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "aria-label attribute does not exist or is empty"
+      },
+      {
+       "id": "aria-labelledby",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+      },
+      {
+       "id": "non-empty-title",
+       "data": {
+        "messageKey": "noAttr"
+       },
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element has no title attribute"
+      },
+      {
+       "id": "non-empty-placeholder",
+       "data": {
+        "messageKey": "noAttr"
+       },
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element has no placeholder attribute"
+      },
+      {
+       "id": "presentational-role",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "critical",
+     "html": "<input type=\"text\" id=\"app-timeline-llm_lin...\" readonly=\"readonly\" value=\"https://faers.mobi/s...\" style=\"flex:1; min-width:28...\" class=\"shiny-bound-input\">",
+     "target": [
+      "#app-timeline-llm_link_copy"
+     ],
+     "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+    }
+   ]
+  },
+  {
+   "id": "landmark-one-main",
+   "impact": "moderate",
+   "tags": [
+    "cat.semantics",
+    "best-practice"
+   ],
+   "description": "Ensure the document has a main landmark",
+   "help": "Document should have one main landmark",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/landmark-one-main?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [],
+     "all": [
+      {
+       "id": "page-has-main",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Document does not have a main landmark"
+      }
+     ],
+     "none": [],
+     "impact": "moderate",
+     "html": "<html class=\"\">",
+     "target": [
+      "html"
+     ],
+     "failureSummary": "Fix all of the following:\n  Document does not have a main landmark"
+    }
+   ]
+  },
+  {
+   "id": "page-has-heading-one",
+   "impact": "moderate",
+   "tags": [
+    "cat.semantics",
+    "best-practice"
+   ],
+   "description": "Ensure that the page, or at least one of its frames contains a level-one heading",
+   "help": "Page should contain a level-one heading",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/page-has-heading-one?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [],
+     "all": [
+      {
+       "id": "page-has-heading-one",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Page must have a level-one heading"
+      }
+     ],
+     "none": [],
+     "impact": "moderate",
+     "html": "<html class=\"\">",
+     "target": [
+      "html"
+     ],
+     "failureSummary": "Fix all of the following:\n  Page must have a level-one heading"
+    }
+   ]
+  },
+  {
+   "id": "region",
+   "impact": "moderate",
+   "tags": [
+    "cat.keyboard",
+    "best-practice",
+    "RGAAv4",
+    "RGAA-9.2.1"
+   ],
+   "description": "Ensure all page content is contained by landmarks",
+   "help": "All page content should be contained by landmarks",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/region?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<div class=\"row\">",
+     "target": [
+      "#tab-1310-1 > .container-fluid > .container-fluid > .row:nth-child(1)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<div class=\"shiny-options-group\">",
+     "target": [
+      ".shiny-options-group"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<small class=\"text-muted\">",
+     "target": [
+      ".row:nth-child(2) > .col-sm-12 > small"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<input id=\"app-timeline-search_query\" type=\"text\" class=\"shiny-input-text form-control shiny-bound-input\" value=\"\" placeholder=\"Search any brand, generic, substance, ATC class, or event (e.g. advil \u2192 ibuprofen + 86 brands)\u2026\" data-update-on=\"change\">",
+     "target": [
+      "#app-timeline-search_query"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<input id=\"app-timeline-event_refine\" type=\"text\" class=\"shiny-input-text form-control shiny-bound-input\" value=\"\" placeholder=\"AND event (e.g. Nausea)\" data-update-on=\"change\">",
+     "target": [
+      "#app-timeline-event_refine"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<div>",
+     "target": [
+      ".col-sm-2:nth-child(3) > .shiny-input-container.form-group > div"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<div>",
+     "target": [
+      ".row:nth-child(3) > .col-sm-2:nth-child(4) > .shiny-input-container.form-group > div"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<input id=\"app-timeline-drug_refine\" type=\"text\" class=\"shiny-input-text form-control shiny-bound-input\" value=\"\" placeholder=\"AND drug\" data-update-on=\"change\">",
+     "target": [
+      "#app-timeline-drug_refine"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<div class=\"col-sm-2\">",
+     "target": [
+      ".col-sm-2:nth-child(2)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<div class=\"col-sm-2\">",
+     "target": [
+      ".row:nth-child(4) > .col-sm-2:nth-child(3)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<div class=\"col-sm-2\">",
+     "target": [
+      ".row:nth-child(4) > .col-sm-2:nth-child(4)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<div class=\"col-sm-2\">",
+     "target": [
+      ".col-sm-2:nth-child(5)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    },
+    {
+     "any": [
+      {
+       "id": "region",
+       "data": {
+        "isIframe": false
+       },
+       "relatedNodes": [],
+       "impact": "moderate",
+       "message": "Some page content is not contained by landmarks"
+      }
+     ],
+     "all": [],
+     "none": [],
+     "impact": "moderate",
+     "html": "<div class=\"row\">",
+     "target": [
+      ".row:nth-child(19)"
+     ],
+     "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks"
+    }
+   ]
+  },
+  {
+   "id": "select-name",
+   "impact": "critical",
+   "tags": [
+    "cat.forms",
+    "wcag2a",
+    "wcag412",
+    "section508",
+    "section508.22.n",
+    "TTv5",
+    "TT5.c",
+    "EN-301-549",
+    "EN-9.4.1.2",
+    "ACT",
+    "RGAAv4",
+    "RGAA-11.1.1"
+   ],
+   "description": "Ensure select element has an accessible name",
+   "help": "Select element must have an accessible name",
+   "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/select-name?application=axe-puppeteer",
+   "nodes": [
+    {
+     "any": [],
+     "all": [],
+     "none": [
+      {
+       "id": "hidden-explicit-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Form element has explicit <label> that is hidden"
+      }
+     ],
+     "impact": "critical",
+     "html": "<select class=\"shiny-input-select form-control shiny-bound-input\" id=\"app-timeline-trend_filter\">",
+     "target": [
+      "#app-timeline-trend_filter"
+     ],
+     "failureSummary": "Fix all of the following:\n  Form element has explicit <label> that is hidden"
+    },
+    {
+     "any": [],
+     "all": [],
+     "none": [
+      {
+       "id": "hidden-explicit-label",
+       "data": null,
+       "relatedNodes": [],
+       "impact": "critical",
+       "message": "Form element has explicit <label> that is hidden"
+      }
+     ],
+     "impact": "critical",
+     "html": "<select class=\"shiny-input-select form-control shiny-bound-input\" id=\"app-timeline-novel_filter\"><option value=\"\" selected=\"\">All novelty</option>\n<option value=\"novel\">Novel</option>\n<option value=\"known\">Known</option>\n<option value=\"?\">Undetermined</option></select>",
+     "target": [
+      "#app-timeline-novel_filter"
+     ],
+     "failureSummary": "Fix all of the following:\n  Form element has explicit <label> that is hidden"
+    }
+   ]
+  }
+ ]
+}
