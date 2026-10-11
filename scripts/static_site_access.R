@@ -110,9 +110,10 @@ build_llms <- function(rows) {
     "- GET https://globalpatientsafety.com/pipeline?sponsor=Sanofi — JSON studies for one sponsor",
     "- GET https://globalpatientsafety.com/pipeline?sponsor=Sanofi&format=brief — text/plain brief",
     "- GET https://faers.mobi/signals — FAERS disproportionality (a different service)",
-    "- MCP https://faers.mobi/mcp — one server, tool get_pipeline plus the FAERS tools",
+    "- GET https://vaers.globalpatientsafety.com/signals?vaccine=COVID19&event=Myocarditis — VAERS reporting signals (a different service)",
+    "- MCP https://faers.mobi/mcp — one server, tools get_pipeline and get_vaers plus the FAERS tools",
     "",
-    "Disclaimer: registry facts from ClinicalTrials.gov are not efficacy or safety conclusions. FAERS signals are statistical patterns, not evidence of causation."
+    "Disclaimer: registry facts from ClinicalTrials.gov are not efficacy or safety conclusions. FAERS signals are statistical patterns, not evidence of causation. VAERS counts are reporting, not incidence."
   )
   write_out("llms.txt", paste(lines, collapse = "\n"))
 }
