@@ -839,7 +839,7 @@ Enterprise → API key + higher rate limits + SLA dashboard
 VPS (Hetzner)
 ├── nginx (reverse proxy, SSL)
 │   ├── faers.mobi → Shiny Server (port 3838)
-│   ├── api.globalpatientsafety.com → Plumber (port 8000)
+│   ├── api.globalpatientsafety.com — not shipped (see note below)
 │   └── globalpatientsafety.com → Shiny Server (portal)
 ├── Shiny Server
 │   ├── faers-mobi/
@@ -851,6 +851,12 @@ VPS (Hetzner)
     ├── contingency/ (for stratified analysis)
     └── fda_labels.parquet
 ```
+
+Not shipped. Checked 2026-10-11: `api.globalpatientsafety.com` and `vaers.mobi`
+do not resolve (NXDOMAIN). There is no Plumber listener on port 8000 and no
+nginx server block for either name. FAERS signals are
+`https://faers.mobi/signals`. VAERS signals are
+`https://vaers.globalpatientsafety.com/signals`. The pay gate stays parked.
 
 ### 10. Files to Modify
 
@@ -867,7 +873,7 @@ VPS (Hetzner)
 | `faers-mobi/templates/signal-report.typ` | **New** — Custom Typst branding template | 7 |
 | `faers-mobi/api/plumber.R` | **New** — REST API endpoints | 8 |
 | `faers-mobi/api/auth.R` | **New** — API key validation + Stripe integration | 8 |
-| VPS nginx config | Add `api.globalpatientsafety.com` proxy | 8 |
+| VPS nginx config | `api.globalpatientsafety.com` was not added. The name no longer resolves (2026-10-11). | 8 |
 
 ### 9. Migration Path
 
@@ -896,6 +902,9 @@ VPS (Hetzner)
    via Stripe Checkout before download.
 8. **Phase 8:** REST API (Plumber) + monetization. API keys, metered billing,
    enterprise subscriptions. MCP server wrapper for AI agent integration.
+   The `api.globalpatientsafety.com` host in the diagram above was not built.
+   That name no longer resolves. The live signals APIs are on faers.mobi and
+   vaers.globalpatientsafety.com. The pay gate stays parked.
 
 ### 10. Validation
 

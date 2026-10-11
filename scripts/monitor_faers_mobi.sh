@@ -107,6 +107,8 @@ probe() {
     HEAD) cmd+=(-I) ;;
     MCP)  cmd+=(-X POST -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream'
                 -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"gps-monitor","version":"0"}}}') ;;
+    TOOLS) cmd+=(-X POST -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream'
+                -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}') ;;
   esac
   # Bare /pipeline is JSON for curl's default Accept. The form check is the
   # browser contract: Ask for HTML and the picker must come back.
@@ -134,6 +136,10 @@ probe() {
   if [ -z "$why" ] && [ "$name" = signals-headers ]; then
     grep -qi '^x-total-count:' "$hdr" || why="no X-Total-Count header"
     grep -qi '^x-faers-through:' "$hdr" || why="no X-FAERS-Through header"
+  fi
+  if [ -z "$why" ] && [ "$name" = vaers-signals ]; then
+    grep -qi '^x-vaers-through:' "$hdr" || why="no X-VAERS-Through header"
+    grep -qi '^x-vaers-build:' "$hdr" || why="no X-VAERS-Build header"
   fi
   if [ -z "$why" ] && [ "$name" = formats-contract-match ]; then
     # The production divergence this exists for: the validator and the published
@@ -206,8 +212,43 @@ if [ "$BASE" = "https://faers.mobi" ]; then
   BASE="$SAVED_BASE"
 fi
 
+# vaers.globalpatientsafety.com, plus the VAERS tool names on the faers MCP.
+# Kept out of CHECKS for the same reason as GPS_CHECKS: the faers fail-path
+# stub only speaks the faers contract. Runs only when BASE is production.
+VAERS_N=0
+if [ "$BASE" = "https://faers.mobi" ]; then
+  VAERS_BASE="${GPS_MONITOR_VAERS_BASE:-https://vaers.globalpatientsafety.com}"
+  r="$(probe vaers-mcp-tools TOOLS /mcp curl 200 application/json "vaers_search_vaccine && vaers_get_signal && vaers_get_profile")"
+  if [ "$r" != OK ]; then
+    sleep "${GPS_MONITOR_RETRY_SLEEP:-20}"
+    r="$(probe vaers-mcp-tools TOOLS /mcp curl 200 application/json "vaers_search_vaccine && vaers_get_signal && vaers_get_profile")"
+  fi
+  if [ "$r" = OK ]; then PASSES=$((PASSES+1)); else FAILS+=("vaers-mcp-tools|TOOLS /mcp|$r"); fi
+  VAERS_N=$((VAERS_N + 1))
+  sleep "${GPS_MONITOR_PACE:-1.2}"
+  VAERS_CHECKS=(
+    "vaers-signals|GET|/signals?vaccine=COVID19&event=Myocarditis&limit=5|curl|200|application/json|\"n\":[0-9]+ && \"eb05\":"
+    "vaers-bad-format|GET|/signals?vaccine=COVID19&event=Myocarditis&format=bogus|curl|400|application/json|unknown format"
+    "vaers-openapi|GET|/openapi.json|curl|200|application/json|\"/signals\""
+  )
+  SAVED_BASE="$BASE"
+  BASE="$VAERS_BASE"
+  for spec in "${VAERS_CHECKS[@]}"; do
+    IFS='|' read -r name method path ua want ct re <<<"$spec"
+    r="$(probe "$name" "$method" "$path" "$ua" "$want" "$ct" "$re")"
+    if [ "$r" != OK ]; then
+      sleep "${GPS_MONITOR_RETRY_SLEEP:-20}"
+      r="$(probe "$name" "$method" "$path" "$ua" "$want" "$ct" "$re")"
+    fi
+    if [ "$r" = OK ]; then PASSES=$((PASSES+1)); else FAILS+=("$name|$method $path|$r"); fi
+    VAERS_N=$((VAERS_N + 1))
+    sleep "${GPS_MONITOR_PACE:-1.2}"
+  done
+  BASE="$SAVED_BASE"
+fi
+
 NOW="$(date -Is)"; echo "$NOW" >"$LASTRUN_FILE"
-TOTAL=$(( ${#CHECKS[@]} + GPS_N )); NFAIL=${#FAILS[@]}
+TOTAL=$(( ${#CHECKS[@]} + GPS_N + VAERS_N )); NFAIL=${#FAILS[@]}
 FAILSET="$(printf '%s\n' "${FAILS[@]}" | cut -d'|' -f1 | sort | tr '\n' ' ')"
 echo "$NOW pass=$PASSES fail=$NFAIL ${FAILSET}" | tee -a "$LOG"
 [ "$NFAIL" = 0 ] && echo "OK $PASSES/$TOTAL" >"$LASTRESULT_FILE" || echo "FAIL $NFAIL/$TOTAL: $FAILSET" >"$LASTRESULT_FILE"

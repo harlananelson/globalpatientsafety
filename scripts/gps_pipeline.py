@@ -726,7 +726,12 @@ def openapi_spec() -> dict[str, Any]:
         "info": {
             "title": "Global Patient Safety pipeline",
             "version": "1",
-            "description": DISCLAIMER + " FAERS signals stay on https://faers.mobi/signals.",
+            "description": (
+                DISCLAIMER
+                + " FAERS signals stay on https://faers.mobi/signals."
+                + " VAERS signals stay on https://vaers.globalpatientsafety.com/signals"
+                + " (docs: https://vaers.globalpatientsafety.com/api)."
+            ),
         },
         "servers": [{"url": "https://globalpatientsafety.com"}],
         "paths": {

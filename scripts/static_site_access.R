@@ -30,9 +30,9 @@ page_rows <- function() {
     list(path = "/articles", title = "Articles",
          line = "Published signal analyses."),
     list(path = "/api", title = "API",
-         line = "How to call GET /pipeline. FAERS signals stay on faers.mobi."),
+         line = "How to call GET /pipeline. FAERS signals stay on faers.mobi. VAERS signals stay on vaers.globalpatientsafety.com."),
     list(path = "/mcp", title = "MCP",
-         line = "The hosted MCP server is https://faers.mobi/mcp and includes get_pipeline."),
+         line = "The hosted MCP server is https://faers.mobi/mcp and includes get_pipeline, get_vaers, vaers_search_vaccine, vaers_get_signal, and vaers_get_profile."),
     list(path = "/accessibility", title = "Accessibility",
          line = "WCAG 2.1 Level AA target, known exceptions, and a contact address.")
   )
@@ -111,7 +111,7 @@ build_llms <- function(rows) {
     "- GET https://globalpatientsafety.com/pipeline?sponsor=Sanofi&format=brief — text/plain brief",
     "- GET https://faers.mobi/signals — FAERS disproportionality (a different service)",
     "- GET https://vaers.globalpatientsafety.com/signals?vaccine=COVID19&event=Myocarditis — VAERS reporting signals (a different service)",
-    "- MCP https://faers.mobi/mcp — one server, tools get_pipeline and get_vaers plus the FAERS tools",
+    "- MCP https://faers.mobi/mcp — one server, tools get_pipeline, get_vaers, vaers_search_vaccine, vaers_get_signal, vaers_get_profile, plus the FAERS tools",
     "",
     "Disclaimer: registry facts from ClinicalTrials.gov are not efficacy or safety conclusions. FAERS signals are statistical patterns, not evidence of causation. VAERS counts are reporting, not incidence."
   )
@@ -133,6 +133,7 @@ api_md <- function() {
     "",
     "Registry facts from ClinicalTrials.gov. Not efficacy or safety conclusions.",
     "FAERS signals are a different service: https://faers.mobi/api",
+    "VAERS signals are a different service: https://vaers.globalpatientsafety.com/api",
     "",
     "## GET /pipeline",
     "",
@@ -190,6 +191,8 @@ mcp_md <- function() {
     "Omitted role is lead sponsor. role=any includes collaborator-only trials.",
     "",
     "The same server still has the FAERS tools (get_signal, and the rest).",
+    "VAERS tools on that server: get_vaers, vaers_search_vaccine, vaers_get_signal, vaers_get_profile.",
+    "They call https://vaers.globalpatientsafety.com/signals. Docs: https://vaers.globalpatientsafety.com/api",
     "Install notes: https://faers.mobi/mcp.md",
     "",
     "```json",
@@ -222,6 +225,7 @@ chatgpt_md <- function() {
     "If the call fails, say ClinicalTrials.gov was unavailable.",
     "Say that the rows are registry facts, not evidence a drug works or is safe.",
     "For an adverse-event signal, use https://faers.mobi/openapi.json instead.",
+    "For a vaccine report, use https://vaers.globalpatientsafety.com/openapi.json.",
     "",
     sep = "\n"
   )
@@ -252,7 +256,7 @@ twin_md <- function(title, line, path) {
   paste(
     paste0("# ", title),
     "",
-    "Machine path: GET /pipeline?sponsor= on this site, and GET https://faers.mobi/signals for FAERS signals.",
+    "Machine path: GET /pipeline?sponsor= on this site, GET https://faers.mobi/signals for FAERS signals, and GET https://vaers.globalpatientsafety.com/signals for VAERS signals.",
     "",
     line,
     "",
@@ -283,7 +287,8 @@ build_machine_access <- function() {
       '<h1>API</h1>\n',
       '<p>', esc(MACHINE_SENTENCE), '</p>\n',
       '<p>Registry facts from ClinicalTrials.gov. Not efficacy or safety conclusions. ',
-      'FAERS signals are a different service: <a href="https://faers.mobi/api">faers.mobi/api</a>.</p>\n',
+      'FAERS signals are a different service: <a href="https://faers.mobi/api">faers.mobi/api</a>. ',
+      'VAERS signals are a different service: <a href="https://vaers.globalpatientsafety.com/api">vaers.globalpatientsafety.com/api</a>.</p>\n',
       '<h2>GET /pipeline</h2>\n',
       '<p><code>sponsor</code> is required for JSON and for a brief. It is trimmed and matched against the lead sponsor name. A family name that contains it counts. It is not expanded to other companies.</p>\n',
       '<p><code>role</code> defaults to <code>lead</code>. <code>collaborator</code> is collaborator-only. <code>any</code> is lead or collaborator. Each study row says which one. <code>n_studies</code> counts that same role.</p>\n',
@@ -311,6 +316,9 @@ build_machine_access <- function() {
       '<p>URL: <a href="https://faers.mobi/mcp">https://faers.mobi/mcp</a>. Streamable HTTP. No API key.</p>\n',
       '<p>The tool <code>get_pipeline</code> takes a sponsor and calls ',
       '<code>GET /pipeline?format=json</code> on this site. Omitted role is lead sponsor. <code>role=any</code> includes collaborator-only trials. The result is a registry list, not a FAERS signal.</p>\n',
+      '<p>VAERS tools on that same server: <code>get_vaers</code>, <code>vaers_search_vaccine</code>, <code>vaers_get_signal</code>, <code>vaers_get_profile</code>. ',
+      'They call <a href="https://vaers.globalpatientsafety.com/signals">vaers.globalpatientsafety.com/signals</a>. ',
+      'Docs: <a href="https://vaers.globalpatientsafety.com/api">vaers.globalpatientsafety.com/api</a>.</p>\n',
       '<p>Install notes for the FAERS tools on the same server: <a href="https://faers.mobi/mcp.md">faers.mobi/mcp.md</a>.</p>\n',
       '<pre tabindex="0">{ "mcpServers": { "faers-mobi": { "url": "https://faers.mobi/mcp" } } }</pre>\n',
       '</article>'
