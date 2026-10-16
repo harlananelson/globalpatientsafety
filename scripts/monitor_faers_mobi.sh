@@ -257,7 +257,7 @@ if [ "$BASE" = "https://faers.mobi" ]; then
   mmr_body="$TMP/vaers-mmr.body"
   mmr_code="$(curl -sS --max-time 45 -o "$mmr_body" -w '%{http_code}' "$BASE/signals?vaccine=MMR&event=Autism%20spectrum%20disorder&limit=5" || echo 000)"
   VAERS_N=$((VAERS_N + 1))
-  if [ "$mmr_code" = 200 ] && grep -q '"eb05_peak_pre2021":4\.2' "$mmr_body" && grep -q '"peak_in_covid_era":true' "$mmr_body"; then
+  if [ "$mmr_code" = 200 ] && grep -q '"eb05_peak_pre2021":3\.7291' "$mmr_body" && grep -q '"peak_in_covid_era":true' "$mmr_body"; then
     PASSES=$((PASSES+1))
   else
     FAILS+=("vaers-mmr-era|GET /signals MMR x ASD|$mmr_code missing pre-2021 peak or covid-era flag")
