@@ -1,0 +1,9 @@
+[["faers-home","https://faers.mobi/",true],
+ ["faers-tzield-nausea","https://faers.mobi/?drug=tzield&event=Nausea",true],
+ ["faers-tzield","https://faers.mobi/?drug=tzield",true],
+ ["faers-api","https://faers.mobi/api",false],
+ ["gps-home","https://globalpatientsafety.com/",false],
+ ["gps-articles","https://globalpatientsafety.com/articles",false],
+ ["gps-shingles","https://globalpatientsafety.com/shingles",false],
+ ["gps-christine-cotton","https://globalpatientsafety.com/christine_cotton",false],
+ ["gps-methods","https://globalpatientsafety.com/methods",false]]

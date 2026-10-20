@@ -1,0 +1,286 @@
+[
+ {
+  "slug": "faers-home",
+  "url": "https://faers.mobi/",
+  "title": "faers.mobi \u2014 Adverse Event Signal Detection",
+  "violations": [
+   {
+    "id": "color-contrast",
+    "impact": "serious",
+    "tags": "wcag2aa,wcag143",
+    "nodes": 47,
+    "ex": [
+     ".col-sm-12 > .alert-secondary.alert.py-2 :: <div class=\"alert alert-secondary small py-2\">",
+     ".col-sm-12 > .alert-secondary.alert.py-2 > strong:nth-child(1) :: <strong>LLM / API access. </strong>"
+    ],
+    "help": "Elements must meet minimum color contrast ratio thresholds"
+   },
+   {
+    "id": "html-has-lang",
+    "impact": "serious",
+    "tags": "wcag2a,wcag311",
+    "nodes": 1,
+    "ex": [
+     "html :: <html class=\"\">"
+    ],
+    "help": "<html> element must have a lang attribute"
+   },
+   {
+    "id": "label-title-only",
+    "impact": "serious",
+    "tags": "best-practice",
+    "nodes": 3,
+    "ex": [
+     "input[title=\"3 ... 32\"] :: <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" title=\"3 ... 32\">",
+     "input[title=\"5 ... 9999\"] :: <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" title=\"5 ... 9999\">"
+    ],
+    "help": "Form elements should have a visible label"
+   },
+   {
+    "id": "label",
+    "impact": "critical",
+    "tags": "wcag2a,wcag412",
+    "nodes": 1,
+    "ex": [
+     "#app-timeline-llm_link_copy :: <input type=\"text\" id=\"app-timeline-llm_link_copy\" readonly=\"readonly\" value=\"https://faers.mobi/signals?drug=cetrotide&event=Premature%20ov"
+    ],
+    "help": "Form elements must have labels"
+   },
+   {
+    "id": "landmark-one-main",
+    "impact": "moderate",
+    "tags": "best-practice",
+    "nodes": 1,
+    "ex": [
+     "html :: <html class=\"\">"
+    ],
+    "help": "Document should have one main landmark"
+   },
+   {
+    "id": "page-has-heading-one",
+    "impact": "moderate",
+    "tags": "best-practice",
+    "nodes": 1,
+    "ex": [
+     "html :: <html class=\"\">"
+    ],
+    "help": "Page should contain a level-one heading"
+   },
+   {
+    "id": "region",
+    "impact": "moderate",
+    "tags": "best-practice",
+    "nodes": 13,
+    "ex": [
+     "#tab-2388-1 > .container-fluid > .container-fluid > .row:nth-child(1) :: <div class=\"row\">",
+     ".shiny-options-group :: <div class=\"shiny-options-group\">"
+    ],
+    "help": "All page content should be contained by landmarks"
+   },
+   {
+    "id": "select-name",
+    "impact": "critical",
+    "tags": "wcag2a,wcag412",
+    "nodes": 2,
+    "ex": [
+     "#app-timeline-trend_filter :: <select class=\"shiny-input-select form-control shiny-bound-input\" id=\"app-timeline-trend_filter\">",
+     "#app-timeline-novel_filter :: <select class=\"shiny-input-select form-control shiny-bound-input\" id=\"app-timeline-novel_filter\"><option value=\"\" selected=\"\">All novelty</o"
+    ],
+    "help": "Select element must have an accessible name"
+   }
+  ],
+  "incomplete": [
+   "color-contrast(2)"
+  ]
+ },
+ {
+  "slug": "faers-tzield-nausea",
+  "url": "https://faers.mobi/?drug=tzield&event=Nausea",
+  "title": "faers.mobi \u2014 Adverse Event Signal Detection",
+  "violations": [
+   {
+    "id": "color-contrast",
+    "impact": "serious",
+    "tags": "wcag2aa,wcag143",
+    "nodes": 40,
+    "ex": [
+     ".col-sm-12 > .alert-secondary.alert.py-2 :: <div class=\"alert alert-secondary small py-2\">",
+     ".col-sm-12 > .alert-secondary.alert.py-2 > strong:nth-child(1) :: <strong>LLM / API access. </strong>"
+    ],
+    "help": "Elements must meet minimum color contrast ratio thresholds"
+   },
+   {
+    "id": "html-has-lang",
+    "impact": "serious",
+    "tags": "wcag2a,wcag311",
+    "nodes": 1,
+    "ex": [
+     "html :: <html class=\"\">"
+    ],
+    "help": "<html> element must have a lang attribute"
+   },
+   {
+    "id": "label-title-only",
+    "impact": "serious",
+    "tags": "best-practice",
+    "nodes": 2,
+    "ex": [
+     "td[data-type=\"integer\"][rowspan=\"1\"][colspan=\"1\"]:nth-child(6) > .has-feedback.form-group > input[title=\"1 ... 1\"][placeholder=\"All\"][type=\"search\"] :: <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\" title=\"1 ... 1\">",
+     "td[data-type=\"integer\"][rowspan=\"1\"][colspan=\"1\"]:nth-child(7) > .has-feedback.form-group > input[title=\"1 ... 1\"][placeholder=\"All\"][type=\"search\"] :: <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" disabled=\"\" title=\"1 ... 1\">"
+    ],
+    "help": "Form elements should have a visible label"
+   },
+   {
+    "id": "label",
+    "impact": "critical",
+    "tags": "wcag2a,wcag412",
+    "nodes": 2,
+    "ex": [
+     "#app-timeline-rwe_brief_copy :: <textarea id=\"app-timeline-rwe_brief_copy\" readonly=\"readonly\" rows=\"12\" style=\"width:100%; font-family: ui-monospace, SFMono-Regular, Menlo",
+     "#app-timeline-llm_link_copy :: <input type=\"text\" id=\"app-timeline-llm_link_copy\" readonly=\"readonly\" value=\"https://faers.mobi/signals?drug=tzield&amp;event=Nausea&amp;fo"
+    ],
+    "help": "Form elements must have labels"
+   },
+   {
+    "id": "landmark-one-main",
+    "impact": "moderate",
+    "tags": "best-practice",
+    "nodes": 1,
+    "ex": [
+     "html :: <html class=\"\">"
+    ],
+    "help": "Document should have one main landmark"
+   },
+   {
+    "id": "page-has-heading-one",
+    "impact": "moderate",
+    "tags": "best-practice",
+    "nodes": 1,
+    "ex": [
+     "html :: <html class=\"\">"
+    ],
+    "help": "Page should contain a level-one heading"
+   },
+   {
+    "id": "region",
+    "impact": "moderate",
+    "tags": "best-practice",
+    "nodes": 13,
+    "ex": [
+     "#tab-5240-1 > .container-fluid > .container-fluid > .row:nth-child(1) :: <div class=\"row\">",
+     ".shiny-options-group :: <div class=\"shiny-options-group\">"
+    ],
+    "help": "All page content should be contained by landmarks"
+   },
+   {
+    "id": "select-name",
+    "impact": "critical",
+    "tags": "wcag2a,wcag412",
+    "nodes": 2,
+    "ex": [
+     "#app-timeline-trend_filter :: <select class=\"shiny-input-select form-control shiny-bound-input\" id=\"app-timeline-trend_filter\">",
+     "#app-timeline-novel_filter :: <select class=\"shiny-input-select form-control shiny-bound-input\" id=\"app-timeline-novel_filter\"><option value=\"\" selected=\"\">All novelty</o"
+    ],
+    "help": "Select element must have an accessible name"
+   }
+  ],
+  "incomplete": [
+   "color-contrast(1)"
+  ]
+ },
+ {
+  "slug": "faers-tzield",
+  "url": "https://faers.mobi/?drug=tzield",
+  "title": "faers.mobi \u2014 Adverse Event Signal Detection",
+  "violations": [
+   {
+    "id": "color-contrast",
+    "impact": "serious",
+    "tags": "wcag2aa,wcag143",
+    "nodes": 40,
+    "ex": [
+     ".col-sm-12 > .alert-secondary.alert.py-2 :: <div class=\"alert alert-secondary small py-2\">",
+     ".col-sm-12 > .alert-secondary.alert.py-2 > strong:nth-child(1) :: <strong>LLM / API access. </strong>"
+    ],
+    "help": "Elements must meet minimum color contrast ratio thresholds"
+   },
+   {
+    "id": "html-has-lang",
+    "impact": "serious",
+    "tags": "wcag2a,wcag311",
+    "nodes": 1,
+    "ex": [
+     "html :: <html class=\"\">"
+    ],
+    "help": "<html> element must have a lang attribute"
+   },
+   {
+    "id": "label-title-only",
+    "impact": "serious",
+    "tags": "best-practice",
+    "nodes": 2,
+    "ex": [
+     "input[title=\"3 ... 11\"] :: <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" title=\"3 ... 11\">",
+     "input[title=\"5 ... 319\"] :: <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\" title=\"5 ... 319\">"
+    ],
+    "help": "Form elements should have a visible label"
+   },
+   {
+    "id": "label",
+    "impact": "critical",
+    "tags": "wcag2a,wcag412",
+    "nodes": 2,
+    "ex": [
+     "#app-timeline-rwe_brief_copy :: <textarea id=\"app-timeline-rwe_brief_copy\" readonly=\"readonly\" rows=\"12\" style=\"width:100%; font-family: ui-monospace, SFMono-Regular, Menlo",
+     "#app-timeline-llm_link_copy :: <input type=\"text\" id=\"app-timeline-llm_lin...\" readonly=\"readonly\" value=\"https://faers.mobi/s...\" style=\"flex:1; min-width:28...\" class=\"s"
+    ],
+    "help": "Form elements must have labels"
+   },
+   {
+    "id": "landmark-one-main",
+    "impact": "moderate",
+    "tags": "best-practice",
+    "nodes": 1,
+    "ex": [
+     "html :: <html class=\"\">"
+    ],
+    "help": "Document should have one main landmark"
+   },
+   {
+    "id": "page-has-heading-one",
+    "impact": "moderate",
+    "tags": "best-practice",
+    "nodes": 1,
+    "ex": [
+     "html :: <html class=\"\">"
+    ],
+    "help": "Page should contain a level-one heading"
+   },
+   {
+    "id": "region",
+    "impact": "moderate",
+    "tags": "best-practice",
+    "nodes": 13,
+    "ex": [
+     "#tab-1310-1 > .container-fluid > .container-fluid > .row:nth-child(1) :: <div class=\"row\">",
+     ".shiny-options-group :: <div class=\"shiny-options-group\">"
+    ],
+    "help": "All page content should be contained by landmarks"
+   },
+   {
+    "id": "select-name",
+    "impact": "critical",
+    "tags": "wcag2a,wcag412",
+    "nodes": 2,
+    "ex": [
+     "#app-timeline-trend_filter :: <select class=\"shiny-input-select form-control shiny-bound-input\" id=\"app-timeline-trend_filter\">",
+     "#app-timeline-novel_filter :: <select class=\"shiny-input-select form-control shiny-bound-input\" id=\"app-timeline-novel_filter\"><option value=\"\" selected=\"\">All novelty</o"
+    ],
+    "help": "Select element must have an accessible name"
+   }
+  ],
+  "incomplete": [
+   "color-contrast(1)"
+  ]
+ }
+]

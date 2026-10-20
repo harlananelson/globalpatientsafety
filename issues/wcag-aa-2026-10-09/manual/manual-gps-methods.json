@@ -1,0 +1,219 @@
+{
+ "title": "Signal & Noise — Reading FDA Adverse-Event Data",
+ "lang": "en",
+ "skipLink": [
+  {
+   "text": "← Global Patient Safety",
+   "href": "/"
+  },
+  {
+   "text": "All articles",
+   "href": "/articles"
+  },
+  {
+   "text": "How each installment works",
+   "href": "#how-each-installment-works"
+  }
+ ],
+ "landmarks": {
+  "main": 1,
+  "nav": 1
+ },
+ "h1": [
+  "Signal & Noise — Reading FDA Adverse-Event Data"
+ ],
+ "headings": [
+  "H2:Table of contents",
+  "H1:Signal & Noise — Reading FDA Adverse-Event Data",
+  "H2:How each installment works",
+  "H2:The installments",
+  "H2:Why this series"
+ ],
+ "tables": [
+  {
+   "id": "",
+   "cls": "caption-top table",
+   "caption": false,
+   "th": 3,
+   "thScope": 0,
+   "rows": 7
+  }
+ ],
+ "inputs": [],
+ "imgs": [],
+ "svgs": [],
+ "canvases": 0,
+ "plots": [],
+ "ariaLive": [],
+ "shinyOutputs": 0,
+ "colorCues": [],
+ "tabOrder": [
+  {
+   "tag": "A",
+   "id": "",
+   "text": "← Global Patient Safety",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "All articles",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "id": "",
+   "text": "Copy link",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "toc-how-each-installment-works",
+   "text": "How each installment works",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-the-installments",
+   "text": "The installments",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-why-this-series",
+   "text": "Why this series",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Inside the AEMS Data →",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BODY"
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "← Global Patient Safety",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "All articles",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "id": "",
+   "text": "Copy link",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "toc-how-each-installment-works",
+   "text": "How each installment works",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-the-installments",
+   "text": "The installments",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "toc-why-this-series",
+   "text": "Why this series",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Inside the AEMS Data →",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Anchor",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BODY"
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "← Global Patient Safety",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "All articles",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BUTTON",
+   "id": "",
+   "text": "Copy link",
+   "outline": "auto 1px",
+   "boxShadow": false
+  }
+ ]
+}

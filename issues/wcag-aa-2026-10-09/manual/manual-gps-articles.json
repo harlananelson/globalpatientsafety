@@ -1,0 +1,214 @@
+{
+ "title": "Articles — Global Patient Safety",
+ "lang": "en",
+ "skipLink": [
+  {
+   "text": "Global Patient Safety",
+   "href": "/"
+  },
+  {
+   "text": "Home",
+   "href": "/"
+  },
+  {
+   "text": "Articles",
+   "href": "/articles"
+  }
+ ],
+ "landmarks": {
+  "main": 0,
+  "nav": 1
+ },
+ "h1": [
+  "Articles"
+ ],
+ "headings": [
+  "H1:Articles",
+  "H5:Inside the AEMS Data: What 4.8 Million Reports Do ",
+  "H5:Tested Against VAERS: Christine Cotton's Safety Cl",
+  "H5:Independent Reanalysis: COVID/Shingles Vaccine Sig",
+  "H5:COVID-19 Vaccine Safety Signals in VAERS"
+ ],
+ "tables": [],
+ "inputs": [],
+ "imgs": [],
+ "svgs": [],
+ "canvases": 0,
+ "plots": [],
+ "ariaLive": [],
+ "shinyOutputs": 0,
+ "colorCues": [],
+ "tabOrder": [
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Global Patient Safety",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Home",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Articles",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Signal & Noise",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "AEMS",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "faers.mobi",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "pico-dag",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "vaers",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "About",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Inside the AEMS Data: What 4.8 Million R",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Tested Against VAERS: Christine Cotton's",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Independent Reanalysis: COVID/Shingles V",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "COVID-19 Vaccine Safety Signals in VAERS",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "GPS framework (DuMouchel 1999)",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BODY"
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Global Patient Safety",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Home",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Articles",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Signal & Noise",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "AEMS",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "faers.mobi",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "pico-dag",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "vaers",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "About",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Inside the AEMS Data: What 4.8 Million R",
+   "outline": "auto 1px",
+   "boxShadow": false
+  }
+ ]
+}

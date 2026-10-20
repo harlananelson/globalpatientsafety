@@ -1,0 +1,209 @@
+{
+ "title": "How to query faers.mobi",
+ "lang": "en",
+ "skipLink": [
+  {
+   "text": "https://faers.mobi/signals?drug=tzield",
+   "href": "https://faers.mobi/signals?drug=tzield"
+  },
+  {
+   "text": "https://faers.mobi/signals?drug=tzield&e",
+   "href": "https://faers.mobi/signals?drug=tzield&event=Nausea"
+  },
+  {
+   "text": "https://faers.mobi/signals?drug=tzield&e",
+   "href": "https://faers.mobi/signals?drug=tzield&event=Nausea&format=brief"
+  }
+ ],
+ "landmarks": {
+  "main": 1,
+  "nav": 0
+ },
+ "h1": [
+  "How to query faers.mobi"
+ ],
+ "headings": [
+  "H1:How to query faers.mobi",
+  "H2:GET /signals",
+  "H2:Formats",
+  "H2:Other machine docs"
+ ],
+ "tables": [],
+ "inputs": [],
+ "imgs": [],
+ "svgs": [],
+ "canvases": 0,
+ "plots": [],
+ "ariaLive": [],
+ "shinyOutputs": 0,
+ "colorCues": [],
+ "tabOrder": [
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/signals?drug=tzield",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/signals?drug=tzield&e",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/signals?drug=tzield&e",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "/examples/tzield-nausea-brief.txt",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Raw Markdown /api.md",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "OpenAPI",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "ChatGPT",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "hosted MCP",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Perplexity: Connectors",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "llms.txt",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Human UI",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BODY"
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/signals?drug=tzield",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/signals?drug=tzield&e",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/signals?drug=tzield&e",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "/examples/tzield-nausea-brief.txt",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Raw Markdown /api.md",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "OpenAPI",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "ChatGPT",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "hosted MCP",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Perplexity: Connectors",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "llms.txt",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Human UI",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "BODY"
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/signals?drug=tzield",
+   "outline": "auto 1px",
+   "boxShadow": false
+  }
+ ]
+}

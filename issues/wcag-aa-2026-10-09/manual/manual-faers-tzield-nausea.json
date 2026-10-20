@@ -1,0 +1,589 @@
+{
+ "title": "faers.mobi — Adverse Event Signal Detection",
+ "lang": null,
+ "skipLink": [
+  {
+   "text": "Signals over time",
+   "href": "#tab-5240-1"
+  },
+  {
+   "text": "Upload CSV",
+   "href": "#tab-5240-2"
+  },
+  {
+   "text": "About",
+   "href": "#tab-5240-3"
+  }
+ ],
+ "landmarks": {
+  "main": 0,
+  "nav": 1
+ },
+ "h1": [],
+ "headings": [
+  "H4:Signals by drug and event",
+  "H4:Bayesian Gamma-Poisson Signal Detection",
+  "H3:Signal Detection Results",
+  "H2:About faers.mobi",
+  "H3:Statistical methods",
+  "H3:Time dimension",
+  "H3:LLM / machine clients",
+  "H3:Disclaimer"
+ ],
+ "tables": [
+  {
+   "id": "DataTables_Table_1",
+   "cls": "display dataTable no-footer",
+   "caption": false,
+   "th": 19,
+   "thScope": 0,
+   "rows": 1
+  },
+  {
+   "id": "",
+   "cls": "table table-sm table-bordered",
+   "caption": false,
+   "th": 4,
+   "thScope": 0,
+   "rows": 11
+  }
+ ],
+ "inputs": [
+  {
+   "id": "",
+   "type": "radio",
+   "label": null,
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "radio",
+   "label": null,
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "app-timeline-search_query",
+   "type": "text",
+   "label": "",
+   "aria": null,
+   "placeholder": "Search any brand, generic, substance, ATC class, or event (e.g. advil → ibuprofen + 86 brands)…",
+   "visible": true
+  },
+  {
+   "id": "app-timeline-event_refine",
+   "type": "text",
+   "label": "",
+   "aria": null,
+   "placeholder": "AND event (e.g. Nausea)",
+   "visible": true
+  },
+  {
+   "id": "app-timeline-trend_filter",
+   "type": "select-one",
+   "label": "",
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "app-timeline-novel_filter",
+   "type": "select-one",
+   "label": "",
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "app-timeline-drug_refine",
+   "type": "text",
+   "label": "",
+   "aria": null,
+   "placeholder": "AND drug",
+   "visible": true
+  },
+  {
+   "id": "app-timeline-min_eb05",
+   "type": "number",
+   "label": "min EB05",
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "app-timeline-min_n",
+   "type": "number",
+   "label": "min n",
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "app-timeline-sort_key",
+   "type": "select-one",
+   "label": "sort",
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "app-timeline-sort_order",
+   "type": "select-one",
+   "label": "order",
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "app-timeline-rwe_brief_copy",
+   "type": "textarea",
+   "label": null,
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "select-one",
+   "label": null,
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "",
+   "type": "search",
+   "label": null,
+   "aria": null,
+   "placeholder": "All",
+   "visible": true
+  },
+  {
+   "id": "app-timeline-llm_link_copy",
+   "type": "text",
+   "label": null,
+   "aria": null,
+   "placeholder": null,
+   "visible": true
+  },
+  {
+   "id": "app-data_file",
+   "type": "file",
+   "label": "Upload FAERS/VAERS data (CSV):",
+   "aria": null,
+   "placeholder": null,
+   "visible": false
+  },
+  {
+   "id": "",
+   "type": "text",
+   "label": null,
+   "aria": null,
+   "placeholder": "No file selected",
+   "visible": false
+  },
+  {
+   "id": "app-signals-product_filter",
+   "type": "select-multiple",
+   "label": null,
+   "aria": null,
+   "placeholder": null,
+   "visible": false
+  },
+  {
+   "id": "app-signals-product_filter-selectized",
+   "type": "text",
+   "label": "Filter by product:",
+   "aria": null,
+   "placeholder": null,
+   "visible": false
+  },
+  {
+   "id": "app-signals-threshold",
+   "type": "text",
+   "label": "EB05 signal threshold:",
+   "aria": null,
+   "placeholder": null,
+   "visible": false
+  }
+ ],
+ "imgs": [
+  {
+   "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABQ4AAAH0CAIAAA",
+   "alt": "Plot object"
+  }
+ ],
+ "svgs": [],
+ "canvases": 0,
+ "plots": [
+  {
+   "id": "app-timeline-signal_table",
+   "cls": "datatables html-widget html-widget-output shiny-report-size "
+  },
+  {
+   "id": "app-timeline-timeline",
+   "cls": "shiny-plot-output html-fill-item shiny-bound-output",
+   "img": "Plot object"
+  }
+ ],
+ "ariaLive": [
+  "app-timeline-csv_download:polite",
+  "app-timeline-search_status:polite",
+  "app-timeline-profile_brief:polite",
+  "app-timeline-rwe_brief:polite",
+  "app-timeline-signal_table:polite",
+  "DataTables_Table_1_info:polite",
+  "app-timeline-known_badge:polite",
+  "app-timeline-explain_signal:polite",
+  "app-timeline-class_peers:polite",
+  "app-timeline-event_description:polite",
+  "app-timeline-pair_series:polite",
+  "app-timeline-llm_link:polite",
+  "app-timeline-timeline:polite",
+  "app-signals-results_table:polite",
+  ":assertive"
+ ],
+ "shinyOutputs": 12,
+ "colorCues": [
+  {
+   "text": "tzield",
+   "style": "margin: 2px 4px 2px 0;"
+  },
+  {
+   "text": "teplizumab",
+   "style": "margin: 2px 4px 2px 0;"
+  }
+ ],
+ "tabOrder": [
+  {
+   "tag": "A",
+   "id": "",
+   "text": "Signals over time",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/signals?drug=tzield&e",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "/api",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "API.md",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "OpenAPI",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "ChatGPT",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "MCP",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "GET /signals?drug=tzield",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/signals?drug=tzield&e",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/api",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/api.md",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/openapi.json",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/chatgpt.md",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "https://faers.mobi/mcp",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "/api",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "A",
+   "id": "",
+   "text": "/api.md",
+   "outline": "auto 1px",
+   "boxShadow": false
+  },
+  {
+   "tag": "INPUT",
+   "id": "",
+   "text": "drug",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "INPUT",
+   "id": "app-timeline-search_query",
+   "text": "tzield",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "INPUT",
+   "id": "app-timeline-event_refine",
+   "text": "Nausea",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "SELECT",
+   "id": "app-timeline-trend_filter",
+   "text": "All trends\nAccelerating\nRising\nNew\nStabl",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "SELECT",
+   "id": "app-timeline-novel_filter",
+   "text": "All novelty\nNovel\nKnown\nUndetermined",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "INPUT",
+   "id": "app-timeline-drug_refine",
+   "text": "",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "INPUT",
+   "id": "app-timeline-min_eb05",
+   "text": "",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "INPUT",
+   "id": "app-timeline-min_n",
+   "text": "",
+   "outline": "none 0px",
+   "boxShadow": true
+  },
+  {
+   "tag": "SELECT",
+   "id": "app-timeline-sort_key",
+   "text": "Default\nEB05\nn\nTrend\nNovel",
+   "outline": "none 0px",
+   "boxShadow": true
+  }
+ ]
+}
