@@ -24,3 +24,16 @@ articles/reviews/meddra-subscription-email.txt
 # MedDRA/MSSO email drafts + working notes — personal correspondence, keep out
 # of the public repo. Any extension: the notes are .md, the drafts are .txt.
 articles/reviews/meddra-email-*
+
+# MedDRA SSA secrets (never commit; live copy is ~/.config/meddra/credentials)
+**/meddra/credentials
+
+# Copilot knowledge pack staging (regenerate with tools/pack_copilot_knowledge.py)
+copilot/_stage/
+
+
+# copilot-pack: local override (may add PHI) and build output; built where used, never committed
+copilot/pack.local.yaml
+copilot/knowledge/
+copilot/pack-report.txt
+copilot/gps-copilot-archive.txt

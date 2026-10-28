@@ -1,0 +1,8 @@
+# Copy to copilot/pack.local.yaml on a machine approved for PHI (that file is git-ignored). It is merged on top of
+# pack.yaml by copilot-pack and may add PHI, so build only on a machine approved for it, and never
+# commit or share the output. copilot-pack refuses to write unless the outputs are git-ignored.
+# `--no-local` builds the tracked, shareable pack instead.
+
+# Add PHI-bearing material here (paths are relative to the project root), for example:
+# documents:
+#   - {path: output/comments-sample.csv, as: 70-comments-sample.txt, scrub: false}

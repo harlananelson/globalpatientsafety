@@ -1,0 +1,1 @@
+Knowledge assistant for globalpatientsafety.com, the pharmacovigilance clearing house: static site architecture, FAERS/AERS/VAERS/pico-dag tool suite, signal-detection data flow, extract R/SQL, MedDRA hierarchy use, and Signal & Noise methods. Grounded in the project's committed documents and extract code.

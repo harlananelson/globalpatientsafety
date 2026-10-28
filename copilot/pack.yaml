@@ -1,0 +1,74 @@
+# Copilot knowledge pack: control file for copilot-pack (reference: its README.md).
+# This file IS the reviewable specification of what the GPS Clearing House agent knows. Edit here,
+# then from the repository root:
+#   copilot-pack --dry-run      (stage and report sizes)
+#   copilot-pack                (write copilot/knowledge/gps-copilot-archive_partN.txt)
+# The built output is git-ignored: build it where it is used.
+#
+# Ported 2026-10-28 from tools/pack_copilot_knowledge.py (489 lines, in git history). Sibling
+# repositories (faers-pipeline, signal-compute) are read from beside this project.
+
+extends: ?~/.config/copilot-pack/user.yaml
+
+user:
+  drop_lines_containing:
+    - "~/.config/meddra"          # local licence path, not knowledge
+
+agent:
+  name: GPS Clearing House                 # Agent Builder cap 30 characters
+  archive_stem: gps-copilot-archive
+  title: Global Patient Safety catalog
+  generated_from: Global Patient Safety catalog
+  description: {file: copilot/description.txt}
+  instructions: {file: copilot/instructions.txt}
+  starter_prompts: {file: copilot/starter-prompts.txt}
+
+split:
+  max_tokens: 6000
+  max_files: 20
+
+how_to_read:
+  numbering: |
+    01  project facts, decision log
+    20  this repo's registries and site-build R scripts
+    21  articles (Quarto sources)
+    40  faers-pipeline R and scripts (sibling repo)
+    42  signal-compute R and prototypes (sibling repo)
+    50  extract SQL and R
+  key_facts: |
+    globalpatientsafety.com is the clearing house for a pharmacovigilance tool suite. It does not
+    run signal detection. Production front end is a static site (scripts/build_static_site.R ->
+    nginx). The Rhino/Shiny portal is retired (archive/rhino-app/). Tool apps are separate:
+    faers.mobi, aers.mobi, VAERS, pico-dag.
+
+    Signal data flow (sibling projects):
+      faers-pipeline (parse FDA FAERS XML -> contingency parquet)
+        -> signal-compute (safetysignal per quarter -> signals.parquet)
+        -> faers-mobi (Shiny search / caterpillar / novelty)
+
+    After 2026-04, signals columns are `drug` and `event` (not drug_name / outcome_name). FAERS REAC
+    is already MedDRA PT. The 2000-row splash cap is in-app (SPLASH_SIZE), not a deploy filter.
+    MedDRA Commercial Level 0 is licensed for internal hierarchy use; do not treat licensed
+    .asc/parquet as public knowledge.
+
+documents:
+  - {path: CLAUDE.md, as: 01-claude.txt}
+  - {path: docs/noise-pt-classification.md, as: 01-noise-pt-classification.txt}
+  - {path: issues/signal-disconnection.md, as: 01-signal-disconnection.txt}
+  - {path: articles/proposals/signal-triage-ui.md, as: 01-signal-triage-ui.txt}
+  - {path: DECISION_LOG.md, as: 02-decision-log.txt}
+  - {path: app/logic/articles.R, as: 20-r-articles-registry.txt}
+  - {path: app/logic/tools.R, as: 20-r-tools-registry.txt}
+  - {glob: "scripts/*.R", prefix: 20-r-script-}
+  - {glob: "articles/*.qmd", prefix: 21-article-}
+  - {glob: "../faers-pipeline/R/*.R", prefix: 40-faers-r-}
+  - {glob: "../faers-pipeline/scripts/*.R", prefix: 41-faers-script-}
+  - {glob: "../signal-compute/R/*.R", prefix: 42-signal-r-}
+  - {glob: "../signal-compute/proto_*.R", prefix: 42-signal-proto-}
+  - {glob: "../signal-compute/scripts/*.R", prefix: 43-signal-script-}
+  - {path: sql/README.md, as: 50-sql-README.txt}
+  - {glob: "sql/**/*.sql", prefix: 50-sql-}
+  - {glob: "sql/**/*.R", prefix: 50-sql-}
+
+edw:
+  enabled: false

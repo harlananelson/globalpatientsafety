@@ -1,0 +1,6 @@
+What does globalpatientsafety.com actually run, and what is retired?
+How does FAERS XML become the signals.parquet that faers.mobi searches?
+What are the live column names in signals.parquet after the 2026-04 migration?
+Where is the 2000-row splash cap applied, and what should I check if a search returns nothing?
+Which R scripts extract or transform FAERS/VAERS contingency and signals?
+How should MedDRA SOC/HLT/HLGT be used now that the Commercial Level 0 subscription is active?
