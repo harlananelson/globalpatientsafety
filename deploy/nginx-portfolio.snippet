@@ -1,0 +1,17 @@
+# Exact match so /portfolio.md stays a static file.
+# Insert in the globalpatientsafety.com server block, before `location /`,
+# next to the /pipeline blocks. The .md location in nginx-pipeline.snippet
+# already serves /portfolio.md.
+
+location = /portfolio/ {
+    return 301 /portfolio$is_args$args;
+}
+
+location = /portfolio {
+    proxy_pass http://127.0.0.1:3847;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    # Requests read a local cache only; they never wait on faers.mobi.
+    proxy_read_timeout 25s;
+}

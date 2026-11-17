@@ -35,6 +35,11 @@ if (!file.exists(file.path(PROJ_ROOT, "app/logic/articles.R"))) {
   PROJ_ROOT <- getwd()
 }
 OUT_DIR <- file.path(PROJ_ROOT, "static_site")
+# Portfolio safety (/portfolio) is a separate service. Its links and docs are
+# built only when deploy/portfolio.live exists, so a routine build + rsync
+# before the service is up cannot ship a dead link. Create the file in the
+# same change that confirms the service answers on the VPS.
+PORTFOLIO_LIVE <- file.exists(file.path(PROJ_ROOT, "deploy", "portfolio.live"))
 dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
 # ── Source the tribbles -----------------------------------------------------
@@ -106,7 +111,8 @@ esc <- function(s) {
 
 # First sentence of every description names the machine path (handshake 2026-10-10).
 MACHINE_SENTENCE <- paste(
-  "Machine path: GET /pipeline?sponsor= on this site, and",
+  if (PORTFOLIO_LIVE) "Machine path: GET /pipeline?sponsor= and GET /portfolio?sponsor= on this site, and"
+  else "Machine path: GET /pipeline?sponsor= on this site, and",
   "GET https://faers.mobi/signals for FAERS signals."
 )
 
@@ -200,7 +206,9 @@ site_nav <- function(active = "") {
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="/pipeline">Pipeline analysis</a></li>
-        <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
+',
+    if (PORTFOLIO_LIVE) '        <li class="nav-item"><a class="nav-link" href="/portfolio">Portfolio safety</a></li>\n' else "",
+    '        <li class="nav-item"><a class="nav-link" href="/articles">Articles</a></li>
 ',
     standalone_items,
     '        <li class="nav-item"><a class="nav-link" href="https://faers.mobi" target="_blank" rel="noopener">faers.mobi</a></li>
@@ -337,7 +345,9 @@ build_index <- function() {
   <div class="container text-center">
     <h1 class="display-5 mb-3">Global Patient Safety</h1>
     <p class="lead mb-3">Open tools for pharmacovigilance signal detection and clinical research acceleration.</p>
-    <p class="mb-0"><a class="btn" href="/pipeline">Pipeline analysis</a></p>
+    <p class="mb-0"><a class="btn" href="/pipeline">Pipeline analysis</a>',
+    if (PORTFOLIO_LIVE) ' <a class="btn" href="/portfolio">Portfolio safety</a>' else "",
+    '</p>
   </div>
 </header>',
     featured_html,
@@ -427,7 +437,8 @@ build_articles_index <- function() {
 # One %s: the page id, used only in the markdown-twin href. The old constant
 # form could not name that per-page link.
 article_chrome <- function(page) {
-  sprintf('
+  bar <- if (PORTFOLIO_LIVE) '    <a href="/portfolio" style="color:#d7eef8; text-decoration:none; margin-right:1rem;">Portfolio safety</a>\n' else ""
+  out <- sprintf('
 <a class="skip-link" href="#quarto-document-content">Skip to content</a>
 <div class="llm-access">
   <strong>LLM / API access.</strong>
@@ -441,7 +452,7 @@ article_chrome <- function(page) {
   <div>
     <a href="/" style="color:#7ec8e8; text-decoration:none; margin-right:1rem;">&larr; Global Patient Safety</a>
     <a href="/pipeline" style="color:#d7eef8; text-decoration:none; margin-right:1rem;">Pipeline analysis</a>
-    <a href="/articles" style="color:#d7eef8; text-decoration:none;">All articles</a>
+@@PORTFOLIO_BAR@@    <a href="/articles" style="color:#d7eef8; text-decoration:none;">All articles</a>
   </div>
   <button onclick="navigator.clipboard.writeText(location.href);this.textContent=\'Copied\';setTimeout(()=>this.textContent=\'Copy link\',1500);"
           style="background:transparent; color:#fff; border:1px solid #7ec8e8; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:13px;">
@@ -449,6 +460,7 @@ article_chrome <- function(page) {
   </button>
 </div>
 ', esc(page))
+  sub("@@PORTFOLIO_BAR@@", bar, out, fixed = TRUE)
 }
 
 finish_quarto <- function(html, out, page) {
@@ -517,7 +529,7 @@ check_internal_links <- function() {
   }
   # Known-good built pages (index/articles plus published + standalone)
   known <- c(
-    "index", "articles", "pipeline", "api", "mcp", "accessibility",
+    "index", "articles", "pipeline", "portfolio", "api", "mcp", "accessibility",
     published$id,
     available_standalone$id
   )

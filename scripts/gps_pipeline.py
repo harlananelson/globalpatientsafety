@@ -454,6 +454,7 @@ def html_document(title: str, body: str, notice: str = "") -> str:
 <nav aria-label="Site">
   <a href="/">Global Patient Safety</a>
   <a href="/pipeline" aria-current="page">Pipeline analysis</a>
+  <a href="/portfolio">Portfolio safety</a>
   <a href="/articles">Articles</a>
   <a href="/api">API</a>
 </nav>

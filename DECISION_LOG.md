@@ -2986,3 +2986,103 @@ the box runs fine.
 
 Claims audit extended to both cron entries and the heartbeat's own behaviour:
 **35 pass, 0 fail**, both modes.
+
+### 2026-11-17 — Portfolio safety: FAERS signals for a company's current drugs
+
+Harlan asked for a companion to Pipeline analysis: the safety profile of the
+drugs a company sells now. Name chosen: **Portfolio safety** at `/portfolio`
+(pipeline = what is being tested; portfolio = what is on the market). The label
+is one constant, `PAGE_TITLE` in `scripts/gps_portfolio.py`; renaming is cheap.
+
+Decisions, each with its reason:
+
+- **Products = Drugs@FDA application holder, NDA/BLA only, at least one product
+  Prescription or OTC.** Generics (ANDA) excluded. Matching is a substring of the
+  holder name, as `/pipeline` matches sponsors; nothing is expanded to other
+  companies. Consequences stated on the page: Dupixent is under REGENERON, not
+  Sanofi; Johnson & Johnson's drugs are under JANSSEN; CBER vaccines/blood
+  products are mostly absent. The openFDA *search* API matches `sponsor_name` as
+  a whole-string keyword (`sanofi` finds nothing, `"ELI LILLY"` finds nothing,
+  `ELI*` finds ELI LILLY AND CO), so the service loads the 9 MB bulk download
+  daily instead and matches locally. That also avoids the keyless 1,000/day cap.
+- **Signals are per active ingredient, from `faers.mobi/signals`, not
+  recomputed.** Clearing-house rule. The page says plainly that a signal belongs
+  to the ingredient across every manufacturer (Plavix rows include generic
+  clopidogrel reports), not to the company's product.
+- **faers.mobi isolates by substance family, so rows are filtered.** Measured on
+  Sanofi's 30 drugs: `insulin glargine` returned Humulin, Fiasp, Apidra rows
+  (ingredient `insulin`); `lixisenatide` returned the Soliqua combination;
+  `glyburide` returned glyburide+metformin. Rule in `row_belongs`: same resolved
+  ingredient set (salt-free) or a learned synonym (glyburide→glibenclamide,
+  rifampin→rifampicin, learned only from rows reported under our exact name or
+  brand, never a coarser family) is kept; a different ingredient count or a
+  different substance is dropped; a coarser family keeps only rows whose reported
+  name says our ingredient or brand. The 3-letter biologic prefix is KEPT
+  (`ziv-aflibercept`): stripping it merged Zaltrap with Eylea. The 4-letter FDA
+  suffix is stripped (222 names in the index, all genuine suffixes; biosimilars
+  collapse to the parent substance, consistent with per-ingredient signals).
+- **No live fan-out.** Measured 2026-11-17: one `/signals?drug=` call takes 2–3 s
+  idle and 8+ s under load, and six parallel calls returned four 504s. A page
+  request therefore reads only a local cache. `--refresh` fills it serially with
+  a 2 s pause, one file per ingredient set with `checked_at`, resumable.
+  States: `signals`, `none_isolated`, `other_products_only`, `not_checked`
+  (call failed), `pending` (not reached). The last two are never shown as "no
+  signals". Full fill ≈ 1,807 ingredient sets ≈ 3 h serial; the timer ships
+  disabled until Harlan decides when that load is acceptable.
+- **Counts.** Every drug is fetched at the same depth (top 500 by EB05, with
+  `indication`, `low_info`, `medication_error` hidden), so event counts compare.
+  `n_unique` was absent from every row on 2026-11-17, so the page prints `n` and
+  says it is the overlapping-window sum, not distinct reports.
+- **Load I put on faers.mobi during design:** two six-way parallel probe runs
+  (~08:00 ET) produced 504s; sequential calls afterwards were 2–3 s and the
+  monitor's 08:02 run was pass=47 fail=0.
+
+Open, for Harlan: (1) the top events by EB05 include extreme small-count pairs
+(e.g. "Glycogen storage disease type VIII" under Lantus, "Foetal alcohol
+syndrome" under Avalide) — a `min_n` floor is a ranking choice not yet made;
+(2) port 3846 is unverified on the VPS; (3) faers-mobi could expose an
+exact-ingredient query or per-ingredient export, which would remove most of
+`row_belongs` and the slow calls — that is faers-mobi's work, not done here.
+
+Same day, after the Sanofi demo fill (30/30 drugs, 0 failures): the synonym
+learner took `iron` from a single row reported as "ferrlecit", which let every
+iron product (Ferinject, Venofer, ferrous sulfate) under Ferrlecit. Fixed: a
+synonym needs at least half the distinct reported names under it to say the
+synonym, our ingredient, or our brand; and a row reported under our own brand
+is kept even when faers.mobi buckets it elsewhere. Regression test added.
+Re-tabulated all 30 drugs' kept reported names after the fix. Known residual
+edge: inside a coarse family (insulin), a combination reported by full name
+("insulin aspart insulin degludec") still passes under the single product.
+
+Corrections, same day:
+- **Depth is 300, not 500.** faers.mobi leaves `trend` blank on every row when
+  `limit` ≥ 400 (irbesartan: 300 → trend on all rows, 400 → blank on all). The
+  500-row fetch cost the trend field, which made Avapro/Lantus show "0 rising".
+  Raised with faers-mobi as a question, not fixed here.
+- **Event-count column removed** from HTML and brief: a 300-row window is full
+  for Arava but mostly other insulins for Lantus, so the counts do not compare.
+  JSON keeps them, with `events_label_unknown` (`novel` = `?`) and
+  `events_trend_unknown` beside the known counts instead of folding unknown into 0.
+- **Disclaimer reworded:** each faers.mobi row is one reported drug name × event;
+  the page pools every name that resolves to the ingredient.
+- **Full-fill estimate is ~4.5 h, not 3 h**: the Sanofi fill ran ~9 s per drug
+  (1,807 sets × 9 s).
+- **Links gated on `deploy/portfolio.live`.** Without that file the builder
+  emits no `/portfolio` link, doc, twin or OpenAPI path, and the consistency
+  check fails if any built page links to it. Create the file when the service is
+  confirmed answering on the VPS.
+- Fill job: `SignalCache.put` now raises on a write failure (a fill with an
+  unwritable cache dir used to log "ok" and store nothing), and a failed
+  re-check keeps the older good rows with `last_error`.
+
+### 2026-11-17 — Portfolio safety: top signals need n ≥ 10 (Harlan)
+
+Harlan set `min_n` = 10 for the top signals, after the brief showed the EB05
+ranking led by n = 4–8 pairs. Sent to faers.mobi as `min_n=10` (so the 300-row
+window is spent on such pairs) and re-applied when reading the cache. Note: `n`
+is faers.mobi's overlapping-window sum, so n ≥ 10 is not 10 distinct reports;
+`n_unique` is not published yet. The ingredient-pooling question (Nasacort
+showing injection signals) is left open; Harlan undecided.
+
+Port: 3846 is taken on the VPS (an R process; `ss -ltnp` run by Harlan
+2026-11-17 showed 3841–3846 all listening). Portfolio safety uses **3847**.

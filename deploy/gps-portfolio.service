@@ -1,0 +1,17 @@
+[Unit]
+Description=globalpatientsafety.com portfolio safety (Drugs@FDA + cached faers.mobi signals)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/gps-pipeline
+# 3842 is the faers MCP server. 3843 and 3844 are the FAERS R APIs. 3845 is gps-pipeline.
+# 3841, 3843, 3844, 3846 are R services; 3847 checked free with ss on 2026-11-17.
+CacheDirectory=gps-portfolio
+ExecStart=/usr/bin/python3 /opt/gps-pipeline/gps_portfolio.py --bind 127.0.0.1 --port 3847 --cache-dir /var/cache/gps-portfolio
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

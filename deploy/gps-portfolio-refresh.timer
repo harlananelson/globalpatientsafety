@@ -1,0 +1,12 @@
+[Unit]
+Description=Weekly portfolio safety cache fill (low-traffic hours)
+
+[Timer]
+# Not enabled by default: the first full fill is ~3 hours of serial load on
+# faers.mobi. Enable only after deciding when that load is acceptable.
+OnCalendar=Sun *-*-* 07:00:00 UTC
+RandomizedDelaySec=30min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

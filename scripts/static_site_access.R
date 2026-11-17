@@ -27,15 +27,18 @@ page_rows <- function() {
          line = "Pharmacovigilance tools and signal analyses."),
     list(path = "/pipeline", title = "Pipeline analysis",
          line = "ClinicalTrials.gov studies for one lead sponsor. role=any includes collaborators. Registry facts, not a safety conclusion."),
+    list(path = "/portfolio", title = "Portfolio safety",
+         line = "FAERS signals for one company's currently marketed NDA and BLA products, per active ingredient. Hypotheses, not causation; not attributable to that company's product alone."),
     list(path = "/articles", title = "Articles",
          line = "Published signal analyses."),
     list(path = "/api", title = "API",
-         line = "How to call GET /pipeline. FAERS signals stay on faers.mobi. VAERS signals stay on vaers.globalpatientsafety.com."),
+         line = if (PORTFOLIO_LIVE) "How to call GET /pipeline and GET /portfolio. FAERS signals stay on faers.mobi. VAERS signals stay on vaers.globalpatientsafety.com." else "How to call GET /pipeline. FAERS signals stay on faers.mobi. VAERS signals stay on vaers.globalpatientsafety.com."),
     list(path = "/mcp", title = "MCP",
          line = "The hosted MCP server is https://faers.mobi/mcp and includes get_pipeline, get_vaers, vaers_search_vaccine, vaers_get_signal, and vaers_get_profile."),
     list(path = "/accessibility", title = "Accessibility",
          line = "WCAG 2.1 Level AA target, known exceptions, and a contact address.")
   )
+  if (!PORTFOLIO_LIVE) rows <- Filter(function(row) row$path != "/portfolio", rows)
   if (nrow(published)) {
     for (i in seq_len(nrow(published))) {
       rows[[length(rows) + 1]] <- list(
@@ -90,7 +93,8 @@ build_llms <- function(rows) {
   lines <- c(
     "# Global Patient Safety",
     "",
-    "Open pharmacovigilance tools and ClinicalTrials.gov pipeline reports.",
+    if (PORTFOLIO_LIVE) "Open pharmacovigilance tools, ClinicalTrials.gov pipeline reports, and FAERS portfolio safety reports."
+    else "Open pharmacovigilance tools and ClinicalTrials.gov pipeline reports.",
     "Hypotheses and registry facts, not causation and not medical advice.",
     "",
     "## Pages",
@@ -109,6 +113,8 @@ build_llms <- function(rows) {
     "",
     "- GET https://globalpatientsafety.com/pipeline?sponsor=Sanofi — JSON studies whose lead sponsor matches. role=any includes collaborators",
     "- GET https://globalpatientsafety.com/pipeline?sponsor=Sanofi&format=brief — text/plain brief",
+    if (PORTFOLIO_LIVE) c("- GET https://globalpatientsafety.com/portfolio?sponsor=Sanofi — JSON: the company's currently marketed NDA/BLA products (Drugs@FDA) with top faers.mobi signals per active ingredient, from a cache filled serially",
+    "- GET https://globalpatientsafety.com/portfolio?sponsor=Sanofi&format=brief — text/plain brief"),
     "- GET https://faers.mobi/signals — FAERS disproportionality (a different service)",
     "- GET https://vaers.globalpatientsafety.com/signals?vaccine=COVID19&event=Myocarditis — VAERS reporting signals (a different service)",
     "- MCP https://faers.mobi/mcp — one server, tools get_pipeline, get_vaers, vaers_search_vaccine, vaers_get_signal, vaers_get_profile, plus the FAERS tools",
@@ -119,19 +125,63 @@ build_llms <- function(rows) {
 }
 
 build_openapi <- function() {
-  py <- file.path(PROJ_ROOT, "scripts/gps_pipeline.py")
-  spec <- system2("python3", c(py, "--openapi"), stdout = TRUE)
-  if (!length(spec)) stop("gps_pipeline.py --openapi produced nothing")
+  # One document for both services: gps_pipeline.py owns the base spec and
+  # gps_portfolio.py contributes its /portfolio path.
+  code <- paste(
+    "import json, sys",
+    sprintf("sys.path.insert(0, %s)", deparse(file.path(PROJ_ROOT, "scripts"))),
+    "import gps_pipeline, gps_portfolio",
+    "spec = gps_pipeline.openapi_spec()",
+    if (PORTFOLIO_LIVE) "spec['paths']['/portfolio'] = gps_portfolio.openapi_path()" else "",
+    if (PORTFOLIO_LIVE) "spec['info']['title'] = 'Global Patient Safety pipeline and portfolio safety'" else "",
+    "print(json.dumps(spec, indent=2))",
+    sep = "\n"
+  )
+  spec <- system2("python3", c("-c", shQuote(code)), stdout = TRUE)
+  if (!length(spec)) stop("openapi merge of gps_pipeline.py and gps_portfolio.py produced nothing")
   write_out("openapi.json", paste(spec, collapse = "\n"))
+}
+
+portfolio_api_md <- function() {
+  if (!PORTFOLIO_LIVE) return("")
+  paste(
+    "## GET /portfolio",
+    "",
+    "sponsor (required for JSON and brief, at least 3 letters or digits):",
+    "matched as a substring of the Drugs@FDA application holder name, ignoring",
+    "case and punctuation. JANSSEN, not Johnson & Johnson. Not expanded to other companies.",
+    "Products: NDA and BLA applications with at least one product marked Prescription",
+    "or Over-the-counter. Generics (ANDA) are not listed. One row per active-ingredient set.",
+    "limit (optional): drugs per page, default 20, maximum 100. offset (optional): default 0.",
+    "format (optional): json, brief, or html, with the same Accept rule as /pipeline.",
+    "",
+    "Each drug has a state: signals, none_isolated (faers.mobi isolated nothing for",
+    "the name), other_products_only (only same-family products came back, none shown),",
+    "not_checked (the last faers.mobi call failed), or pending (not checked yet).",
+    "A page request never calls faers.mobi. A serial job fills a cache; checked_at",
+    "says when each drug was last checked.",
+    "top_signals: up to 5 events with n of at least 10, highest EB05 first, with indication, low-information",
+    "and medication-error events hidden. n_unique is the distinct-case count when",
+    "faers.mobi publishes it; n is the overlapping-window sum, not distinct reports.",
+    "novel means not matched in the cached FDA label text, not a previously unknown risk.",
+    "Signals are per active ingredient across all manufacturers, not this company's product alone.",
+    "If Drugs@FDA cannot be loaded the status is 503 and the body lists no products.",
+    "",
+    "curl -sS 'https://globalpatientsafety.com/portfolio?sponsor=Sanofi'",
+    "curl -sS 'https://globalpatientsafety.com/portfolio?sponsor=Sanofi&format=brief'",
+    "",
+    sep = "\n"
+  )
 }
 
 api_md <- function() {
   paste(
     "# Global Patient Safety API",
     "",
-    "Machine path: GET /pipeline?sponsor=",
+    if (PORTFOLIO_LIVE) "Machine paths: GET /pipeline?sponsor= and GET /portfolio?sponsor=" else "Machine path: GET /pipeline?sponsor=",
     "",
-    "Registry facts from ClinicalTrials.gov. Not efficacy or safety conclusions.",
+    "Pipeline: registry facts from ClinicalTrials.gov. Not efficacy or safety conclusions.",
+    if (PORTFOLIO_LIVE) "Portfolio safety: faers.mobi signals for a company's current products. Hypotheses, not causation." else "",
     "FAERS signals are a different service: https://faers.mobi/api",
     "VAERS signals are a different service: https://vaers.globalpatientsafety.com/api",
     "",
@@ -170,6 +220,7 @@ api_md <- function() {
     "curl -sS 'https://globalpatientsafety.com/pipeline?sponsor=Sanofi&format=brief'",
     "curl -sS -H 'Accept: text/html' 'https://globalpatientsafety.com/pipeline?sponsor=Sanofi'",
     "",
+    portfolio_api_md(),
     "OpenAPI: https://globalpatientsafety.com/openapi.json",
     "MCP: https://faers.mobi/mcp (tool get_pipeline). See /mcp.md",
     "",
@@ -224,7 +275,14 @@ chatgpt_md <- function() {
     "Pass role=any to include collaborator-only trials. Do not invent NCT ids.",
     "If the call fails, say ClinicalTrials.gov was unavailable.",
     "Say that the rows are registry facts, not evidence a drug works or is safe.",
-    "For an adverse-event signal, use https://faers.mobi/openapi.json instead.",
+    if (PORTFOLIO_LIVE) paste(c(
+    "Use getPortfolioSafety when the question is what FAERS shows for the drugs a",
+    "company sells now. Pass the FDA application holder name as sponsor.",
+    "Say the signals are statistical hypotheses per active ingredient across all",
+    "manufacturers, not evidence of harm and not specific to that company's product.",
+    "Treat pending and not_checked as unknown, never as no signals."
+    ), collapse = "\n") else "",
+    "For one drug and event in depth, use https://faers.mobi/openapi.json instead.",
     "For a vaccine report, use https://vaers.globalpatientsafety.com/openapi.json.",
     "",
     sep = "\n"
@@ -256,7 +314,7 @@ twin_md <- function(title, line, path) {
   paste(
     paste0("# ", title),
     "",
-    "Machine path: GET /pipeline?sponsor= on this site, GET https://faers.mobi/signals for FAERS signals, and GET https://vaers.globalpatientsafety.com/signals for VAERS signals.",
+    if (PORTFOLIO_LIVE) "Machine path: GET /pipeline?sponsor= and GET /portfolio?sponsor= on this site, GET https://faers.mobi/signals for FAERS signals, and GET https://vaers.globalpatientsafety.com/signals for VAERS signals." else "Machine path: GET /pipeline?sponsor= on this site, GET https://faers.mobi/signals for FAERS signals, and GET https://vaers.globalpatientsafety.com/signals for VAERS signals.",
     "",
     line,
     "",
@@ -280,7 +338,8 @@ build_machine_access <- function() {
   write_out("API.md", api_md())
   write_out("api.html", shell_page(
     "API — Global Patient Safety",
-    "Documents GET /pipeline, including JSON, format=brief, and what a registry outage returns.",
+    if (PORTFOLIO_LIVE) "Documents GET /pipeline and GET /portfolio, including JSON, format=brief, and what an upstream outage returns."
+    else "Documents GET /pipeline, including JSON, format=brief, and what a registry outage returns.",
     "/api",
     paste0(
       '<article class="container py-4">\n',
@@ -300,6 +359,15 @@ build_machine_access <- function() {
       '<pre tabindex="0">curl -sS \'https://globalpatientsafety.com/pipeline?sponsor=Sanofi\'\n',
       'curl -sS \'https://globalpatientsafety.com/pipeline?sponsor=Sanofi&amp;role=any\'\n',
       'curl -sS \'https://globalpatientsafety.com/pipeline?sponsor=Sanofi&amp;format=brief\'</pre>\n',
+      if (PORTFOLIO_LIVE) paste0(
+      '<h2>GET /portfolio</h2>\n',
+      '<p><code>sponsor</code> is matched as a substring of the Drugs@FDA application holder name (for example JANSSEN, not Johnson &amp; Johnson). It is not expanded to other companies.</p>\n',
+      '<p>The list is that holder\'s NDA and BLA applications with a product marked Prescription or Over-the-counter, one row per active ingredient. Generics are not listed. <code>limit</code> defaults to 20 and stops at 100; <code>offset</code> pages.</p>\n',
+      '<p>Each drug has a <code>state</code>: <code>signals</code>, <code>none_isolated</code>, <code>other_products_only</code>, <code>not_checked</code> (the last faers.mobi call failed) or <code>pending</code> (not checked yet). A page request never calls faers.mobi; a serial job fills a cache and <code>checked_at</code> says when.</p>\n',
+      '<p>FAERS signals are statistical hypotheses per active ingredient across all manufacturers, not evidence of harm and not specific to that company\'s product. <code>n</code> is an overlapping-window sum, not a count of distinct reports. <code>novel</code> means not matched in the cached label text.</p>\n',
+      '<pre tabindex="0">curl -sS \'https://globalpatientsafety.com/portfolio?sponsor=Sanofi\'\n',
+      'curl -sS \'https://globalpatientsafety.com/portfolio?sponsor=Sanofi&amp;format=brief\'</pre>\n'
+      ) else '',
       '<p><a href="/openapi.json">OpenAPI</a> · <a href="/mcp.md">MCP</a> · <a href="/chatgpt.md">ChatGPT</a> · <a href="/api.md">Markdown</a></p>\n',
       '</article>'
     )
@@ -358,9 +426,23 @@ build_machine_access <- function() {
     ),
     "/pipeline"
   ))
+  if (PORTFOLIO_LIVE) write_out("portfolio.md", twin_md(
+    "Portfolio safety",
+    paste(
+      "GET /portfolio?sponsor= returns one company's currently marketed NDA and BLA products",
+      "from Drugs@FDA, with the top faers.mobi signals for each active ingredient.",
+      "format=brief is text/plain. format=html is the same page a browser shows.",
+      "Signals are per active ingredient across all manufacturers, not this company's product alone.",
+      "pending and not_checked mean unknown, not no signals.",
+      api_md(),
+      sep = "\n"
+    ),
+    "/portfolio"
+  ))
   write_out("index.md", twin_md(
     "Global Patient Safety",
-    "Open tools for pharmacovigilance, plus a ClinicalTrials.gov pipeline report for one sponsor.",
+    if (PORTFOLIO_LIVE) "Open tools for pharmacovigilance, plus a ClinicalTrials.gov pipeline report and a FAERS portfolio safety report for one company."
+    else "Open tools for pharmacovigilance, plus a ClinicalTrials.gov pipeline report for one sponsor.",
     "/"
   ))
   write_out("articles.md", twin_md(

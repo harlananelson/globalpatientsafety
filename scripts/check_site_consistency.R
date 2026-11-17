@@ -170,6 +170,18 @@ for (needle in markers) {
   }
 }
 ok("homepage has the pipeline link, skip target, and machine-access head")
+# /portfolio is built only when deploy/portfolio.live exists. Live: it must be
+# linked and documented. Not live: nothing may link to it yet.
+portfolio_live <- file.exists(file.path(PROJ_ROOT, "deploy", "portfolio.live"))
+if (portfolio_live) {
+  if (!grepl('href="/portfolio"', index_txt, fixed = TRUE)) fail("portfolio is live but the homepage does not link it")
+  if (!file.exists(file.path(site, "portfolio.md"))) fail("portfolio is live but static_site/portfolio.md is missing")
+} else {
+  linked <- Filter(function(f) grepl('href="/portfolio"', paste(readLines(f, warn = FALSE), collapse = "\n"), fixed = TRUE),
+                   list.files(site, pattern = "\\.html$", full.names = TRUE))
+  if (length(linked)) fail("portfolio is not live but %s links to /portfolio", paste(basename(unlist(linked)), collapse = ", "))
+}
+ok(sprintf("portfolio links match deploy/portfolio.live (%s)", if (portfolio_live) "live" else "not live"))
 for (f in c(
   "robots.txt", "sitemap.xml", "llms.txt", "openapi.json",
   "api.md", "chatgpt.md", "mcp.md", "methods.md", "pipeline.md",
@@ -180,6 +192,9 @@ for (f in c(
 openapi_txt <- paste(readLines(file.path(site, "openapi.json"), warn = FALSE), collapse = "\n")
 if (!grepl("/pipeline", openapi_txt, fixed = TRUE)) {
   fail("openapi.json does not describe /pipeline")
+}
+if (portfolio_live && !grepl("/portfolio", openapi_txt, fixed = TRUE)) {
+  fail("openapi.json does not describe /portfolio")
 }
 ok("machine-access files are in the built site")
 

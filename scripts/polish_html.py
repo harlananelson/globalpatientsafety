@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import html
+import os
 import re
 import sys
 
@@ -16,7 +17,13 @@ a.skip-link:focus { top: 0; }
 :focus-visible { outline: 3px solid #0b4f6a; outline-offset: 2px; }
 """
 
-HEAD_LINKS = """<meta name="description" content="Machine path: GET /pipeline?sponsor= on this site, and GET https://faers.mobi/signals for FAERS signals.">
+# /portfolio is named only once deploy/portfolio.live exists (see build_static_site.R).
+PORTFOLIO_LIVE = os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                             "..", "deploy", "portfolio.live"))
+MACHINE_PATHS = ("GET /pipeline?sponsor= and GET /portfolio?sponsor=" if PORTFOLIO_LIVE
+                 else "GET /pipeline?sponsor=")
+
+HEAD_LINKS = """<meta name="description" content="Machine path: """ + MACHINE_PATHS + """ on this site, and GET https://faers.mobi/signals for FAERS signals.">
 <link rel="alternate" type="text/markdown" href="/{page}.md">
 <link rel="alternate" href="/llms.txt" title="llms.txt">
 <link rel="service-desc" type="application/json" href="/openapi.json">

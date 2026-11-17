@@ -1,0 +1,16 @@
+[Unit]
+Description=Fill the portfolio safety cache from faers.mobi, one call at a time
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/gps-pipeline
+CacheDirectory=gps-portfolio
+# Serial, 2 s between calls. faers.mobi returns 504 under parallel load.
+# Entries younger than 30 days are skipped, so a stopped run resumes.
+# A full first fill is ~1,800 ingredient sets, roughly 3 hours.
+ExecStart=/usr/bin/python3 /opt/gps-pipeline/gps_portfolio.py --refresh --cache-dir /var/cache/gps-portfolio --pause 2 --max-age-days 30
+Nice=10
