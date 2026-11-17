@@ -190,6 +190,8 @@ if [ "$BASE" = "https://faers.mobi" ]; then
     "gps-home|GET|/|Mozilla/5.0|200|text/html|Pipeline analysis && LLM / API access && rel=\"alternate\""
     "gps-pipeline-form|GET|/pipeline|curl|200|text/html|<form"
     "gps-pipeline-sanofi|GET|/pipeline?sponsor=Sanofi&limit=5|curl|200|application/json|NCT[0-9]{8}"
+    "gps-portfolio-form|GET|/portfolio|curl|200|text/html|<form"
+    "gps-portfolio-sanofi|GET|/portfolio?sponsor=Sanofi&limit=5&format=json|curl|200|application/json|[NB][DL]A[0-9]{6}"
     "gps-llms|GET|/llms.txt|curl|200|text/plain|pipeline"
     "gps-robots|GET|/robots.txt|curl|200|text/plain|llms.txt"
     "gps-openapi|GET|/openapi.json|curl|200|application/json|/pipeline"

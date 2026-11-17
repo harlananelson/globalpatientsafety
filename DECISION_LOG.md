@@ -3086,3 +3086,20 @@ showing injection signals) is left open; Harlan undecided.
 
 Port: 3846 is taken on the VPS (an R process; `ss -ltnp` run by Harlan
 2026-11-17 showed 3841–3846 all listening). Portfolio safety uses **3847**.
+
+### 2026-11-17 — Portfolio safety deployed
+
+- `gps-portfolio.service` on the VPS, 127.0.0.1:3847; nginx `location = /portfolio`
+  added beside `/pipeline` (backup `/root/nginx-globalpatientsafety.bak-20261117-portfolio`,
+  `nginx -t` passed). `gps_pipeline.py` redeployed with the Portfolio nav link
+  (old copy kept as `/opt/gps-pipeline/gps_pipeline.py.bak-20261117`).
+- Cache: Sanofi copied from the local fill; a detached serial seed fill
+  (`gps-portfolio-seed`, systemd-run) for Pfizer, Merck, AstraZeneca, Eli Lilly,
+  Janssen, Regeneron. Every other company shows `pending` until the full fill runs.
+  The weekly timer is installed but NOT enabled.
+- `deploy/portfolio.live` committed; the static site now links `/portfolio`.
+- Monitor: `gps-portfolio-form` and `gps-portfolio-sanofi` added to the gps-only
+  checks (outside the faers mutation self-test). The spec splits on `|`, so the
+  body regex is `[NB][DL]A[0-9]{6}`, not an alternation.
+- Seen, not changed: `nginx -t` warns of conflicting server names for faers.mobi
+  because `faers-mobi.bak-*` files sit in `sites-enabled/` and are loaded.
