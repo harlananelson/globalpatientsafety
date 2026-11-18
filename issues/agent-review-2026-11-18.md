@@ -28,6 +28,39 @@ portal work, and the November DECISION_LOG entries are the **Portfolio safety**
 service (`/portfolio`, `scripts/gps_portfolio.py`), shipped 2026-11-17 and still
 being filled/iterated. That new service is the context for proposal #1.
 
+### Meta-finding (added after opening PR #120): the review PRs are piling up unmerged
+
+Opening this PR subscribed me to repo activity, which revealed what a `main`-only
+checkout cannot: **there are ~42 open PRs**, including an unmerged weekly
+`agent-review-*` series — #117 (2026-11-11), #113 (11-04), #111 (10-28), #108
+(10-21), #105 (10-14), #99 (10-07), #97 (09-30), #92 (09-23), #77 (09-16), #21
+(09-09) — plus the `research-ideas-*`, `handshake/*`, and `monitor-alert-*`
+streams. **Almost nothing the automated agents produce since ~September has been
+merged.**
+
+This has two consequences that matter more than the proposals below:
+
+1. **Proposals #1 and #3 here are substantially duplicates.** #105's "toothless
+   link check" and #108's "add the Python pipeline test suite to CI" are my #3 and
+   #1; #117 re-raised both ("CI tests none of the new dynamic code … build's own
+   consistency/link checks never run"). I did not cite them in the drafting pass
+   because they live on unmerged branches invisible to a fresh checkout — the exact
+   root cause PR #106 already diagnosed ("research PRs never merged to main, so each
+   week's dedup cannot see prior weeks"). What is genuinely incremental in #1 is
+   that the Portfolio service and its **31** tests are new since those reviews, and
+   that I ran all 46 and confirmed green; #3 is a near-verbatim repeat.
+2. **The real top improvement this week is process, not code: triage the open-PR
+   backlog.** A weekly review that is never read or merged cannot change anything —
+   it just re-notices the same gaps and adds another unmerged PR (this one). The
+   highest-leverage action is for Harlan to merge or close the standing
+   `agent-review`/`research-ideas` PRs (and decide whether these routines should
+   keep opening PRs at all), so the signal stops accumulating unseen. Proposal #2
+   below (the 4-month article-publishing stall) is the same failure in the content
+   pipeline.
+
+Treat the three proposals below as the nominal deliverable; treat this meta-finding
+as the thing to act on first.
+
 ---
 
 ## 1. The two production Python services have 46 passing tests that CI never runs
