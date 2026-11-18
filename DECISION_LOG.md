@@ -3111,3 +3111,15 @@ Harlan asked for the full fill. Started `gps-portfolio-refresh` on the VPS (seri
 ## 2026-11-18 — Ticket: bulk /signals export (PR #119)
 
 Filed `issues/signals-bulk-export-2026-11-18.md` on `handshake/signals-bulk-export`. Portfolio's cache costs about 1,800 serial `/signals` calls, and parallel calls returned 504. The ticket asks faers-mobi for one export with the same rows and filters that `/signals` returns, so the filtering logic stays in one place, plus a quarter/build marker. It also notes two known issues: trend is blank at limit ≥ 400, and there is no `n_unique`. The weekly refresh timer stays disabled until the export is live. The fill timing is evidence: it started at 11:07 UTC and was at 1,596 files by 12:57.
+
+## 2026-11-18 — faers-mobi built the bulk export (PR #119), not yet deployed
+
+faers-mobi-7d reports `GET /signals/export` (gzip JSONL, one row per drug × event) and `GET /signals/export/meta` (through, built_at, rows, current). The rows come from the same functions as `/signals` with the three hide filters and min_n=10, with no scan cap. On local, older data: 309,422 rows, 8,069 drug strings, 8.4 MB. Rows matched `/signals` exactly for tiopronin, ivosidenib, insulin glargine, semaglutide, sacubitril, tzield and two strings with no ingredient.
+
+To plan for when Portfolio switches:
+- `ingredient` is the coarse DiAna substance (every glargine product is "insulin"; Entresto is "sacubitril;valsartan"), so Portfolio keeps its own matching and runs it locally over the export's drug strings.
+- trend is filled on every row. The blank trend at limit ≥ 400 came from a memory guard (more than 64 drugs × more than 64 events on one page).
+- The export answers 503 with stale_reasons while it rebuilds (20+ minutes after each deploy, or after a parquet or label-cache change). Portfolio must check `/meta` and keep its cache on 503.
+- n_unique is not in this build.
+
+The deploy waits on Harlan (that session's SSH goes through him). This session merges only after the live numbers are posted on #119.
