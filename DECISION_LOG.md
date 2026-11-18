@@ -3103,3 +3103,7 @@ Port: 3846 is taken on the VPS (an R process; `ss -ltnp` run by Harlan
   body regex is `[NB][DL]A[0-9]{6}`, not an alternation.
 - Seen, not changed: `nginx -t` warns of conflicting server names for faers.mobi
   because `faers-mobi.bak-*` files sit in `sites-enabled/` and are loaded.
+
+## 2026-11-18 — Portfolio full fill started
+
+Harlan asked for the full fill. Started `gps-portfolio-refresh` on the VPS (serial, 2 s pause, about 4.5 h estimated). The seed fill had already finished, with 208 cache files, so the two fills did not overlap. The weekly timer is still not enabled. `systemctl start` on this oneshot unit blocks until the job ends, so start it with `--no-block` or drop the client afterwards; the job keeps running inside systemd either way.
