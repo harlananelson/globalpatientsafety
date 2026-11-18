@@ -3107,3 +3107,7 @@ Port: 3846 is taken on the VPS (an R process; `ss -ltnp` run by Harlan
 ## 2026-11-18 — Portfolio full fill started
 
 Harlan asked for the full fill. Started `gps-portfolio-refresh` on the VPS (serial, 2 s pause, about 4.5 h estimated). The seed fill had already finished, with 208 cache files, so the two fills did not overlap. The weekly timer is still not enabled. `systemctl start` on this oneshot unit blocks until the job ends, so start it with `--no-block` or drop the client afterwards; the job keeps running inside systemd either way.
+
+## 2026-11-18 — Ticket: bulk /signals export (PR #119)
+
+Filed `issues/signals-bulk-export-2026-11-18.md` on `handshake/signals-bulk-export`. Portfolio's cache costs about 1,800 serial `/signals` calls, and parallel calls returned 504. The ticket asks faers-mobi for one export with the same rows and filters that `/signals` returns, so the filtering logic stays in one place, plus a quarter/build marker. It also notes two known issues: trend is blank at limit ≥ 400, and there is no `n_unique`. The weekly refresh timer stays disabled until the export is live. The fill timing is evidence: it started at 11:07 UTC and was at 1,596 files by 12:57.
