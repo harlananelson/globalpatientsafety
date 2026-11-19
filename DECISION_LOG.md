@@ -3148,3 +3148,9 @@ I checked the live export myself:
 Finding for Portfolio: `limit=300` truncates. The glargine response's drug strings have 2,883 export rows and semaglutide's have 953. The top-5 by EB05 are unaffected, because both are sorted by EB05, but Portfolio's per-drug event counts (novel, rising, label unknown) are currently computed on at most 300 rows. The switch to the export fixes that.
 
 Also noted: meta's `signals_parquet` size (3,606,302,954) matches the local `signals_faers_v2026-07-08.parquet`, not the newer `v2026-10-17` file. Live faers.mobi serves the July build, through 2025Q4.
+
+## 2026-11-19 — The Oct-17 signals build is not live
+
+faers-mobi-7d confirms that live serves `signals_faers_v2026-07-08` (3,606,302,954 bytes, mtime 2026-07-08 13:28 UTC). The workstation's `v2026-10-17` parquet has never been deployed. It goes with uncommitted Oct-17 faers-mobi edits that redefine eb05 and add n_unique. Shipping it would change eb05 on every `/signals` row, so it is Harlan's decision, and he has been asked.
+
+If it ships, this is an inbound change under `issues/inbound-change-protocol.md`: faers-mobi notifies before the restart, and this seat captures the old eb05 values (monitor snapshots plus a saved copy of the current export) before they are gone. Portfolio's keep-cache-on-503 is a design for the export switch and is not built yet. Today Portfolio still reads `/signals`, and a fill keeps the old cache rows when a call fails.
