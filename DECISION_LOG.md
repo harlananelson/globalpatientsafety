@@ -3154,3 +3154,18 @@ Also noted: meta's `signals_parquet` size (3,606,302,954) matches the local `sig
 faers-mobi-7d confirms that live serves `signals_faers_v2026-07-08` (3,606,302,954 bytes, mtime 2026-07-08 13:28 UTC). The workstation's `v2026-10-17` parquet has never been deployed. It goes with uncommitted Oct-17 faers-mobi edits that redefine eb05 and add n_unique. Shipping it would change eb05 on every `/signals` row, so it is Harlan's decision, and he has been asked.
 
 If it ships, this is an inbound change under `issues/inbound-change-protocol.md`: faers-mobi notifies before the restart, and this seat captures the old eb05 values (monitor snapshots plus a saved copy of the current export) before they are gone. Portfolio's keep-cache-on-503 is a design for the export switch and is not built yet. Today Portfolio still reads `/signals`, and a fill keeps the old cache rows when a call fails.
+
+## 2026-11-19 — The Oct-17 EB05 change, as reported by faers-mobi-7d (nothing committed)
+
+Full write-up: faers-mobi scratchpad `eb05-oct17-summary.md`.
+
+- **Live defect.** signal-compute applies `stats::filter(method="recursive")` with 0.3, which computes y[t] = x[t] + 0.3·y[t−1], not an EWMA. A constant series c converges to c/0.7 ≈ 1.43c, and an NA blanks every later quarter. faers-mobi publishes `eb05` = max of that series over flagged quarters (n_methods_flagged ≥ 2). On the July data, 92% of pairs have a published eb05 above their largest quarterly EB05 (tiopronin × Cystinuria: 5,149.6 vs 4,986.3).
+- **Fix (a), signal-compute:** a real EWMA, 0.3·x + 0.7·y[t−1].
+- **Fix (b), faers-mobi:** eb05 = EWMA at the latest flagged quarter instead of the max; `ewma_peak` and `eb05_peak` added.
+- **Measured** on July data, 5 drugs, 571 pairs:
+  - (a) alone: median ratio 0.55; 138 pairs fall below eb05 ≥ 2; within-drug ranking almost unchanged (Spearman 0.97–1.00).
+  - (a)+(b): median 0.49; 195 fall below 2; ranking moves (ivosidenib 0.57).
+- **The Oct-17 parquet is not July plus the fix.** It runs through 2026Q2 with 568k flagged pairs against 1.72M, and that drop is unexplained.
+- **n_unique has no producer.** It needs the same drug-string → RxNorm mapping as #122.
+
+Decisions for Harlan: latest vs peak for (b), and explaining or rebuilding the 1.72M → 568k drop. Consequence here: every EB05 this site shows (Portfolio, pipeline, articles that quote faers.mobi) currently carries the 1/0.7 inflation.
