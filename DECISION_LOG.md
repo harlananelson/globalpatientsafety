@@ -3123,3 +3123,13 @@ To plan for when Portfolio switches:
 - n_unique is not in this build.
 
 The deploy waits on Harlan (that session's SSH goes through him). This session merges only after the live numbers are posted on #119.
+
+## 2026-11-18 — Ticket: RxNorm ingredient (PR #122), depends on #119
+
+The DiAna `ingredient` in the export is too coarse for Portfolio (every glargine product is "insulin"). The workstation already holds `drug_dictionary.parquet` (521,449 names; 33% mapped by name; some brand and ingredient rxcuis mixed together; wrong fuzzy matches to inulin and galactose) and the full RxNorm release. The ticket asks faers-pipeline/faers-mobi for:
+- a name → RxNorm IN rollup
+- fuzzy-match cleanup
+- coverage counted by reports
+- `rxnorm_ingredient` columns on `/signals` and the export
+
+Statistics stay unchanged. Live faers.mobi does not yet run #119, so the two can ship in one deploy. Sent to faers-mobi-7d.
