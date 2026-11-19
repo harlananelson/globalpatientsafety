@@ -3137,3 +3137,14 @@ Statistics stay unchanged. Live faers.mobi does not yet run #119, so the two can
 ## 2026-11-18 — #119 deploying; #122 routed
 
 faers-mobi-7d: Harlan ran deploy.sh for #119, and all three workers are live on api-fb819e233363. The export build is running on the VPS (about 25 minutes); live numbers will follow on #119. #122 goes out as a second deploy. Its asks 1 and 2 (the name → RxNorm IN table and the fuzzy-precision rule) are faers-pipeline work, waiting on Harlan's decision to open a faers-pipeline session. Asks 3 and 4 (coverage, the new columns) are faers-mobi's and depend on that table.
+
+## 2026-11-19 — #119 verified and merged
+
+I checked the live export myself:
+- meta: 2025Q4, 401,527 rows, 8,401 drugs, current.
+- download: 10.9 MB in 1.3 s; the sha256 matches meta.
+- parity with live `/signals` on n/eb05/novel/trend/ingredient: tiopronin, ivosidenib, tzield, insulin glargine and semaglutide all exact, 0 missing.
+
+Finding for Portfolio: `limit=300` truncates. The glargine response's drug strings have 2,883 export rows and semaglutide's have 953. The top-5 by EB05 are unaffected, because both are sorted by EB05, but Portfolio's per-drug event counts (novel, rising, label unknown) are currently computed on at most 300 rows. The switch to the export fixes that.
+
+Also noted: meta's `signals_parquet` size (3,606,302,954) matches the local `signals_faers_v2026-07-08.parquet`, not the newer `v2026-10-17` file. Live faers.mobi serves the July build, through 2025Q4.
