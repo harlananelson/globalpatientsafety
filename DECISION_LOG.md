@@ -3169,3 +3169,14 @@ Full write-up: faers-mobi scratchpad `eb05-oct17-summary.md`.
 - **n_unique has no producer.** It needs the same drug-string → RxNorm mapping as #122.
 
 Decisions for Harlan: latest vs peak for (b), and explaining or rebuilding the 1.72M → 568k drop. Consequence here: every EB05 this site shows (Portfolio, pipeline, articles that quote faers.mobi) currently carries the 1/0.7 inflation.
+
+## 2026-11-19 — Refresh workflow sent to the reMarkable
+
+Combined this seat's workflow with faers-mobi-7d's steps (its scratchpad `harlan-refresh-steps.md`) into one checklist: `docs/faers-data-refresh-steps-2026-11-19.md`. It went to the device as `/globalpatientsafety/FAERS-data-refresh-steps` (6 pages, Paper Pro).
+
+Corrections from faers-mobi to the earlier plan:
+- fix (a) has no flag, so the old-smoothing build needs a worktree at the pre-fix commit, with separate `--output-root`s;
+- the parquet ships through signal-compute's `deploy_to_vps.sh` (newest by mtime, restarts shiny-server only), and faers-mobi `deploy.sh` must follow straight after;
+- the notify-first rule applies before `deploy_to_vps.sh`.
+
+Open decisions D1–D5 are on the sheet.
