@@ -3133,3 +3133,7 @@ The DiAna `ingredient` in the export is too coarse for Portfolio (every glargine
 - `rxnorm_ingredient` columns on `/signals` and the export
 
 Statistics stay unchanged. Live faers.mobi does not yet run #119, so the two can ship in one deploy. Sent to faers-mobi-7d.
+
+## 2026-11-18 — #119 deploying; #122 routed
+
+faers-mobi-7d: Harlan ran deploy.sh for #119, and all three workers are live on api-fb819e233363. The export build is running on the VPS (about 25 minutes); live numbers will follow on #119. #122 goes out as a second deploy. Its asks 1 and 2 (the name → RxNorm IN table and the fuzzy-precision rule) are faers-pipeline work, waiting on Harlan's decision to open a faers-pipeline session. Asks 3 and 4 (coverage, the new columns) are faers-mobi's and depend on that table.
